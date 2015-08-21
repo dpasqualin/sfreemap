@@ -1,0 +1,17 @@
+useDynLib(sfreemapc)
+#exportPattern("^[[:alpha:]]+")
+importFrom(Rcpp, evalCpp)
+
+export(sfreemap.map
+       , sfreemap.describe
+       , sfreemap.read_tips
+       , sfreemap.reorder
+       , sfreemap.analyse
+       , sfreemap.plot_distribution)
+
+importFrom(ape, ace, di2multi, is.binary.tree, is.rooted)
+importFrom(ape, is.ultrametric, matexpo, multi2di, nodelabels, plot.phylo)
+importFrom(ape, read.tree, reorder.phylo, write.tree)
+importFrom(phytools, matchNodes, to.matrix, countSimmap, pbtree)
+importFrom(phytools, sim.history, make.simmap, describe.simmap)
+importFrom(parallel, mclapply, detectCores)

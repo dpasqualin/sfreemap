@@ -1,0 +1,9 @@
+visual_test
+^.*\.Rproj$
+^\.Rproj\.user$
+^\.travis\.yml$
+^/\.gitattributes$
+^inst/web$
+^notes$
+^cran-comments.md$
+^\.git
