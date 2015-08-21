@@ -63,13 +63,21 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 	}
 
 	if (final_precision > 0) {
+
 		# main plot
 		p_x <- final_ticks
 		p_y <- final_prob[1:(length(final_prob)-1)] # don't plot NA
-		plot(p_x, p_y, type='l'
-				, xlab="Dwelling time (% of branch length)"
-				, ylab="Probability"
-				, main="Distribution of branch length across trees")
+		plot(p_x
+			, p_y
+			, type='l'
+			, xlab="Dwelling time (% of branch length)"
+			, ylab="Probability"
+			, main="Distribution of branch length across trees"
+		)
+
+		# get and print NA percentage
+		na_percent <- round(tail(final_prob,1), 2)
+		mtext(paste('NA:', na_percent, '%'))
 
 		# lines
 		l_x <- final_ticks[c(min(final_idx), max(final_idx))]
@@ -89,10 +97,6 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 		g_x <- length(final_ticks)/10
 		g_y <- length(final_prob)/10
 		grid(g_x, g_y)
-
-		# add NA percentage
-		na_percent <- round(tail(final_prob,1), 2)
-		mtext(paste('NA:', na_percent, '%'), 4)
 
 		return(list(
 			px=p_x
