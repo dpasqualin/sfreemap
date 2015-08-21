@@ -1,4 +1,4 @@
-sfreemap.map_dwelling_time <- function(base_tree, trees) {
+sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
     n_trees <- length(trees)
     states <- colnames(base_tree$mapped.edge)
     n_states <- length(states)
@@ -46,7 +46,11 @@ sfreemap.map_dwelling_time <- function(base_tree, trees) {
                 branch_names <- rownames(tree$mapped.edge)
                 pattern <- paste(',', cn, '$', sep='')
                 branch <- grepl(pattern, branch_names)
-                result[count,] <- tree$mapped.edge[branch,]
+                if (isTRUE(scale)) {
+                    result[count,] <- rule_of_three(tree$mapped.edge[branch,])
+                } else {
+                    result[count,] <- tree$mapped.edge[branch,]
+                }
             }
             count <- count + 1 # index for result
         }

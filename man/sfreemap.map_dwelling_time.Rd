@@ -2,11 +2,14 @@
 \alias{sfreemap.map_dwelling_time}
 \title{Creates an object suitable analysing results over many phylogenies}
 \usage{
-sfreemap.map_dwelling_time(base_tree, trees)
+sfreemap.map_dwelling_time(base_tree, trees, scale=TRUE)
 }
 \arguments{
     \item{base_tree}{A tree result of a sfreemap.map execution}
     \item{trees}{A 'multiPhylo' object, result of sfreemap.map execution}
+    \item{scale}{Whether the function should scale the dwelling times to the
+    branch length, resulting in a proportion of the time instead of an absolute
+    value}
 }
 \description{
     This functions returns an object that can be used with

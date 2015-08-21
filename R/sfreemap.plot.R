@@ -1,6 +1,6 @@
 # TODO: look for p-value on the internet, probably this entire function
 # is already implemented somewhere
-sfreemap.plot_distribution <- function(node, state, conf.level=90, ...) {
+sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, ...) {
 
 	# Just a reminder of something we could do, which is to call this function
 	# Starting from a specific confidence level that is not 100. This could be
