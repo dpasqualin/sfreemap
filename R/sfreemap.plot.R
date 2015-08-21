@@ -67,7 +67,7 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 		p_x <- final_ticks
 		p_y <- final_prob[1:(length(final_prob)-1)] # don't plot NA
 		plot(p_x, p_y, type='l'
-				, xlab="Branch length"
+				, xlab="Dwelling time (% of branch length)"
 				, ylab="Probability"
 				, main="Distribution of branch length across trees")
 
