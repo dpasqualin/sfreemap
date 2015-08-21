@@ -6,7 +6,7 @@ export(sfreemap.map
        , sfreemap.describe
        , sfreemap.read_tips
        , sfreemap.reorder
-       , sfreemap.analyse
+       , sfreemap.map_dwelling_time
        , sfreemap.plot_distribution)
 
 importFrom(ape, ace, di2multi, is.binary.tree, is.rooted)

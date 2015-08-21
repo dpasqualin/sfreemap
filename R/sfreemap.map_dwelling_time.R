@@ -1,4 +1,4 @@
-sfreemap.analyse <- function(base_tree, trees) {
+sfreemap.map_dwelling_time <- function(base_tree, trees) {
     n_trees <- length(trees)
     states <- colnames(base_tree$mapped.edge)
     n_states <- length(states)
