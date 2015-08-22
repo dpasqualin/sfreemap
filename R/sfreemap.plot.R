@@ -1,6 +1,6 @@
 # TODO: look for p-value on the internet, probably this entire function
 # is already implemented somewhere
-sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, ...) {
+sfreemap.plot_distribution <- function(node, states=NULL, conf.level=90, scale=TRUE, ...) {
 
 	# Just a reminder of something we could do, which is to call this function
 	# Starting from a specific confidence level that is not 100. This could be
@@ -12,7 +12,8 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 
 	# TODO: add sanity check for parameters
 
-	data <- node[,as.character(state)]
+	# all states or states passed as argument
+	states <- ifelse(is.null(states), colnames(node), c(states))
 
 	# FIXME: this were arbitrarily defined and need to be reviwed
 	if (isTRUE(scale)) {
@@ -20,6 +21,42 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 	} else {
 		possible_ticks <- seq(10, length(data)/2, 1)
 	}
+
+	if (final_precision > 0) {
+
+		# main plot
+		bars <- final_prob[1:(length(final_prob)-1)] # don't plot NA
+		names(bars) <- final_ticks
+
+		colors <- rep('white', length(bars))
+		colors[final_idx] <- 'grey'
+
+		xlab <- paste("Dwelling time (% of branch length) of state '"
+						, state, "'", sep="")
+
+		barplot(bars
+			, col=colors
+			, xlab=xlab
+			, ylab="Probability"
+			, main="Distribution of branch length across trees"
+		)
+
+		# get and print NA percentage
+		na_percent <- round(tail(final_prob,1), 2)
+		mtext(paste('NA:', na_percent, '%'))
+
+		return(list(
+			bars=bars
+			, probabilities=final_prob
+			, ticks=final_ticks
+			, precision=final_precision))
+	} else {
+		return(NULL)
+	}
+}
+
+get_state_data <- function(node, state, scale, possible_ticks)
+	data <- node[,as.character(state)]
 
 	begin <- ifelse(isTRUE(scale), 0, min(data, na.rm=TRUE))
 	end <- ifelse(isTRUE(scale), 100, max(data, na.rm=TRUE))
@@ -63,40 +100,15 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 			final_ticks <- ticks
 			final_prob <- prob
 		}
-	}
-
-	if (final_precision > 0) {
-
-		# main plot
-		bars <- final_prob[1:(length(final_prob)-1)] # don't plot NA
-		names(bars) <- final_ticks
-
-		colors <- rep('white', length(bars))
-		colors[final_idx] <- 'grey'
-
-		xlab <- paste("Dwelling time (% of branch length) of state '"
-						, state, "'", sep="")
-
-		barplot(bars
-			, col=colors
-			, xlab=xlab
-			, ylab="Probability"
-			, main="Distribution of branch length across trees"
-		)
-
-		# get and print NA percentage
-		na_percent <- round(tail(final_prob,1), 2)
-		mtext(paste('NA:', na_percent, '%'))
 
 		return(list(
-			bars=bars
-			, probabilities=final_prob
-			, ticks=final_ticks
-			, precision=final_precision))
-	} else {
-		return(NULL)
+			final_precision=final_precision
+			final_idx=final_idx
+			final_ticks=final_ticks
+			final_prob=final_prob
+		))
+
 	}
-}
 
 gen_group <- function(data, ticks) {
 	group <- table(findInterval(data, ticks), useNA='always')
