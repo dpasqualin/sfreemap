@@ -15,11 +15,10 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 	data <- node[,as.character(state)]
 
 	# FIXME: this were arbitrarily defined and need to be reviwed
-	min_ticks <- 10
 	if (isTRUE(scale)) {
-		max_ticks <- 25
+		possible_ticks <- c(20)
 	} else {
-		max_ticks <- length(data)/2
+		possible_ticks <- seq(10, length(data)/2, 1)
 	}
 
 	begin <- ifelse(isTRUE(scale), 0, min(data, na.rm=TRUE))
@@ -30,7 +29,7 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 	final_idx <- c()
 	final_na_percent <- 0.0
 
-	for (number_of_ticks in min_ticks:max_ticks) {
+	for (number_of_ticks in possible_ticks) {
 		# first divide the dataset
 		tick <- (end - begin) / number_of_ticks
 		ticks <- seq(begin, end, tick)
@@ -75,9 +74,12 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 		colors <- rep('white', length(bars))
 		colors[final_idx] <- 'grey'
 
+		xlab <- paste("Dwelling time (% of branch length) of state '"
+						, state, "'", sep="")
+
 		barplot(bars
 			, col=colors
-			, xlab="Dwelling time (% of branch length)"
+			, xlab=xlab
 			, ylab="Probability"
 			, main="Distribution of branch length across trees"
 		)
