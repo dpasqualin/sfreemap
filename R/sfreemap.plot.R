@@ -16,10 +16,14 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 
 	# FIXME: this were arbitrarily defined and need to be reviwed
 	min_ticks <- 10
-	max_ticks <- length(data)/2
+	if (isTRUE(scale)) {
+		max_ticks <- 25
+	} else {
+		max_ticks <- length(data)/2
+	}
 
-	begin <- min(data, na.rm=TRUE)
-	end <- max(data, na.rm=TRUE)
+	begin <- ifelse(isTRUE(scale), 0, min(data, na.rm=TRUE))
+	end <- ifelse(isTRUE(scale), 100, max(data, na.rm=TRUE))
 
 	final_precision <- 0.0
 	final_len <- Inf
@@ -65,11 +69,14 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 	if (final_precision > 0) {
 
 		# main plot
-		p_x <- final_ticks
-		p_y <- final_prob[1:(length(final_prob)-1)] # don't plot NA
-		plot(p_x
-			, p_y
-			, type='l'
+		bars <- final_prob[1:(length(final_prob)-1)] # don't plot NA
+		names(bars) <- final_ticks
+
+		colors <- rep('white', length(bars))
+		colors[final_idx] <- 'grey'
+
+		barplot(bars
+			, col=colors
 			, xlab="Dwelling time (% of branch length)"
 			, ylab="Probability"
 			, main="Distribution of branch length across trees"
@@ -79,30 +86,8 @@ sfreemap.plot_distribution <- function(node, state, conf.level=90, scale=TRUE, .
 		na_percent <- round(tail(final_prob,1), 2)
 		mtext(paste('NA:', na_percent, '%'))
 
-		# lines
-		l_x <- final_ticks[c(min(final_idx), max(final_idx))]
-		l_y <- rep(max(p_y), 2)
-
-		# TODO: would be nice to have a shade inside the graph instead of a line
-		# on top to show the interval found
-		#pol_x <- rep(0, length(final_idx))
-		#pol_y <- p_y[final_idx]
-		#polygon(pol_x, pol_y, col='red')
-
-		# add lines for confidence level
-		par(pch=21, col="red")
-		lines(l_x, l_y, type="o")
-
-		# add grid
-		g_x <- length(final_ticks)/10
-		g_y <- length(final_prob)/10
-		grid(g_x, g_y)
-
 		return(list(
-			px=p_x
-			, py=p_y
-			, lx=l_x
-			, ly=l_y
+			bars=bars
 			, probabilities=final_prob
 			, ticks=final_ticks
 			, precision=final_precision))
