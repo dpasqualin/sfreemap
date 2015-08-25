@@ -1,6 +1,6 @@
 # TODO: look for p-value on the internet, probably this entire function
 # is already implemented somewhere
-sfreemap.plot_distribution <- function(node, states=NULL, conf.level=90
+sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	, number_of_ticks=20, ...) {
 
 	# TODO: add sanity check for parameters
@@ -14,34 +14,43 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf.level=90
 
 	# first divide the dataset
 	ticks <- seq(0, 100, 100/number_of_ticks)
-
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (cont in 1:length(states)) {
 		state <- states[cont]
-		state_name <- as.character(state)
-		data <- get_state_data(node, state, conf.level, ticks)
-		to_plot[[state_name]] <- data$final_prob
+		data <- get_state_data(node, state, conf_level, ticks)
+
+		to_plot[[as.character(state)]] <- data$final_prob
 		to_plot$alpha[data$final_idx] <- TRUE
 	}
 
 	melted <- melt(to_plot, id=c('x', 'alpha'))
+	title <- "Distribution of branch length across trees"
+	subtitle <- paste("(NA: ", data$final_na_percent, "%)", sep="")
 
 	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
+			# define the alpha for bars inside and outside HPD
 	 		scale_alpha_discrete(range=c(0.4, 0.9), guide=FALSE) +
-			geom_bar(stat="identity", position="identity", aes(alpha=alpha)) +
+			# x+2.5 ensures that the beginning of the bar will be at the
+			# beginning of the interval, and not at the middle
+			geom_bar(stat="identity", position="identity", aes(alpha=alpha, x=x + 2.5)) +
 			xlab("Dwelling time (% of branch length)") +
 			ylab("Probability") +
-			ggtitle("Distribution of branch length across trees") +
+			# add title and subtitle
+			ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
+			#ggtitle("Distribution of branch length across trees") +
 			scale_fill_discrete(name = "States") +
-			scale_x_continuous(breaks=ticks)
+			# set the breaks (ticks) at x axis
+			scale_x_continuous(breaks=ticks) +
+			# put legend at the bottom
+			theme(legend.position="bottom")
 
 	return(p)
 }
 
-get_state_data <- function(node, state, conf.level, ticks) {
+get_state_data <- function(node, state, conf_level, ticks) {
 	data <- node[,as.character(state)]
 
-	final_precision <- 0.0
+	final_conf_level <- 0.0
 	final_idx <- c()
 	final_na_percent <- 0.0
 
@@ -53,20 +62,19 @@ get_state_data <- function(node, state, conf.level, ticks) {
 	# in a tick
 	prob <- freq_to_prob(group)
 
-	# find the max precision we can get with probabilities calculated
-	# the maximum precision we could find
-	partial <- get_max_percent(prob, conf.level)
-	# the indexes in prob objected that generated the precision above
-	p_idx <- partial[['prob_idx']]
+	# find the max conf_level we can get with probabilities calculated
+	# the maximum conf_level we could find
+	partial <- get_max_percent(prob, conf_level)
+	# the indexes in prob objected that generated the conf_level above
+	final_conf_level <- partial[['conf_level']]
+	final_idx <- partial[['prob_idx']]
 
-	final_precision <- partial[['precision']]
-	final_idx <- p_idx
 	final_na_percent <- round(tail(prob, 1), 2)
 	# remove NA values from final_prob
 	final_prob <- prob[1:(length(prob)-1)]
 
 	return(list(
-		final_precision=final_precision
+		final_conf_level=final_conf_level
 		, final_idx=final_idx
 		, final_prob=final_prob
 		, final_na_percent=final_na_percent
@@ -87,15 +95,15 @@ gen_group <- function(data, ticks) {
 
 # prob that came from group_by_break
 get_max_percent <- function(prob, limit) {
-	len <- length(prob)
-	res <- list(precision=NULL, prob_idx=NULL)
+	res <- list(conf_level=NULL, prob_idx=NULL)
 	prob_no_na <- prob[1:(length(prob)-1)] # just remove NA value
+	len <- length(prob_no_na)
 	for (i in seq_along(prob_no_na)) {
 		for (j in 1:(len-i+1)) {
 			interval <- j:(j+i-1)
-			percent <- sum(prob[interval])
+			percent <- sum(prob_no_na[interval])
 			if (percent >= limit) {
-				res$precision <- percent
+				res$conf_level <- percent
 				res$prob_idx <- interval
 				return(res)
 			}

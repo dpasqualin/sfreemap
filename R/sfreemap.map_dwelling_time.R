@@ -47,7 +47,7 @@ sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
                 pattern <- paste(',', cn, '$', sep='')
                 branch <- grepl(pattern, branch_names)
                 if (isTRUE(scale)) {
-                    result[count,] <- rule_of_three(tree$mapped.edge[branch,])
+                    result[count,] <- freq_to_prob(tree$mapped.edge[branch,])
                 } else {
                     result[count,] <- tree$mapped.edge[branch,]
                 }
