@@ -4,7 +4,7 @@ Title: What the package does (short line)
 Version: 1.0
 Date: 2015-06-23
 Author: Diego Pasqualin
-Depends: R (>= 2.10), ape (>= 3.0-10), phytools (>= 0.3-93)
+Depends: R (>= 2.10), ape (>= 3.0-10), phytools (>= 0.3-93), reshape(>= 0.8.5), ggplot2(>= 1.0.1)
 Suggests: testthat (>= 0.10.0)
 Maintainer: Diego Pasqualin <dpasqualin@c3sl.ufpr.br>
 Description: More about what it does (maybe more than one line).

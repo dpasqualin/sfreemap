@@ -1,117 +1,77 @@
 # TODO: look for p-value on the internet, probably this entire function
 # is already implemented somewhere
-sfreemap.plot_distribution <- function(node, states=NULL, conf.level=90, scale=TRUE, ...) {
-
-	# Just a reminder of something we could do, which is to call this function
-	# Starting from a specific confidence level that is not 100. This could be
-	# useful do determine the highest possible fit
-	#start.conf.level <- 100
-	#if (hasArg(start.conf.level)) {
-	#	start.conf.level <- list(...)$start.conf.level
-	#}
+sfreemap.plot_distribution <- function(node, states=NULL, conf.level=90
+	, number_of_ticks=20, ...) {
 
 	# TODO: add sanity check for parameters
 
 	# all states or states passed as argument
-	states <- ifelse(is.null(states), colnames(node), c(states))
-
-	# FIXME: this were arbitrarily defined and need to be reviwed
-	if (isTRUE(scale)) {
-		possible_ticks <- c(20)
+	if (is.null(states)) {
+		states <- colnames(node)
 	} else {
-		possible_ticks <- seq(10, length(data)/2, 1)
+	 	states <- c(states)
 	}
 
-	for (state in states) {
-		data <- get_state_data(node, state, scale, possible_ticks)
-		if (data$final_precision > 0) {
+	# first divide the dataset
+	ticks <- seq(0, 100, 100/number_of_ticks)
 
-			# main plot
-			bars <- $final_prob[1:(length(data$final_prob)-1)] # don't plot NA
-			names(bars) <- final_ticks
-
-			colors <- rep('white', length(data$bars))
-			colors[data$final_idx] <- 'grey'
-
-			xlab <- paste("Dwelling time (% of branch length) of state '"
-							, state, "'", sep="")
-
-			barplot(bars
-				, col=colors
-				, xlab=xlab
-				, ylab="Probability"
-				, main="Distribution of branch length across trees"
-			)
-
-			# get and print NA percentage
-			na_percent <- round(tail(final_prob,1), 2)
-			mtext(paste('NA:', na_percent, '%'))
-
-			return(list(
-				bars=bars
-				, probabilities=final_prob
-				, ticks=final_ticks
-				, precision=final_precision))
-		} else {
-			return(NULL)
-		}
+	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
+	for (cont in 1:length(states)) {
+		state <- states[cont]
+		state_name <- as.character(state)
+		data <- get_state_data(node, state, conf.level, ticks)
+		to_plot[[state_name]] <- data$final_prob
+		to_plot$alpha[data$final_idx] <- TRUE
 	}
+
+	melted <- melt(to_plot, id=c('x', 'alpha'))
+
+	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
+	 		scale_alpha_discrete(range=c(0.4, 0.9), guide=FALSE) +
+			geom_bar(stat="identity", position="identity", aes(alpha=alpha)) +
+			xlab("Dwelling time (% of branch length)") +
+			ylab("Probability") +
+			ggtitle("Distribution of branch length across trees") +
+			scale_fill_discrete(name = "States") +
+			scale_x_continuous(breaks=ticks)
+
+	return(p)
 }
 
-get_state_data <- function(node, state, scale, possible_ticks)
+get_state_data <- function(node, state, conf.level, ticks) {
 	data <- node[,as.character(state)]
 
-	begin <- ifelse(isTRUE(scale), 0, min(data, na.rm=TRUE))
-	end <- ifelse(isTRUE(scale), 100, max(data, na.rm=TRUE))
-
 	final_precision <- 0.0
-	final_len <- Inf
 	final_idx <- c()
 	final_na_percent <- 0.0
 
-	for (number_of_ticks in possible_ticks) {
-		# first divide the dataset
-		tick <- (end - begin) / number_of_ticks
-		ticks <- seq(begin, end, tick)
-		# group values into the closest tick
-		group <- gen_group(data, ticks)
-		# just make sure all ticks have a value, even if it's zero
+	# group values into the closest tick
+	group <- gen_group(data, ticks)
+	# just make sure all ticks have a value, even if it's zero
 
-		# translate frequencies into probabilities of seem a particular values
-		# in a tick
-		prob <- freq_to_prob(group)
+	# translate frequencies into probabilities of seem a particular values
+	# in a tick
+	prob <- freq_to_prob(group)
 
-		# find the max precision we can get with probabilities calculated
-		# the maximum precision we could find
-		partial <- get_max_percent(prob, conf.level)
-		# the indexes in prob objected that generated the precision above
-		p_idx <- partial[['prob_idx']]
+	# find the max precision we can get with probabilities calculated
+	# the maximum precision we could find
+	partial <- get_max_percent(prob, conf.level)
+	# the indexes in prob objected that generated the precision above
+	p_idx <- partial[['prob_idx']]
 
-		if (is.null(p_idx)) {
-			# we've found nothing with conf.level, let's try again
-			# with different ticks
-			next
-		}
-		# the number of indexes necessary for the precision will tell the
-		# length necessary to get it
-		total_len <- tick * length(p_idx)
-		# update final values if we found a more suitable result
-		if (total_len < final_len) {
-			final_len <- total_len
-			final_precision <- partial[['precision']]
-			final_idx <- p_idx
-			final_ticks <- ticks
-			final_prob <- prob
-		}
+	final_precision <- partial[['precision']]
+	final_idx <- p_idx
+	final_na_percent <- round(tail(prob, 1), 2)
+	# remove NA values from final_prob
+	final_prob <- prob[1:(length(prob)-1)]
 
-		return(list(
-			final_precision=final_precision
-			final_idx=final_idx
-			final_ticks=final_ticks
-			final_prob=final_prob
-		))
-
-	}
+	return(list(
+		final_precision=final_precision
+		, final_idx=final_idx
+		, final_prob=final_prob
+		, final_na_percent=final_na_percent
+	))
+}
 
 gen_group <- function(data, ticks) {
 	group <- table(findInterval(data, ticks), useNA='always')

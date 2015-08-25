@@ -2,21 +2,21 @@
 \alias{sfreemap.plot_distribution}
 \title{Plot the distribution of a state in a particular node}
 \usage{
-sfreemap.plot_distribution(node, states=NULL, conf.level=90, scale=TRUE, ...)
+sfreemap.plot_distribution(node, states=NULL, conf.level=90, scale=TRUE, number_of_ticks=20, ...)
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, Q='empirical', parallel=FALSE)
 analysis <- sfreemap.analyse(sm[[1]], sm)
 node <- analysis$n120
-result <- sfreemap.plot_distribution(node, 1, conf.level=90)
+result <- sfreemap.plot_distribution(node, 1)
 }
 \arguments{
 	\item{node}{The data for the base node, extracted from \link{sfreemap.analyse}}
     \item{states}{The base state}
 	\item{conf.level}{The confidence desired}
-	\item{scale}{Whether the times in the states should be scaled as a
 	proportion of the time spent on the branch. For example, in a branch of
 	length 2, and time spent of 0.2 for a state 'a' would be converted to 10\%}
+	\item{number_of_ticks}{you know it..}
 	\item{...}{Other parameters..}
 }
 \description{
