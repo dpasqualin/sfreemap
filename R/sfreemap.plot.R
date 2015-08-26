@@ -24,8 +24,12 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	}
 
 	melted <- melt(to_plot, id=c('x', 'alpha'))
-	title <- "Distribution of branch length across trees"
+
+	# graph config
+	title <- "Posterior Distribution of Branch Lengths"
 	subtitle <- paste("(NA: ", data$final_na_percent, "%)", sep="")
+	xlabel <- "Dwelling time (% of branch length)"
+	ylabel <- "Probability"
 
 	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
 			# define the alpha for bars inside and outside HPD
@@ -33,8 +37,8 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 			# x+2.5 ensures that the beginning of the bar will be at the
 			# beginning of the interval, and not at the middle
 			geom_bar(stat="identity", position="identity", aes(alpha=alpha, x=x + 2.5)) +
-			xlab("Dwelling time (% of branch length)") +
-			ylab("Probability") +
+			# x and y labels
+			xlab(xlabel) + ylab(ylabel) +
 			# add title and subtitle
 			ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
 			#ggtitle("Distribution of branch length across trees") +
