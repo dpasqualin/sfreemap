@@ -33,10 +33,10 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 
 	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
 			# define the alpha for bars inside and outside HPD
-	 		scale_alpha_discrete(range=c(0.4, 0.9), guide=FALSE) +
+	 		scale_alpha_discrete(range=c(0.3, 0.6), guide=FALSE) +
 			# x+2.5 ensures that the beginning of the bar will be at the
 			# beginning of the interval, and not at the middle
-			geom_bar(stat="identity", position="identity", aes(alpha=alpha, x=x + 2.5)) +
+			geom_bar(stat="identity", position="identity", aes(alpha=alpha, x=x+2.5)) +
 			# x and y labels
 			xlab(xlabel) + ylab(ylabel) +
 			# add title and subtitle
@@ -44,7 +44,7 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 			#ggtitle("Distribution of branch length across trees") +
 			scale_fill_discrete(name = "States") +
 			# set the breaks (ticks) at x axis
-			scale_x_continuous(breaks=ticks) +
+			scale_x_discrete(breaks=ticks) +
 			# put legend at the bottom
 			theme(legend.position="bottom")
 
