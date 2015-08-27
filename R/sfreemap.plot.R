@@ -102,14 +102,19 @@ get_max_percent <- function(prob, limit) {
 	res <- list(conf_level=NULL, prob_idx=NULL)
 	prob_no_na <- prob[1:(length(prob)-1)] # just remove NA value
 	len <- length(prob_no_na)
+	max_percent <- 0
+	min_interval <- Inf
 	for (i in seq_along(prob_no_na)) {
 		for (j in 1:(len-i+1)) {
 			interval <- j:(j+i-1)
 			percent <- sum(prob_no_na[interval])
-			if (percent >= limit) {
-				res$conf_level <- percent
+			n <- length(interval)
+			if (percent >= limit
+				 	&& percent > max_percent
+					&& (min_interval == Inf || n <= min_interval)) {
+				min_interval <- length(interval)
+				res$conf_level <- max_percent <- percent
 				res$prob_idx <- interval
-				return(res)
 			}
 		}
 	}
