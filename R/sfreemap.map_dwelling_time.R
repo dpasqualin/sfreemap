@@ -31,7 +31,7 @@ sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
         return(tree)
     }
 
-    trees <- lapply(trees, mymatch)
+    trees <- mclapply(trees, mymatch)
     class(trees) <- 'multiPhylo'
 
     for (node in all_nodes) {
