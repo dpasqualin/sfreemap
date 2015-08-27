@@ -292,6 +292,22 @@ sfreemap.reorder <- function(tree, order='cladewise') {
 whichorder <- function(x,y) sapply(x,function(x,y) which(x==y),y=y)
 
 freq_to_prob <- function(x) {
-    total <- sum(x)
-    return ((x*100)/total)
+
+    if (is.null(dim(x))) {
+        # vector
+        result <- (x*100)/sum(x)
+    } else if (length(dim(x)) == 2) {
+        # matrix
+        result <- (x*100)/rowSums(x)
+    } else if (length(dim(x)) == 3) {
+        # 3-dimentional array
+        result <- x
+        for (i in 1:dim(x)[3]) {
+            tmp <- x[,,i]
+            result[,,i] <- (tmp*100) / rowSums(tmp)
+        }
+    } else {
+        stop("dim(x) cannot be greater than 3")
+    }
+    return (result)
 }

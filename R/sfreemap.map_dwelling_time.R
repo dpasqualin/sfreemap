@@ -4,8 +4,13 @@ sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
     n_states <- length(states)
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])[-1]
+    n_nodes <- max(all_nodes)
 
-    res <- list()
+    result_dim <- c(n_trees, n_states, n_nodes)
+    result <- list(
+        emr = array(NA, result_dim, dimnames=list(NULL, states))
+        , lmt = array(NA, result_dim, dimnames=list(NULL, states))
+    )
 
     # correspondent nodes of base_tree in tree
     # NA when there is no correspondent
@@ -30,32 +35,28 @@ sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
     class(trees) <- 'multiPhylo'
 
     for (node in all_nodes) {
-        result <- matrix(0, nrow=n_trees, ncol=n_states)
-        colnames(result) <- states
         count <- 1 # index for result
         for (tree in trees) {
             # correspondent node
             cn <- tree$match[as.character(node),2]
 
-            if (is.na(cn)) {
-                # there is no corresponding node on tree
-                result[count, ] <- NA
-            } else {
+            if (!is.na(cn)) {
                 # search for branch ending in "cn" on tree and add corresponding
                 # values for states
                 branch_names <- rownames(tree$mapped.edge)
                 pattern <- paste(',', cn, '$', sep='')
                 branch <- grepl(pattern, branch_names)
-                if (isTRUE(scale)) {
-                    result[count,] <- freq_to_prob(tree$mapped.edge[branch,])
-                } else {
-                    result[count,] <- tree$mapped.edge[branch,]
-                }
+                result$emr[count,,node] <- tree$mapped.edge[branch,]
+                result$lmt[count,,node] <- tree$mapped.edge.lmt[branch,]
             }
             count <- count + 1 # index for result
         }
-        node_name <- paste('n', as.character(node), sep='')
-        res[[node_name]] <- result
     }
-    return(res)
+
+    if (isTRUE(scale)) {
+        result$emr <- freq_to_prob(result$emr)
+        result$lmt <- freq_to_prob(result$lmt)
+    }
+
+    return(result)
 }
