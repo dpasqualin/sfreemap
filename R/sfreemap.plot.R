@@ -1,7 +1,7 @@
 # TODO: look for p-value on the internet, probably this entire function
 # is already implemented somewhere
 sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
-	, number_of_ticks=20, ...) {
+	, number_of_ticks=20, type='emr', ...) {
 
 	# TODO: add sanity check for parameters
 
@@ -13,7 +13,16 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	}
 
 	# first divide the dataset
-	ticks <- seq(0, 100, 100/number_of_ticks)
+	if (type == 'emr') {
+		ticks <- seq(0, 100, 100/number_of_ticks)
+	} else if (type == 'lmt') {
+		begin <- min(node)
+		end <- max(node)
+		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
+	} else {
+		stop(paste('unrecognized type:', type))
+	}
+
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (cont in 1:length(states)) {
 		state <- states[cont]
@@ -23,30 +32,45 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 		to_plot$alpha[data$final_idx] <- TRUE
 	}
 
-	melted <- melt(to_plot, id=c('x', 'alpha'))
-
 	# graph config
 	title <- "Posterior Distribution of Branch Lengths"
 	subtitle <- paste("(NA: ", data$final_na_percent, "%)", sep="")
-	xlabel <- "Dwelling time (% of branch length)"
 	ylabel <- "Probability"
+	if (type == 'emr') {
+		xlabel <- "Dwelling time (% of branch length)"
+		# shift bars do it fits within intervals
+		to_plot$x <- to_plot$x + 2.5
+		# label angle
+		angle <- 0
+	} else if (type == 'lmt') {
+		# label angle
+		angle <- 90
+		xlabel <- "Expected number of state transitions"
+	}
+
+	melted <- melt(to_plot, id=c('x', 'alpha'))
+
+	# format x labels, limiting the number of digits
+	fmt <- function(){
+	  function(x) format(x, digits=5)
+	}
 
 	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
 			# define the alpha for bars inside and outside HPD
 	 		scale_alpha_discrete(range=c(0.3, 0.6), guide=FALSE) +
 			# x+2.5 ensures that the beginning of the bar will be at the
 			# beginning of the interval, and not at the middle
-			geom_bar(stat="identity", position="identity", aes(alpha=alpha, x=x+2.5)) +
+			geom_bar(stat="identity", position="identity", aes(alpha=alpha)) +
 			# x and y labels
 			xlab(xlabel) + ylab(ylabel) +
 			# add title and subtitle
 			ggtitle(bquote(atop(.(title), atop(italic(.(subtitle)), "")))) +
-			#ggtitle("Distribution of branch length across trees") +
+			# legend name
 			scale_fill_discrete(name = "States") +
 			# set the breaks (ticks) at x axis
-			scale_x_discrete(breaks=ticks) +
+			scale_x_continuous(breaks=ticks, labels=fmt()) +
 			# put legend at the bottom
-			theme(legend.position="bottom")
+			theme(legend.position="bottom", axis.text.x = element_text(angle = angle))
 
 	return(p)
 }

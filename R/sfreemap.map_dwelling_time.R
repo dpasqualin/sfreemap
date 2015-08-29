@@ -55,7 +55,6 @@ sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
 
     if (isTRUE(scale)) {
         result$emr <- freq_to_prob(result$emr)
-        result$lmt <- freq_to_prob(result$lmt)
     }
 
     return(result)
