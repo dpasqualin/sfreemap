@@ -70,7 +70,8 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 			# set the breaks (ticks) at x axis
 			scale_x_continuous(breaks=ticks, labels=fmt()) +
 			# put legend at the bottom
-			theme(legend.position="bottom", axis.text.x = element_text(angle = angle))
+			theme(legend.position="bottom", text=element_text(size=15)
+					, axis.text.x=element_text(angle=angle))
 
 	return(p)
 }
