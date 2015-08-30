@@ -1,8 +1,8 @@
-\name{sfreemap.map_dwelling_time}
-\alias{sfreemap.map_dwelling_time}
+\name{sfreemap.map_posterior_distribution}
+\alias{sfreemap.map_posterior_distribution}
 \title{Creates an object suitable analysing results over many phylogenies}
 \usage{
-sfreemap.map_dwelling_time(base_tree, trees, scale=TRUE)
+sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
 }
 \arguments{
     \item{base_tree}{A tree result of a sfreemap.map execution}

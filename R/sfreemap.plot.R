@@ -32,9 +32,13 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 		to_plot$alpha[data$final_idx] <- TRUE
 	}
 
+	# branch posterior probability
+	# when NA = 0, bpp = 100%
+	bpp <- 100-data$final_na_percent
+
 	# graph config
 	title <- "Posterior Distribution of Branch Lengths"
-	subtitle <- paste("(NA: ", data$final_na_percent, "%)", sep="")
+	subtitle <- paste("Branch posterior probability: ", bpp, "%", sep="")
 	ylabel <- "Probability"
 	if (type == 'emr') {
 		xlabel <- "Dwelling time (% of branch length)"
@@ -55,12 +59,12 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	  function(x) format(x, digits=5)
 	}
 
-	p <- ggplot(melted, aes(x=x, y=value, fill=variable)) +
+	p <- ggplot(melted, aes_string(x='x', y='value', fill='variable')) +
 			# define the alpha for bars inside and outside HPD
 	 		scale_alpha_discrete(range=c(0.3, 0.6), guide=FALSE) +
 			# x+2.5 ensures that the beginning of the bar will be at the
 			# beginning of the interval, and not at the middle
-			geom_bar(stat="identity", position="identity", aes(alpha=alpha)) +
+			geom_bar(stat="identity", position="identity", aes_string(alpha='alpha')) +
 			# x and y labels
 			xlab(xlabel) + ylab(ylabel) +
 			# add title and subtitle

@@ -1,4 +1,4 @@
-sfreemap.map_dwelling_time <- function(base_tree, trees, scale=TRUE) {
+sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
     n_trees <- length(trees)
     states <- colnames(base_tree$mapped.edge)
     n_states <- length(states)
