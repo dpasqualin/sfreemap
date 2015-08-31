@@ -35,7 +35,7 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
     class(trees) <- 'multiPhylo'
 
     for (node in all_nodes) {
-        count <- 1 # index for result
+        tree_number <- 1 # index for result
         for (tree in trees) {
             # correspondent node
             cn <- tree$match[as.character(node),2]
@@ -46,10 +46,10 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
                 branch_names <- rownames(tree$mapped.edge)
                 pattern <- paste(',', cn, '$', sep='')
                 branch <- grepl(pattern, branch_names)
-                result$emr[count,,node] <- tree$mapped.edge[branch,]
-                result$lmt[count,,node] <- tree$mapped.edge.lmt[branch,]
+                result$emr[tree_number,,node] <- tree$mapped.edge[branch,]
+                result$lmt[tree_number,,node] <- tree$mapped.edge.lmt[branch,]
             }
-            count <- count + 1 # index for result
+            tree_number <- tree_number + 1 # index for result
         }
     }
 

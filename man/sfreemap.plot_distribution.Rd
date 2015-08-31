@@ -1,6 +1,6 @@
 \name{sfreemap.plot_distribution}
 \alias{sfreemap.plot_distribution}
-\title{Plot the distribution of a state in a particular node}
+\title{Plot the distribution of states in a particular given node}
 \usage{
 sfreemap.plot_distribution(node, states=NULL, conf_level=90, number_of_ticks=20
 							, type='emr', ...)
@@ -12,16 +12,17 @@ node <- map$emr[,,120]
 result <- sfreemap.plot_distribution(node)
 }
 \arguments{
-	\item{node}{The data for the base node, extracted from \link{sfreemap.map_posterior_distribution}}
-    \item{states}{The base state}
-	\item{conf_level}{The confidence desired}
-	\item{number_of_ticks}{you know it..}
-	\item{type}{What are you plotting?}
-	\item{...}{Other parameters..}
+	\item{node}{The data for the node to analyse, extracted from \link{sfreemap.map_posterior_distribution}}
+    \item{states}{The states to be shown in the plot, defaults to all states.}
+	\item{conf_level}{The confidence level desired}
+	\item{number_of_ticks}{The number of intervals in the x axis.}
+	\item{type}{\code{emr} for expected markov reward (dwelling times) or
+	\code{lmt} for labelled makov transistions (number of transitions).}
+	\item{...}{nothing special so far.}
 }
 \description{
-    This functions plots a distribution for a particular state in
-	particular node, highlighting the confidence level desired.
+    This functions plots the posterior distribution for a state (or all states)
+	in particular node, highlighting the confidence level desired.
 }
 %\details{
 %    Details
@@ -41,13 +42,9 @@ result <- sfreemap.plot_distribution(node)
     }
 }
 
-%\references{
-%    \code{\link{sfreemap.map}}
-%}
-
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap.map_posterior_distribution}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}

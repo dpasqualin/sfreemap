@@ -5,17 +5,22 @@
 sfreemap.describe(tree)
 }
 \arguments{
-    \item{tree}{A result of a sfreemap.map execution (\code{phylo} or \code{multiPhylo})}
+    \item{tree}{A result of a sfreemap.map execution, can be of types
+\code{phylo} or \code{multiPhylo}}
 
 }
 \description{
-    This function returns the mean number of transitions and dwelling times of tree (which can be multiple trees as a multiPhylo object).
+    This function returns the expected number of transitions and dwelling times
+    of for the states of the tree passed as argument.
+
+    If tree is a \code{multiPhylo} the result will be the mean of the trees.
 }
 %\details{
 %    Details
 %}
 \value{
-    A named list with values \code{transitions} and \code{dwelling_times}.
+    A named list with values \code{transitions} and \code{dwelling_times} for
+    each state.
 }
 
 %\references{
