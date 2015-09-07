@@ -1,3 +1,7 @@
+### WARNING
+
+This package is not production ready. There are still some improvements and tests that need to be done.
+
 ### Package Requirements for Production
 
 You need to have R installed on your system. If you are using a debian/ubuntu based distribution, just type the following command in a terminal.
