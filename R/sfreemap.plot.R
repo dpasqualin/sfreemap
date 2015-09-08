@@ -13,15 +13,7 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	}
 
 	# first divide the dataset
-	if (type == 'emr') {
-		ticks <- seq(0, 100, 100/number_of_ticks)
-	} else if (type == 'lmt') {
-		begin <- min(node)
-		end <- max(node)
-		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
-	} else {
-		stop(paste('unrecognized type:', type))
-	}
+	ticks <- get_ticks(node, type, number_of_ticks)
 
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (cont in 1:length(states)) {
@@ -31,6 +23,7 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 		to_plot[[as.character(state)]] <- data$final_prob
 		to_plot$alpha[data$final_idx] <- TRUE
 	}
+	print(to_plot)
 
 	# branch posterior probability
 	# when NA = 0, bpp = 100%
@@ -80,7 +73,58 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 	return(p)
 }
 
-get_state_data <- function(node, state, conf_level, ticks) {
+sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
+															, conf_level=90, number_of_ticks=20) {
+
+	map <- sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
+	ticks <- get_ticks(node, type, number_of_ticks)
+
+	tree <- base_tree
+	tree$maps <- list()
+	for (node in 1:nrow(tree$edge)) {
+		b_len <- tree$edge.length[node]
+
+		data <- get_state_data(map$emr[,,node], state, conf_level, ticks, na.rm=FALSE)
+
+		if (data$final_conf_level >= conf_level) {
+			value <- freq_to_prob(data$final_prob[data$final_idx])
+			# workaround to set <NA> as a character
+			tmp <- as.character((as.numeric(names(value))-1) * 5)
+			tmp[is.na(tmp)] <- 'NA'
+			names(value) <- tmp
+		} else {
+			# 100% unknown
+			value <- 100
+			names(value) <- 'NA'
+		}
+
+		# scale maps to branch length
+		tree$maps[[node]] <- (value*b_len)/100.0
+	}
+
+	# color grandient
+	colfunc <- colorRampPalette(c("#A2A2FF", "blue"))
+	colors <- colfunc(length(ticks))
+
+	color_names <- as.numeric(unique(unlist(sapply(tree$maps,names))))
+	color_names <- as.character(sort(color_names, na.last=TRUE))
+	color_names[is.na(color_names)] <- 'NA'
+
+	names(colors) <- color_names
+	colors['NA'] <- 'red'
+
+print(sort(unique(unlist(sapply(tree$maps,names)))))
+
+	# make room for the legend
+	ylim <- c(-4, length(tree$tip.label))
+
+	plotSimmap(tree, colors=colors, fsize=0.7, ftype="i", ylim=ylim)
+	sfreemap.add.legend(colors=colors)
+
+	return(tree)
+}
+
+get_state_data <- function(node, state, conf_level, ticks, na.rm=TRUE) {
 	data <- node[,as.character(state)]
 
 	final_conf_level <- 0.0
@@ -103,8 +147,11 @@ get_state_data <- function(node, state, conf_level, ticks) {
 	final_idx <- partial[['prob_idx']]
 
 	final_na_percent <- round(tail(prob, 1), 2)
-	# remove NA values from final_prob
-	final_prob <- prob[1:(length(prob)-1)]
+	final_prob <- prob
+	if (isTRUE(na.rm)) {
+		# remove NA values from final_prob
+		final_prob <- prob[1:(length(prob)-1)]
+	}
 
 	return(list(
 		final_conf_level=final_conf_level
@@ -128,7 +175,7 @@ gen_group <- function(data, ticks) {
 
 # prob that came from group_by_break
 get_max_percent <- function(prob, limit) {
-	res <- list(conf_level=NULL, prob_idx=NULL)
+	res <- list(conf_level=0, prob_idx=c())
 	prob_no_na <- prob[1:(length(prob)-1)] # just remove NA value
 	len <- length(prob_no_na)
 	max_percent <- 0
@@ -150,59 +197,16 @@ get_max_percent <- function(prob, limit) {
 	return(res)
 }
 
-# TODO this probably doesn't make sense, think about removing it
-# receives a tree modified by sfreemap
-sfreemap.pie_plot <- function(tree, percent_only=FALSE) {
-    get_rows <- function(x) {
-        y <- x$mapped.edge
-        rownames(y) <- x$edge[,1]
-        y <- y[as.character(length(x$tip)+1:x$Nnode),]
-        return(y)
-    }
-
-    get_percentage <- function(row) {
-        return(row/sum(row))
-    }
-
-    do_the_plot <- function(percent) {
-        if (class(tree) == 'multiPhylo') {
-            t <- tree[[1]]
-        } else {
-            t <- tree
-        }
-        states <- colnames(t$Q)
-
-        if (is.null(t$node.label)) {
-            t$node.label <- unique(t$edge[,1])
-        }
-
-        l_values <- colnames(percent) <- states
-        l_colors <- palette()[1:length(l_values)]
-
-        plot.phylo(t, no.margin=TRUE
-                    , show.tip.label=TRUE, show.node.label=TRUE
-                    , label.offset=0.02)
-        nodelabels(pie=percent, piecol=l_colors, cex=0.6)
-        legend('topright', legend=l_values, text.col=l_colors)
-    }
-
-    if (class(tree) == 'multiPhylo') {
-        # get the percentage for each tree
-        all_percent <- lapply(tree, sfreemap.pie_plot, percent_only=TRUE)
-        # get a mean of all percentages
-        percent <- Reduce('+', all_percent)/length(all_percent)
-    } else if (class(tree) == 'phylo') {
-        if (is.null(tree$mapped.edge)) {
-            stop("tree should contain mapped states on edges")
-        }
-        percent <- t(apply(get_rows(tree), 1, get_percentage))
-    } else {
-        stop('tree should be object of class \"phylo\"')
-    }
-
-    if (isTRUE(percent_only)) {
-        return (percent)
-    } else {
-        do_the_plot(percent)
-    }
+get_ticks <- function(node, type, number_of_ticks) {
+	# first divide the dataset
+	if (type == 'emr') {
+		ticks <- seq(0, 100, 100/number_of_ticks)
+	} else if (type == 'lmt') {
+		begin <- min(node)
+		end <- max(node)
+		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
+	} else {
+		stop(paste('unrecognized type:', type))
+	}
+	return(ticks)
 }
