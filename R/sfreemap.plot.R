@@ -102,18 +102,20 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 		tree$maps[[node]] <- (value*b_len)/100.0
 	}
 
+	# set color names
+	color_names <- unique(unlist(sapply(tree$maps,names)))
+	color_names <- suppressWarnings(as.numeric(color_names))
+	color_names <- as.character(sort(color_names, na.last=TRUE))
+	color_names[is.na(color_names)] <- 'NA'
+
 	# color grandient
 	colfunc <- colorRampPalette(c("#A2A2FF", "blue"))
 	colors <- colfunc(length(ticks))
 
-	color_names <- as.numeric(unique(unlist(sapply(tree$maps,names))))
-	color_names <- as.character(sort(color_names, na.last=TRUE))
-	color_names[is.na(color_names)] <- 'NA'
+	#colors <- rainbow(length(ticks))
 
 	names(colors) <- color_names
-	colors['NA'] <- 'red'
-
-print(sort(unique(unlist(sapply(tree$maps,names)))))
+	colors['NA'] <- 'black'
 
 	# make room for the legend
 	ylim <- c(-4, length(tree$tip.label))

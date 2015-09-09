@@ -276,12 +276,12 @@ sfreemap.add.legend <- function(leg=NULL,colors,prompt=FALSE,vertical=FALSE,...)
       x <- x + (0:(length(leg)-2) * w)
       # add NA a bit separate from the rest
       x <- c(x, w*length(leg))
-      y <- rep(y+w/2,length(x)) + h
+      y <- rep(y,length(x)) - h
 
       labels <- leg
       suppressWarnings(labels[as.numeric(labels) %% 10 != 0] <- '')
 
-      text(x, y, labels, pos=3, cex=0.7*fsize)
+      text(x, y+0.5, labels, pos=3, cex=0.7*fsize)
     }
 
     if (shape=="square") {
