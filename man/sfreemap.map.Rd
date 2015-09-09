@@ -2,7 +2,7 @@
 \alias{sfreemap.map}
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
-sfreemap.map(tree, tip_states, Q, ...)
+sfreemap.map(tree, tip_states, Q='empirical', ...)
 
 }
 \arguments{

@@ -1,7 +1,7 @@
 # Input
 #   tree    a phylogenetic tree as an object of class "phylo" (from package
 #           ape)
-sfreemap.map <- function(tree, tip_states, Q, ...) {
+sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
 
     # Should this program run in parallel?
     parallel <- TRUE

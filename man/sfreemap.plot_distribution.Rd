@@ -1,27 +1,28 @@
 \name{sfreemap.plot_distribution}
 \alias{sfreemap.plot_distribution}
-\title{Plot the distribution of a state in a particular node}
+\title{Plot the distribution of states in a particular given node}
 \usage{
-sfreemap.plot_distribution(node, state, conf.level=90, scale=TRUE, ...)
+sfreemap.plot_distribution(node, states=NULL, conf_level=90, number_of_ticks=20
+							, type='emr', ...)
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, Q='empirical', parallel=FALSE)
-analysis <- sfreemap.analyse(sm[[1]], sm)
-node <- analysis$n120
-result <- sfreemap.plot_distribution(node, 1, conf.level=90)
+map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
+node <- map$emr[,,120]
+result <- sfreemap.plot_distribution(node)
 }
 \arguments{
-	\item{node}{The data for the base node, extracted from \link{sfreemap.analyse}}
-    \item{state}{The base state}
-	\item{conf.level}{The confidence desired}
-	\item{scale}{Whether the times in the states should be scaled as a
-	proportion of the time spent on the branch. For example, in a branch of
-	length 2, and time spent of 0.2 for a state 'a' would be converted to 10\%}
-	\item{...}{Other parameters..}
+	\item{node}{The data for the node to analyse, extracted from \link{sfreemap.map_posterior_distribution}}
+    \item{states}{The states to be shown in the plot, defaults to all states.}
+	\item{conf_level}{The confidence level desired}
+	\item{number_of_ticks}{The number of intervals in the x axis.}
+	\item{type}{\code{emr} for expected markov reward (dwelling times) or
+	\code{lmt} for labelled makov transistions (number of transitions).}
+	\item{...}{nothing special so far.}
 }
 \description{
-    This functions plots a distribution for a particular state in
-	particular node, highlighting the confidence level desired.
+    This functions plots the posterior distribution for a state (or all states)
+	in particular node, highlighting the confidence level desired.
 }
 %\details{
 %    Details
@@ -41,13 +42,9 @@ result <- sfreemap.plot_distribution(node, 1, conf.level=90)
     }
 }
 
-%\references{
-%    \code{\link{sfreemap.map}}
-%}
-
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap.map_posterior_distribution}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}
