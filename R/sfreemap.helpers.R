@@ -276,7 +276,7 @@ sfreemap.add.legend <- function(leg=NULL,colors,prompt=FALSE,vertical=FALSE,...)
       x <- x + (0:(length(leg)-2) * w)
       # add NA a bit separate from the rest
       x <- c(x, w*length(leg))
-      y <- rep(y,length(x)) - h
+      y <- rep(y,length(x))
 
       labels <- leg
       suppressWarnings(labels[as.numeric(labels) %% 10 != 0] <- '')

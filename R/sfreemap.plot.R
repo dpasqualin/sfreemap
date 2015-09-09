@@ -109,16 +109,21 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 	color_names[is.na(color_names)] <- 'NA'
 
 	# color grandient
-	colfunc <- colorRampPalette(c("#A2A2FF", "blue"))
+	# from blue to red, passing through purple
+	colfunc <- colorRampPalette(c("blue", "#800080FF", "red"))
 	colors <- colfunc(length(ticks))
 
-	#colors <- rainbow(length(ticks))
+	# exponential blue
+	#red <- sapply(seq(0,1,0.05), function(x) round(255*exp(-x*log(255))))
+	#green <- sapply(seq(0,1,0.05), function(x) round(-255*x+255))
+	#blue <- sapply(seq(0,1,0.05), function(x) round(256-exp(x*log(255))))
+	#colors <- rgb(cbind(red, green, blue)/255)
 
 	names(colors) <- color_names
-	colors['NA'] <- 'black'
+	colors['NA'] <- '#B3B3B3FF' # grey 30%
 
 	# make room for the legend
-	ylim <- c(-4, length(tree$tip.label))
+	ylim <- c(-2, length(tree$tip.label))
 
 	plotSimmap(tree, colors=colors, fsize=0.7, ftype="i", ylim=ylim)
 	sfreemap.add.legend(colors=colors)
