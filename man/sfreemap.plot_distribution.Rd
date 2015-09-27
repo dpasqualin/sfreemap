@@ -2,7 +2,7 @@
 \alias{sfreemap.plot_distribution}
 \title{Plot the distribution of states in a particular given node}
 \usage{
-sfreemap.plot_distribution(node, states=NULL, conf_level=90, number_of_ticks=20
+sfreemap.plot_distribution(node, states=NULL, conf_level=95, number_of_ticks=20
 							, type='emr', ...)
 }
 \examples{

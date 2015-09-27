@@ -1,6 +1,4 @@
-# TODO: look for p-value on the internet, probably this entire function
-# is already implemented somewhere
-sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
+sfreemap.plot_distribution <- function(node, states=NULL, conf_level=95
 	, number_of_ticks=20, type='emr', ...) {
 
 	# TODO: add sanity check for parameters
@@ -74,7 +72,7 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=90
 }
 
 sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
-															, conf_level=90, number_of_ticks=20) {
+										, conf_level=95, number_of_ticks=20) {
 
 	map <- sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
 	ticks <- get_ticks(node, type, number_of_ticks)
