@@ -7,7 +7,8 @@ export(sfreemap.map
        , sfreemap.read_tips
        , sfreemap.reorder
        , sfreemap.map_posterior_distribution
-       , sfreemap.plot_distribution)
+       , sfreemap.plot_distribution
+       , sfreemap.plot_tree)
 
 importFrom(ape, ace, di2multi, is.binary.tree, is.rooted)
 importFrom(ape, is.ultrametric, matexpo, multi2di, nodelabels, plot.phylo)
