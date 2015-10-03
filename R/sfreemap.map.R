@@ -16,7 +16,7 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
     }
 
     # tree sanity check
-    if (class(tree) == "multiPhylo") {
+    if ('multiPhylo' %in% class(tree)) {
         # For Just call the same program multiple times...
         if (parallel == TRUE) {
             cores <- detectCores()
