@@ -1,12 +1,10 @@
 sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
-    n_trees <- length(trees)
     states <- colnames(base_tree$mapped.edge)
-    n_states <- length(states)
+
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])[-1]
-    n_nodes <- max(all_nodes)
 
-    result_dim <- c(n_trees, n_states, n_nodes)
+    result_dim <- c(length(trees), length(states), max(all_nodes))
     result <- list(
         emr = array(NA, result_dim, dimnames=list(NULL, states))
         , lmt = array(NA, result_dim, dimnames=list(NULL, states))
@@ -17,21 +15,25 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
     mymatch <- function(tree) {
         # match of internal nodes
         internal <- matchNodes(base_tree, tree, method='descendants')
+
         # match of tips
         ta <- base_tree$tip.label
         tb <- tree$tip.label
         tips <- cbind(seq_along(ta), match(ta, tb))
+
         # concatenate internal and tip nodes
         match <- rbind(internal, tips)
 
         # this names are useful to index the match vector by starting node
         rownames(match) <- match[,1]
+        colnames(match) <- c('base_tree', 'me')
+
         tree[['match']] <- match
 
         return(tree)
     }
 
-    trees <- mclapply(trees, mymatch)
+    trees <- mclapply(trees, mymatch, mc.cores=detectCores())
     class(trees) <- 'multiPhylo'
 
     for (node in all_nodes) {
@@ -43,11 +45,11 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
             if (!is.na(cn)) {
                 # search for branch ending in "cn" on tree and add corresponding
                 # values for states
-                branch_names <- rownames(tree$mapped.edge)
-                pattern <- paste(',', cn, '$', sep='')
-                branch <- grepl(pattern, branch_names)
-                result$emr[tree_number,,node] <- tree$mapped.edge[branch,]
-                result$lmt[tree_number,,node] <- tree$mapped.edge.lmt[branch,]
+                emr <- tree$mapped.edge[tree$edge[,2]==cn,]
+                lmt <- tree$mapped.edge.lmt[tree$edge[,2]==cn,]
+
+                result$emr[tree_number,,node] <- emr
+                result$lmt[tree_number,,node] <- lmt
             }
             tree_number <- tree_number + 1 # index for result
         }
