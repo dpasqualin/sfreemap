@@ -1,5 +1,5 @@
 sfreemap.plot_distribution <- function(node, states=NULL, conf_level=95
-	, number_of_ticks=20, type='emr', ...) {
+	                           , number_of_ticks=20, type='emr', ...) {
 
 	# TODO: add sanity check for parameters
 
@@ -80,7 +80,6 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 	tree <- base_tree
 	tree$maps <- list()
 	for (node in 1:nrow(tree$edge)) {
-		b_len <- tree$edge.length[node]
 
 		data <- get_state_data(map$emr[,,node], state, conf_level, ticks, na.rm=FALSE)
 
@@ -97,6 +96,7 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 		}
 
 		# scale maps to branch length
+		b_len <- tree$edge.length[node]
 		tree$maps[[node]] <- (value*b_len)/100.0
 	}
 
@@ -107,15 +107,7 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 	color_names[is.na(color_names)] <- 'NA'
 
 	# color grandient
-	# from blue to red, passing through purple
-	colfunc <- colorRampPalette(c("blue", "#800080FF", "red"))
-	colors <- colfunc(length(ticks))
-
-	# exponential blue
-	#red <- sapply(seq(0,1,0.05), function(x) round(255*exp(-x*log(255))))
-	#green <- sapply(seq(0,1,0.05), function(x) round(-255*x+255))
-	#blue <- sapply(seq(0,1,0.05), function(x) round(256-exp(x*log(255))))
-	#colors <- rgb(cbind(red, green, blue)/255)
+	colors <- get_color_pallete()
 
 	names(colors) <- color_names
 	colors['NA'] <- '#B3B3B3FF' # grey 30%
@@ -127,6 +119,14 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 	sfreemap.add.legend(colors=colors)
 
 	return(tree)
+}
+
+get_color_pallete <- function() {
+    red <- c(1,1,2,2,3,4,5,7,9,12,16,21,28,37,48,64,84,111,147,193,255)
+    green <- c(0,48,92,130,163,191,214,232,245,252,255,252,245,232,214,191,163,130,92,48,0)
+    blue <- c(255,193,147,111,84,64,48,37,28,21,16,12,9,7,5,4,3,2,2,1,1)
+
+    return (rgb(red, green, blue, maxColorValue=255))
 }
 
 get_state_data <- function(node, state, conf_level, ticks, na.rm=TRUE) {
