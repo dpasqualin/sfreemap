@@ -14,14 +14,12 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=95
 	ticks <- get_ticks(node, type, number_of_ticks)
 
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
-	for (cont in 1:length(states)) {
-		state <- states[cont]
+	for (state in states) {
 		data <- get_state_data(node, state, conf_level, ticks)
 
 		to_plot[[as.character(state)]] <- data$final_prob
 		to_plot$alpha[data$final_idx] <- TRUE
 	}
-	print(to_plot)
 
 	# branch posterior probability
 	# when NA = 0, bpp = 100%
@@ -79,7 +77,11 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 
 	tree <- base_tree
 	tree$maps <- list()
-	for (node in 1:nrow(tree$edge)) {
+
+    # all but the root node
+    all_nodes <- unique(base_tree$edge[,2])
+
+	for (node in all_nodes) {
 
 		data <- get_state_data(map$emr[,,node], state, conf_level, ticks, na.rm=FALSE)
 
@@ -96,9 +98,10 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 		}
 
 		# scale maps to branch length
-		b_len <- tree$edge.length[node]
-		tree$maps[[node]] <- (value*b_len)/100.0
-	}
+        b_number <- which(tree$edge[,2]==node)
+		b_len <- tree$edge.length[b_number]
+		tree$maps[[b_number]] <- (value*b_len)/100.0
+    }
 
 	# set color names
 	color_names <- unique(unlist(sapply(tree$maps,names)))

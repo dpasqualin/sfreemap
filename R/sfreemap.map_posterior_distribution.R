@@ -1,13 +1,12 @@
 sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
+
+    # create tree dimentional matrix for the result
     states <- colnames(base_tree$mapped.edge)
-
-    # all but the root node
-    all_nodes <- unique(base_tree$edge[,2])[-1]
-
+    tree_names <- 1:length(trees)
     result_dim <- c(length(trees), length(states), max(all_nodes))
     result <- list(
-        emr = array(NA, result_dim, dimnames=list(NULL, states))
-        , lmt = array(NA, result_dim, dimnames=list(NULL, states))
+        emr = array(NA, result_dim, dimnames=list(tree_names, states))
+        , lmt = array(NA, result_dim, dimnames=list(tree_names, states))
     )
 
     # correspondent nodes of base_tree in tree
@@ -35,6 +34,9 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
 
     trees <- mclapply(trees, mymatch, mc.cores=detectCores())
     class(trees) <- 'multiPhylo'
+
+    # all but the root node
+    all_nodes <- unique(base_tree$edge[,2])
 
     for (node in all_nodes) {
         tree_number <- 1 # index for result
