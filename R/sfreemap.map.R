@@ -35,7 +35,7 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
         class(mtrees) <- "multiPhylo"
         return(mtrees)
 
-    } else if (class(tree) != "phylo") {
+    } else if (! "phylo" %in% class(tree)) {
         stop("'tree' should be an object of class 'phylo'")
     } else if (!is.rooted(tree)) {
         stop("'tree' must be rooted")
@@ -99,6 +99,8 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
     # Define the tip states as a matrix
     if (!is.matrix(tip_states)) {
         tip_states <- build_states_matrix(tree, tip_states)
+    } else {
+        tip_states <- tip_states[tree$tip.label,]
     }
 
     # Defining Q
@@ -203,6 +205,7 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
     # (expected number of markov transitions) and equation 2.12
     # (expected markov rewards).
     MAP[['h']] <- func_H(Q, Q_eigen, tree, tree_extra, omp)
+
     # Step 4 and 5
     # Traverse the tree once and calculate Fu and Sb for each node u and
     # each edge b;

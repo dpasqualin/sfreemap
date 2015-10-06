@@ -143,25 +143,26 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
     {
-        int i, j, p, c, b;
-        arma::mat lmt_i(n_states, n_states);
-        arma::mat emr_i(n_states, n_states);
-        arma::rowvec gs(n_states);
+        int e, i, j, p, c, b;
+        double gsf;
+        arma::mat lmt_e(n_states, n_states);
+        arma::mat emr_e(n_states, n_states);
 
         #pragma omp for nowait
-        for (i=0; i<n_edges; i++) {
-            p = edges(i,0)-1; // nodes start at 1 in R..
-            c = edges(i,1)-1; // nodes start at 1 in R..
-            b = (i%2==0? edges(i+1,1) : edges(i-1,1)) - 1;
+        for (e=0; e<n_edges; e++) {
+            p = edges(e,0)-1; // nodes start at 1 in R..
+            c = edges(e,1)-1; // nodes start at 1 in R..
+            b = (e%2==0? edges(e+1,1) : edges(e-1,1)) - 1;
 
-            lmt_i = lmt.slice(i);
-            emr_i = emr.slice(i);
+            lmt_e = lmt.slice(e);
+            emr_e = emr.slice(e);
 
-            for (j=0; j<n_states; j++) {
-                gs = g(p,j) * s(b,j) * f.row(c);
-
-                prm_lmt(i,j) += (sum(gs % lmt_i.row(j)));
-                prm_emr(i,j) += (sum(gs % emr_i.row(j)));
+            for (i=0; i<n_states; i++) {
+                for (j=0; j<n_states; j++) {
+                    gsf = g(p,i) * s(b,i) * f(c,j);
+                    prm_emr(e,i) += gsf * emr_e(i,j);
+                    prm_lmt(e,i) += gsf * lmt_e(i,j);
+                }
             }
         }
     }
