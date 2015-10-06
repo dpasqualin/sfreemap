@@ -3,7 +3,8 @@
 \title{Plot the distribution of states in a particular given node}
 \usage{
 sfreemap.plot_tree(base_tree, trees, state, type='emr'
-					        , conf_level=95, number_of_ticks=20)
+					        , conf_level=95, number_of_ticks=20
+                            , tip_states=NULL)
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, Q='empirical', parallel=FALSE)
@@ -17,6 +18,7 @@ result <- sfreemap.plot_tree(sm[[1]], sm, state='1')
 	\code{lmt} for labelled makov transistions (number of transitions).}
 	\item{conf_level}{trololo}
 	\item{number_of_ticks}{trololo}
+    \item{tip_states}{tip states as provided to \code{\link{sfreemap.map}}}
 }
 \description{
     This functions plots something.

@@ -70,7 +70,8 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=95
 }
 
 sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
-										, conf_level=95, number_of_ticks=20) {
+										, conf_level=95, number_of_ticks=20
+                                        , tip_states=NULL) {
 
 	map <- sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
 	ticks <- get_ticks(node, type, number_of_ticks)
@@ -118,10 +119,28 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 	# make room for the legend
 	ylim <- c(-2, length(tree$tip.label))
 
+    # add tip state
+    if (!is.null(tip_states)) {
+        tree$tip.label <- join_tip_states(tree, tip_states)
+    }
+
 	plotSimmap(tree, colors=colors, fsize=0.7, ftype="i", ylim=ylim)
 	sfreemap.add.legend(colors=colors)
 
 	return(tree)
+}
+
+join_tip_states <- function(tree, tip_states) {
+    # Define the tip states as a matrix
+    if (!is.matrix(tip_states)) {
+        tip_states <- build_states_matrix(tree, tip_states)
+    }
+    a <- t(apply(tip_states, 1, function(x) ifelse(x==1, names(x), '')))
+    b <- apply(a, 1, paste, collapse='')
+    b <- b[tree$tip.label]
+    res <- apply(cbind(names(b), b), 1, paste, collapse=' - ')
+    names(res) <- NULL
+    return (res)
 }
 
 get_color_pallete <- function() {
@@ -139,7 +158,7 @@ get_state_data <- function(node, state, conf_level, ticks, na.rm=TRUE) {
 	final_idx <- c()
 	final_na_percent <- 0.0
 
-	# group values into the closest tick
+	# group values into the closest ticknames(b) <- NULL
 	group <- gen_group(data, ticks)
 	# just make sure all ticks have a value, even if it's zero
 
