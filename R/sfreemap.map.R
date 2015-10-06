@@ -226,17 +226,8 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
     tree[['mapped.edge']] <- MAP[['ev']]$emr
     tree[['mapped.edge.lmt']] <- MAP[['ev']]$lmt
 
-    # NOTE: make.simmap (phytools) has this, not sure why it's useful. but if
-    # you decide to uncomment it, remember to uncomment the equivalent line on
-    # sfreemap.reorder()
-    # tree[['maps']] <- generate_maps(tree[['mapped.edge']])
-
     # Return the tree in the original order
     return (sfreemap.reorder(tree, 'cladewise'))
-}
-
-generate_maps <- function(mapped) {
-    return(lapply(1:nrow(mapped), function(i) mapped[i,]))
 }
 
 # The final answer!

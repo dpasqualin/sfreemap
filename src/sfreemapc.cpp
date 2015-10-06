@@ -184,11 +184,11 @@ List fractional_likelihoods(List tree, List tree_extra, arma::mat q
     int n_tips = tree_extra["n_tips"];
     arma::cube tp = array_to_cube(trans_prob, n_states, n_states, n_edges);
 
+    arma::mat edge = tree["edge"];
+    arma::mat states = tree_extra["states"];
     arma::mat f(n_nodes, n_states, arma::fill::zeros);
     arma::mat g(n_nodes, n_states, arma::fill::zeros);
     arma::mat s(n_nodes, n_states, arma::fill::zeros);
-    arma::mat edge = tree["edge"];
-    arma::mat states = tree_extra["states"];
     arma::mat t_right(n_states, n_states);
     arma::mat t_left(n_states, n_states);
     double likelihood;

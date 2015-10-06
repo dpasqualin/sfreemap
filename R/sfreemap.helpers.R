@@ -340,9 +340,9 @@ sfreemap.reorder <- function(tree, order='cladewise') {
     x <- reorder(tree, order)
     o <- whichorder(x$edge[,2], tree$edge[,2])
     x$mapped.edge <- tree$mapped.edge[o,]
-    # NOTE: make.simmap (phytools) use this, but I'm not sure why it's
-    # useful.
-    # x$maps <- tree$maps[o]
+    if (!is.null(tree$maps)) {
+        x$maps <- tree$maps[o]
+    }
     return(x)
 }
 
