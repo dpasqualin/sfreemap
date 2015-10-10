@@ -48,10 +48,12 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
                 # search for branch ending in "cn" on tree and add corresponding
                 # values for states
                 emr <- tree$mapped.edge[tree$edge[,2]==cn,]
-                lmt <- tree$mapped.edge.lmt[tree$edge[,2]==cn,]
-
                 result$emr[tree_number,,node] <- emr
-                result$lmt[tree_number,,node] <- lmt
+
+                if (!is.null(tree$mapped.edge.lmt)) {
+                    lmt <- tree$mapped.edge.lmt[tree$edge[,2]==cn,]
+                    result$lmt[tree_number,,node] <- lmt
+                }
             }
             tree_number <- tree_number + 1 # index for result
         }
