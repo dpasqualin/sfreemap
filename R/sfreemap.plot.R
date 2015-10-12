@@ -112,9 +112,9 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 
 	# color grandient
 	colors <- get_color_pallete()
+	colors['NA'] <- '#B3B3B3FF' # grey 30%
 
 	names(colors) <- color_names
-	colors['NA'] <- '#B3B3B3FF' # grey 30%
 
 	# make room for the legend
 	ylim <- c(-2, length(tree$tip.label))
@@ -125,6 +125,7 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
     }
 
 	plotSimmap(tree, colors=colors, fsize=0.7, ftype="i", ylim=ylim)
+
 	sfreemap.add.legend(colors=colors)
 
 	return(tree)
