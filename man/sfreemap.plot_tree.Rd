@@ -4,7 +4,8 @@
 \usage{
 sfreemap.plot_tree(base_tree, trees, state, type='emr'
 					        , conf_level=95, number_of_ticks=20
-                            , tip_states=NULL)
+                            , tip_states=NULL, fsize=0.7, ftype="i"
+                            , lwd=3)
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, Q='empirical', parallel=FALSE)
@@ -19,6 +20,9 @@ result <- sfreemap.plot_tree(sm[[1]], sm, state='1')
 	\item{conf_level}{trololo}
 	\item{number_of_ticks}{trololo}
     \item{tip_states}{tip states as provided to \code{\link{sfreemap.map}}}
+    \item{fsize}{relative font size for tip labels.}
+    \item{ftype}{font type - options are ``reg'', ``i'' (italics), ``b'' (bold), or ``bi'' (bold-italics).}
+    \item{lwd}{line width for plotting.}
 }
 \description{
     This functions plots something.

@@ -70,8 +70,9 @@ sfreemap.plot_distribution <- function(node, states=NULL, conf_level=95
 }
 
 sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
-										, conf_level=95, number_of_ticks=20
-                                        , tip_states=NULL) {
+                                , conf_level=95, number_of_ticks=20
+                                , tip_states=NULL, fsize=0.7, ftype="i"
+                                , lwd=3) {
 
 	map <- sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
 	ticks <- get_ticks(node, type, number_of_ticks)
@@ -92,6 +93,14 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
 			tmp <- as.character((as.numeric(names(value))-1) * 5)
 			tmp[is.na(tmp)] <- 'NA'
 			names(value) <- tmp
+
+            # we want to show the more relevant probabilities at the end of the
+            # branch. The more relevant probabilities are the ones either closer
+            # to zero or to one hundred percent
+            #tmp <- as.numeric(tmp)
+            #if (tmp[1] < 100 - tail(tmp, n=1)) {
+            #   value <- value[order(tmp, decreasing=TRUE)]
+            #}
 		} else {
 			# 100% unknown
 			value <- 100
@@ -124,7 +133,7 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
         tree$tip.label <- join_tip_states(tree, tip_states)
     }
 
-	plotSimmap(tree, colors=colors, fsize=0.7, ftype="i", ylim=ylim)
+	plotSimmap(tree, colors=colors, fsize=fsize, ftype=ftype, ylim=ylim, lwd=lwd)
 
 	sfreemap.add.legend(colors=colors)
 
