@@ -236,27 +236,27 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
 
 # adds legend to an open stochastic map style plot
 # modified from phytools (written by Liam J. Revell 2013)
-sfreemap.add.legend <- function(leg=NULL,colors,prompt=FALSE,vertical=FALSE,...) {
+sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
+                                , vertical=FALSE, ...) {
+
+    shape <- "rect"
     if (hasArg(shape)) {
       shape <- list(...)$shape
-    } else {
-      shape <- "square"
     }
 
     if (prompt) {
-      cat("Click where you want to draw the legend\n")
-      pos <- unlist(locator(1))
-      x <- pos[1]
-      y <- pos[2]
+        cat("Click where you want to draw the legend\n")
+        pos <- unlist(locator(1))
+        x <- pos[1]
+        y <- pos[2]
     } else {
-      x <- ifelse(hasArg(x), list(...)$x, 0)
-      y <- ifelse(hasArg(y), list(...)$y, -4)
+        x <- ifelse(hasArg(x), list(...)$x, 0)
+        y <- ifelse(hasArg(y), list(...)$y, -4)
     }
 
+    fsize <- 1
     if (hasArg(fsize)) {
-      fsize <- list(...)$fsize
-    } else {
-      fsize <- 1
+        fsize <- list(...)$fsize
     }
 
     if (is.null(leg)) {
@@ -266,30 +266,35 @@ sfreemap.add.legend <- function(leg=NULL,colors,prompt=FALSE,vertical=FALSE,...)
     h <- fsize*strheight(LETTERS[1])
 
     usr <- par()$usr
-    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3])
+    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.5
 
     if (vertical) {
-      y <- y-0:(length(leg)-1)*1.5*h
-      x <- rep(x+w/2,length(y))
-      text(x+w, y, leg, pos=4, cex=fsize/par()$cex)
+        y <- y-0:(length(leg)-1)*1.5*h
+        x <- rep(x+w/2,length(y))
+        text(x+w, y, leg, pos=4, cex=fsize/par()$cex)
     } else {
-      x <- x + (0:(length(leg)-2) * w)
-      # add NA a bit separate from the rest
-      x <- c(x, w*length(leg))
-      y <- rep(y,length(x))
+        x <- x + (0:(length(leg)-2) * w)
+        # add NA a bit separate from the rest
+        x <- c(x, w*length(leg))
+        y <- rep(y,length(x))
 
-      labels <- leg
-      suppressWarnings(labels[as.numeric(labels) %% 10 != 0] <- '')
+        labels <- leg
+        # remove some labels, to make it more compact
+        #suppressWarnings(labels[as.numeric(labels) %% 10 != 0] <- '')
 
-      text(x, y+0.5, labels, pos=3, cex=0.7*fsize)
+        text(x, y+0.5, labels, pos=3, cex=0.7*fsize)
     }
 
-    if (shape=="square") {
-      symbols(x,y,squares=rep(w,length(x)),bg=colors, add=TRUE,inches=FALSE)
+    if (shape=="rect") {
+        rects <- cbind(rep(w, length(x)), rep(h*0.75, length(x)))
+        y <- y + h*0.5
+        symbols(x, y, rectangles=rects, bg=colors, add=TRUE, inches=FALSE)
+    } else if (shape=="square") {
+        symbols(x, y, squares=rep(w,length(x)), bg=colors, add=TRUE, inches=FALSE)
     } else if (shape=="circle") {
-      symbols(x,y,circles=rep(w,length(x)),bg=colors, add=TRUE, inches=FALSE)
+        symbols(x, y, circles=rep(w,length(x)), bg=colors, add=TRUE, inches=FALSE)
     } else {
-      stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
+        stop(paste("shape=\"",shape,"\" is not a recognized option.",sep=""))
     }
 }
 
