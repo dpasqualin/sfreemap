@@ -97,10 +97,10 @@ sfreemap.plot_tree <- function(base_tree, trees, state, type='emr'
             # we want to show the more relevant probabilities at the end of the
             # branch. The more relevant probabilities are the ones either closer
             # to zero or to one hundred percent
-            #tmp <- as.numeric(tmp)
-            #if (tmp[1] < 100 - tail(tmp, n=1)) {
-            #   value <- value[order(tmp, decreasing=TRUE)]
-            #}
+            tmp <- as.numeric(tmp)
+            if (tmp[1] < 100 - tail(tmp, n=1)) {
+               value <- value[order(tmp, decreasing=TRUE)]
+            }
 		} else {
 			# 100% unknown
 			value <- 100
