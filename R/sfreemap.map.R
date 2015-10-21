@@ -78,9 +78,9 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
     }
 
     # number os simulations for the MCMC
-    n_simulations <- 100
-    if (hasArg(n_simulations)) {
-        n_simulations <- list(...)$n_simulations
+    n_simulation <- 100
+    if (hasArg(n_simulation)) {
+        n_simulation <- list(...)$n_simulation
     }
 
     # For now only "symmetrical" model is accepted
@@ -112,7 +112,7 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
         # TODO: This function will generate many Qs. We have to decide how to
         # deal with it. Maybe just run the program for every Q?
         QP <- Q_mcmc(tree, tip_states, model, prior, gamma_prior, tol, burn_in
-                     , sample_freq, vQ, n_simulations)
+                     , sample_freq, vQ, n_simulation)
         # Call sfreemap.map for each {Q,prior} returned by the mcmc simulation
         params <- list(...)
         params$tree <- tree
