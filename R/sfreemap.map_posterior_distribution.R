@@ -8,7 +8,8 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
     tree_names <- 1:length(trees)
     result_dim <- c(length(trees), length(states), max(all_nodes))
     result <- list(
-        emr = array(NA, result_dim, dimnames=list(tree_names, states))
+        base_tree = base_tree
+        , emr = array(NA, result_dim, dimnames=list(tree_names, states))
         , lmt = array(NA, result_dim, dimnames=list(tree_names, states))
     )
 
