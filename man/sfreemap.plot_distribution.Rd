@@ -1,50 +1,39 @@
 \name{sfreemap.plot_distribution}
 \alias{sfreemap.plot_distribution}
-\title{Plot the distribution of states in a particular given node}
+\title{Plot the distribution of states in a given node}
 \usage{
-sfreemap.plot_distribution(node, states=NULL, conf_level=95, number_of_ticks=20
-							, type='emr', ...)
+sfreemap.plot_distribution(map, node, states=NULL, conf_level=95
+	                       , number_of_ticks=20, type='emr', ...)
 }
 \examples{
-sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, Q='empirical', parallel=FALSE)
+sm <- sfreemap.map(trees, tips, Q='empirical')
 map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
-node <- map$emr[,,120]
-result <- sfreemap.plot_distribution(node)
+p <- sfreemap.plot_distribution(map, 160)
+print(p)
 }
 \arguments{
-	\item{node}{The data for the node to analyse, extracted from \link{sfreemap.map_posterior_distribution}}
-    \item{states}{The states to be shown in the plot, defaults to all states.}
-	\item{conf_level}{The confidence level desired}
-	\item{number_of_ticks}{The number of intervals in the x axis.}
+	\item{map}{A result of a \link{sfreemap.map_posterior_distribution} execution;}
+    \item{states}{The states to be shown in the plot, defaults to all states;}
+	\item{conf_level}{An integer representing the confidence level desired, ranging from 0 to 100. Defaults to 95 percent;}
+	\item{number_of_ticks}{The number of intervals in the x axis, defaults to 20;}
 	\item{type}{\code{emr} for expected markov reward (dwelling times) or
-	\code{lmt} for labelled makov transistions (number of transitions).}
-	\item{...}{nothing special so far.}
+	\code{lmt} for labelled markov transitions (number of transitions), defaults for \code{emr};}
 }
 \description{
-    This functions plots the posterior distribution for a state (or all states)
-	in particular node, highlighting the confidence level desired.
+    This function plots the posterior distribution for a state (or all states)
+	in particular node, highlighting the confidence interval desired calculated using the highest posterior density (HPD).
 }
 %\details{
 %    Details
 %}
 \value{
-    Besides the plot, this function returns a list containing the following
-    values:
-    \itemize{
-        \item \code{px} and \code{py}: The x and y axis of the plot
-        \item \code{lx} and {ly}: The start and end value of the line discribing
-        the confidence level
-        \item \code{ticks}: The ticks (cuts) in the possible lengths of the
-        ending in the node given as argument
-        \item \code{probabilities}: A vector representing the probability of
-        finding a dwelling time for the state/node in all trees correspondent
-        with the tick in the same position.
-    }
+    This function returns a \link[ggplot2]{ggplot} object that shows the plot when printed. The print itself can be changed as the pleased, using regular ggplot layers functions.
 }
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map_posterior_distribution}}
+    \code{\link{sfreemap.map_posterior_distribution}},
+    \code{\link{sfreemap.map}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}

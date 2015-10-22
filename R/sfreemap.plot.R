@@ -1,5 +1,5 @@
 sfreemap.plot_distribution <- function(map, node, states=NULL, conf_level=95
-	                                   , number_of_ticks=20, type='emr', ...) {
+	                                   , number_of_ticks=20, type='emr') {
 
 	# TODO: add sanity check for parameters
 

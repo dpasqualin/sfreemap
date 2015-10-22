@@ -20,7 +20,7 @@ sfreemap.read_tips(file, character=1, sep="\t")
     When some taxon have an ambiguous state, put all states side-by-side, without an separator. For instance, if taxa X can be at both states 'a' and 'b', write 'ab' in the file.
 }
 \details{
-    If you decide to use spaces to separate taxa names from characters make sure the taxa names doesn't have spaces. For instance: ``A_grahamae_Agra_Cur'' is correct, ``A grahamae Agra Cur'' is wrong.
+    If you decide to use spaces to separate taxa names from characters make sure the taxa names doesn't have spaces. For instance: "A_grahamae_Agra_Cur" is correct, "A grahamae Agra Cur" is wrong.
 }
 \value{
     {A matrix with the taxa label as the row names and a number of columns equal to the number of possible states of the character. The values of the matrix can be one, when the taxon can be at the state, and 0 otherwize.}

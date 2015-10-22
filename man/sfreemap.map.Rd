@@ -27,19 +27,19 @@ sfreemap.map(tree, tip_states, Q='empirical', ...)
 			\item \code{"empirical"}: first it fits a continuous-time reversible Markov model for the evolution of x
 and then simulates stochastic character histories using that model and the tip states on the tree. This
 is the same procedure that is described in Bollback (2006), except that simulation is performed using
-a fixed value of the transition matrix, Q, instead of by sampling Q from its posterior distribution (from Phytools).
-			\item \code{"mcmc"}: samples Q nsim times from the posterior probability
-		distribution of Q using MCMC, then it simulates nsim stochastic maps
-		conditioned on each sampled value of Q.
-			\item A transition rate matrix. Make sure to name rows and columns properly with the state labels.
-			Also, this matrix \bold{must be symmetrical}.
+a fixed value of the transition matrix, Q, instead of by sampling Q from its posterior distribution (\link[phytools]{phytools}).
+			\item \code{"mcmc"}: samples n_simulation Q matrices from the
+            posterior probability distribution of Q using MCMC, then
+            performs stochastic maps conditioned on each sampled value of Q.
+			\item A transition rate matrix. Make sure to name rows and columns
+            properly with the state labels. Also, \bold{this matrix must be symmetrical}.
 		}
-
 	}
 
-	\item{...}{Optional parameters listed below:
+	\item{...}{Optional parameters, listed below:
 
-		\code{"prior"}: the prior distribution on the root node of the tree. Options are:
+    \itemize{
+		\item \code{"prior"}: the prior distribution on the root node of the tree. Options are:
 		\itemize{
 			\item \code{"equal"} (default): root node is sampled from the conditional
 			scaled likelihood distribution at the root;
@@ -47,20 +47,20 @@ a fixed value of the transition matrix, Q, instead of by sampling Q from its pos
 			solving \code{pi*Q=0};
 		}
 
-		\code{"tol"} (default: 1e-8): the tolerance for zero elements in Q, elements less then
-		tol will be set to zero;
+		\item \code{"tol"} (default: 1e-8): the tolerance for zero elements in Q, elements less then
+		tol will be set to tol;
 
-		\code{"parallel"} (default: TRUE): when \code{tree} is of type \code{multiPhylo} we can run
-		sfreemap in parallel. The number of processes will be the same as the cores available in your machine.
+		\item \code{"parallel"} (default: TRUE): when \code{tree} is of type \code{multiPhylo} we can run
+		sfreemap in parallel. The number of processes created will be the same as the cores available in your machine.
 
-		When \code{Q="mcmc"} some other parameters might be set:
+		\item When \code{Q="mcmc"} some other parameters might be set:
 		\itemize{
 			\item \code{"n_simulations"} (default: 100): The number of Q matrices that will be generated;
-			\item \code{"burn_in"} (default: 1000): the burn in for the MCMC, when Q="mcmc";
-			\item \code{"sample_freq"} (default: 100): sample frequency for the MCMC, when Q="mcmc".
+			\item \code{"burn_in"} (default: 1000): the burn in for the MCMC;
+			\item \code{"sample_freq"} (default: 100): number of generations for each sample taken;
 		}
-	}
-
+    }
+    }
 
 }
 
@@ -76,13 +76,15 @@ a fixed value of the transition matrix, Q, instead of by sampling Q from its pos
 \value{
     Returns a modified object of class "phylo", adding the following data:
 
-		\item{mapped.edge}{a matrix containing the total time spent in each state along each edge of the tree}
+		\item{mapped.edge}{a matrix containing the expected value for dwelling times for each state along each edge of the tree;}
 
-		\item{mapped.edge.lmt}{a matrix containing the number of labelled markov transitions for each state along each edge of the tree}
+		\item{mapped.edge.lmt}{a matrix containing the expected number of labelled markov transitions for each state along each edge of the tree;}
 
-		\item{Q}{the given or estimated value of Q}
+		\item{Q}{the given or estimated value of Q;}
 
-		\item{logL}{The likelihood of given or sampled Q}
+		\item{logL}{The likelihood of calculated for the given or sampled Q;}
+
+        \item{prior}{The prios given or calculated for the root node;}
 }
 
 \references{
@@ -93,7 +95,7 @@ Biological Sciences, 363 (1512): 3985-3995, 2008.
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    See Also
+    %See Also
 }
 \keyword{phylogenetics}
 %\keyword{simulation}

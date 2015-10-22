@@ -13,7 +13,7 @@ sfreemap.describe(tree)
     This function returns the expected number of transitions and dwelling times
     of for the states of the tree passed as argument.
 
-    If tree is a \code{multiPhylo} the result will be the mean of the trees.
+    If tree is a \code{multiPhylo} the result will be the mean value for the trees.
 }
 %\details{
 %    Details
