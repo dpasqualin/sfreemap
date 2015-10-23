@@ -2,7 +2,7 @@
 \alias{sfreemap.map}
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
-sfreemap.map(tree, tip_states, Q='empirical', ...)
+sfreemap.map(tree, tip_states, Q='empirical', model="SYM", ...)
 
 }
 \arguments{
@@ -24,7 +24,7 @@ sfreemap.map(tree, tip_states, Q='empirical', ...)
 		program, according to the following options:
 
 		\itemize{
-			\item \code{"empirical"}: first it fits a continuous-time reversible Markov model for the evolution of x
+			\item \code{"empirical" (default)}: first it fits a continuous-time reversible Markov model for the evolution of x
 and then simulates stochastic character histories using that model and the tip states on the tree. This
 is the same procedure that is described in Bollback (2006), except that simulation is performed using
 a fixed value of the transition matrix, Q, instead of by sampling Q from its posterior distribution (\link[phytools]{phytools}).
@@ -35,6 +35,15 @@ a fixed value of the transition matrix, Q, instead of by sampling Q from its pos
             properly with the state labels. Also, \bold{this matrix must be symmetrical}.
 		}
 	}
+
+    \item{model}{
+    By choosing to estimate Q using either methods the user can then select a model from the list below:
+    \itemize{
+        \item \code{"SYM" (default)}: symmetrical model, e.g, \code{matric(c(0,1,2,1,0,3,2,3,0))};
+        \item \code{"ER"}: equal rates model, for example \code{matrix(c(0,1,1,0))};
+        \item \code{"ARD"}: all rates different model, for example \code{matrix(c(0,1,2,0))};
+    }
+    }
 
 	\item{...}{Optional parameters, listed below:
 

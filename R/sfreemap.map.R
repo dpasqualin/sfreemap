@@ -1,7 +1,7 @@
 # Input
 #   tree    a phylogenetic tree as an object of class "phylo" (from package
 #           ape)
-sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
+sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
 
     # Should this program run in parallel?
     parallel <- TRUE
@@ -39,6 +39,12 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
         stop("'tree' should be an object of class 'phylo'")
     } else if (!is.rooted(tree)) {
         stop("'tree' must be rooted")
+    }
+
+    # check for model
+    valid_models <- c('SYM', 'ER', 'ARD')
+    if (! model %in% valid_models) {
+        stop('Unknown model ', model)
     }
 
     # Defining the prior distribution for the root node of the tree,
@@ -83,11 +89,6 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', ...) {
         n_simulation <- list(...)$n_simulation
     }
 
-    # For now only "symmetrical" model is accepted
-    model <- "SYM"
-    #if (hasArg(model)) {
-    #    model <- list(...)$model
-    #}
 
     # A single numeric value or a vector containing the (normal)
     # sampling variances for the MCMC
