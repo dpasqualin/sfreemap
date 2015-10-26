@@ -5,7 +5,7 @@
 # PHYTOOLS
 # get pars
 # written by Liam J. Revell 2013
-getPars<-function(bt,xx,model,Q,tree,tol,m,omp,liks=TRUE){
+getPars<-function(bt,xx,model,Q,tree,tol,m,omp=1,liks=TRUE){
     XX<-apeAce(bt,xx,model,omp,fixedQ=Q,output.liks=liks)
     N<-length(bt$tip.label)
     II<-XX$index.matrix
@@ -163,7 +163,7 @@ apeAce <- function(tree,x,model,omp,fixedQ=NULL,...){
 # PHYTOOLS
 # mcmc for Q used in Q="mcmc"
 # written by Liam J. Revell 2013
-mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
+mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior,omp){
     update<-function(x){
         ## x<-exp(log(x)+rnorm(n=np,mean=0,sd=sqrt(vQ)))
         x<-abs(x+rnorm(n=np,mean=0,sd=sqrt(vQ)))
@@ -197,13 +197,13 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
     p<-rgamma(np,prior$alpha,prior$beta)
     Q<-matrix(p[rate],m,m)
     diag(Q)<--rowSums(Q,na.rm=TRUE)
-    yy<-getPars(bt,xx,model,Q,tree,tol,m)
+    yy<-getPars(bt,xx,model,Q,tree,tol,m,omp)
     #cat("Running MCMC burn-in. Please wait....\n")
     for(i in 1:burnin){
         pp<-update(p)
         Qp<-matrix(pp[rate],m,m)
         diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-        zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE)
+        zz<-getPars(bt,xx,model,Qp,tree,tol,m,omp,FALSE)
         p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
             yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
         if(p.odds>=runif(n=1)){
@@ -218,7 +218,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
         pp<-update(p)
         Qp<-matrix(pp[rate],m,m)
         diag(Qp)<--rowSums(Qp,na.rm=TRUE)
-        zz<-getPars(bt,xx,model,Qp,tree,tol,m,FALSE)
+        zz<-getPars(bt,xx,model,Qp,tree,tol,m,omp,FALSE)
         p.odds<-exp(zz$loglik+sum(dgamma(pp,prior$alpha,prior$beta,log=TRUE))-
             yy$loglik-sum(dgamma(p,prior$alpha,prior$beta,log=TRUE)))
         if(p.odds>=runif(n=1)){
@@ -228,7 +228,7 @@ mcmcQ<-function(bt,xx,model,tree,tol,m,burnin,samplefreq,nsim,vQ,prior){
         if(i%%samplefreq==0){
             Qi<-matrix(p[rate],m,m)
             diag(Qi)<--rowSums(Qi,na.rm=TRUE)
-            XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,TRUE)
+            XX[[i/samplefreq]]<-getPars(bt,xx,model,Qi,tree,tol,m,omp,TRUE)
         }
     }
     return(XX)
@@ -374,4 +374,15 @@ freq_to_prob <- function(x) {
         stop("dim(x) cannot be greater than 3")
     }
     return (result)
+}
+
+sfreemap.read.fasta <- function(file, ensure_dna=TRUE) {
+    nucleo_data <- read.fasta(file)
+    nucleo_data <- sapply(nucleo_data, cbind)
+    if (ensure_dna) {
+        # converts RNA to DNA
+        nucleo_data[nucleo_data == 'u'] <- 't'
+    }
+    rownames(nucleo_data) <- paste('t', 1:nrow(nucleo_data), sep='')
+    return (nucleo_data)
 }

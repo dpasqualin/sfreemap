@@ -1,7 +1,7 @@
 # Input
 #   tree    a phylogenetic tree as an object of class "phylo" (from package
 #           ape)
-sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
+sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SYM", type="standard", ...) {
 
     # Should this program run in parallel?
     parallel <- TRUE
@@ -20,15 +20,15 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
         # For Just call the same program multiple times...
         if (parallel == TRUE) {
             cores <- detectCores()
-            mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, ..., mc.cores=cores)
+            mtrees <- mclapply(tree, sfreemap.map, tree, tip_states, Q=NULL, method="empirical", model="SYM", type="standard", ..., mc.cores=cores)
         } else {
-            mtrees <- lapply(tree, sfreemap.map, tip_states, Q, ...)
+            mtrees <- lapply(tree, sfreemap.map, tree, tip_states, Q=NULL, method="empirical", model="SYM", type="standard", ...)
         }
 
-        # When Q=mcmc we will have length(trees)*n_simulation trees at the end
+        # When method=mcmc we will have length(trees)*n_simulation trees at the end
         # of the execution. Instead of lists of multPhylo objects we want to
         # return one multiPhylo object with all trees.
-        if (Q == 'mcmc') {
+        if (method == 'mcmc') {
             mtrees <- c(mapply(c, mtrees))
         }
 
@@ -41,9 +41,19 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
         stop("'tree' must be rooted")
     }
 
+    # available types and models
+    valid_models <- list(
+        "standard" = c('SYM', 'ER', 'ARD')
+        , "dna" = c('GTR', 'SYM', 'HKY85', 'K2P', 'F81', 'JC69')
+    )
+
+    # check for type
+    if (! type %in% names(valid_models)) {
+        stop('Unknown type', type)
+    }
+
     # check for model
-    valid_models <- c('SYM', 'ER', 'ARD')
-    if (! model %in% valid_models) {
+    if (! model %in% valid_models[[type]]) {
         stop('Unknown model ', model)
     }
 
@@ -84,11 +94,10 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
     }
 
     # number os simulations for the MCMC
-    n_simulation <- 100
+    n_simulation <- 10
     if (hasArg(n_simulation)) {
         n_simulation <- list(...)$n_simulation
     }
-
 
     # A single numeric value or a vector containing the (normal)
     # sampling variances for the MCMC
@@ -104,20 +113,56 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
         tip_states <- tip_states[tree$tip.label,]
     }
 
-    # Defining Q
-    if (is.character(Q) && (Q == "empirical")) {
+    # Estimating Q when using standard data
+    if (is.matrix(Q)) {
         # Phytools would replicate this result nsim times, but for now
         # we will return just one result.
-        QP <- Q_empirical(tree, tip_states, prior, model, tol, omp)
-    } else if (is.character(Q) && (Q == "mcmc")) {
-        # TODO: This function will generate many Qs. We have to decide how to
-        # deal with it. Maybe just run the program for every Q?
-        QP <- Q_mcmc(tree, tip_states, model, prior, gamma_prior, tol, burn_in
-                     , sample_freq, vQ, n_simulation)
-        # Call sfreemap.map for each {Q,prior} returned by the mcmc simulation
-        params <- list(...)
-        params$tree <- tree
-        params$tip_states <- tip_states
+        QP <- Q_matrix(tree, tip_states, Q, model, prior, tol)
+    } else if (type == 'standard') {
+        # standard data type has currently two ways of estimating the rate
+        # matrix
+        if (method == "empirical") {
+            # Phytools would replicate this result nsim times, but for now
+            # we will return just one result.
+            QP <- Q_empirical(tree, tip_states, prior, model, tol, omp)
+        } else if (method == "mcmc") {
+            # TODO: This function will generate many Qs. We have to decide how to
+            # deal with it. Maybe just run the program for every Q?
+            QP <- Q_mcmc(tree, tip_states, prior, model, gamma_prior, tol, burn_in
+                         , sample_freq, vQ, n_simulation, omp)
+            class(QP) <- 'multiQ'
+        }
+    # Estimating Q when using nucleotide data
+    } else if (type == 'dna') {
+        if (class(data) == 'matrix' && nrow(data) > 1) {
+            if (parallel == TRUE) {
+                # FIXME: this "type=fork" only work on linux and macos. Not using
+                # this mean to pass on every single variable we will need in Q_dna
+                # as an environment variable. Quite annoying..
+                cl <- makeCluster(detectCores(), type="FORK")
+                QP <- parApply(cl, data, 1, Q_dna, tree, method)
+                stopCluster(cl)
+            } else {
+                QP <- apply(cl, data, 1, Q_dna, tree, method)
+            }
+            class(QP) <- 'multiQ'
+        } else {
+            QP <- apply(cl, data, 1, Q_dna, tree, method)
+        }
+    }
+
+    # Call sfreemap.map for each {Q,prior} returned by the mcmc simulation
+    if (class(QP) == 'multiQ') {
+        # prepare parameters
+        # this seems to weird... there must be a better way to do it.
+        params <- list(
+            tree = tree
+            , tip_states = tip_states
+            , model = model
+            , type = type
+            , method = method
+        )
+
         res <- function(QP) {
             params$Q <- QP$Q
             params$prior <- QP$prior
@@ -129,15 +174,9 @@ sfreemap.map <- function(tree, tip_states, Q='empirical', model="SYM", ...) {
         } else {
             mtrees <- lapply(QP, res)
         }
+
         class(mtrees) <- "multiPhylo"
         return(mtrees)
-
-    } else if (is.matrix(Q)) {
-        # Phytools would replicate this result nsim times, but for now
-        # we will return just one result.
-        QP <- Q_matrix(tree, tip_states, Q, model, prior, tol)
-    } else {
-        stop("Unrecognized format for 'Q'")
     }
 
     # Set the final value

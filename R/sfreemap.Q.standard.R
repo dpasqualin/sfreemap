@@ -66,7 +66,7 @@ Q_matrix <- function(tree, tip_states, Q, model, prior, tol) {
 }
 
 # Return the transition matrix Q calculated using a markov chain
-Q_mcmc <- function(tree, tip_states, model, prior, gamma_prior, tol, burn_in, sample_freq, vQ, n_simulations) {
+Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sample_freq, vQ, n_simulations, omp) {
 
     states <- tip_states/rowSums(tip_states)
 
@@ -83,7 +83,7 @@ Q_mcmc <- function(tree, tip_states, model, prior, gamma_prior, tol, burn_in, sa
         gamma_prior$alpha <- qq * gamma_prior$beta
     }
 
-    XX <- mcmcQ(bt, states, model, new_tree, tol, n_states, burn_in, sample_freq, n_simulations, vQ, gamma_prior)
+    XX <- mcmcQ(bt, states, model, new_tree, tol, n_states, burn_in, sample_freq, n_simulations, vQ, gamma_prior, omp)
     # We compute the likelihood again anyway, maybe we could skip this
 
     join_Q_with_prior <- function(idx, Q_list, prior_list, logL_list) {
