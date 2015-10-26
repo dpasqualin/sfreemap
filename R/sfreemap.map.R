@@ -19,16 +19,16 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
     if ('multiPhylo' %in% class(tree)) {
         # For Just call the same program multiple times...
         if (parallel == TRUE) {
-            cores <- detectCores()
-            mtrees <- mclapply(tree, sfreemap.map, tree, tip_states, Q=NULL, method="empirical", model="SYM", type="standard", ..., mc.cores=cores)
+            mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, method, model, type, ...,
+                                mc.cores=detectCores())
         } else {
-            mtrees <- lapply(tree, sfreemap.map, tree, tip_states, Q=NULL, method="empirical", model="SYM", type="standard", ...)
+            mtrees <- lapply(tree, sfreemap.map, tip_states, Q, method, model, type, ...)
         }
 
         # When method=mcmc we will have length(trees)*n_simulation trees at the end
-        # of the execution. Instead of lists of multPhylo objects we want to
+        # of the execution. Instead of lists of multiPhylo objects we want to
         # return one multiPhylo object with all trees.
-        if (method == 'mcmc') {
+        if (class(mtrees[[1]]) == "multiPhylo") {
             mtrees <- c(mapply(c, mtrees))
         }
 
@@ -42,9 +42,11 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
     }
 
     # available types and models
+    dna_models <- names(getModels())
+    standard_models <- c('SYM', 'ER', 'ARD')
     valid_models <- list(
-        "standard" = c('SYM', 'ER', 'ARD')
-        , "dna" = c('GTR', 'SYM', 'HKY85', 'K2P', 'F81', 'JC69')
+        "standard" = standard_models
+        , "dna" = dna_models
     )
 
     # check for type
@@ -122,19 +124,15 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
         # standard data type has currently two ways of estimating the rate
         # matrix
         if (method == "empirical") {
-            # Phytools would replicate this result nsim times, but for now
-            # we will return just one result.
             QP <- Q_empirical(tree, tip_states, prior, model, tol, omp)
         } else if (method == "mcmc") {
-            # TODO: This function will generate many Qs. We have to decide how to
-            # deal with it. Maybe just run the program for every Q?
             QP <- Q_mcmc(tree, tip_states, prior, model, gamma_prior, tol, burn_in
                          , sample_freq, vQ, n_simulation, omp)
             class(QP) <- 'multiQ'
         }
     # Estimating Q when using nucleotide data
-    } else if (type == 'dna') {
-        if (class(data) == 'matrix' && nrow(data) > 1) {
+    } else if (type == "dna") {
+        if (class(data) == "matrix" && nrow(data) > 1) {
             if (parallel == TRUE) {
                 # FIXME: this "type=fork" only work on linux and macos. Not using
                 # this mean to pass on every single variable we will need in Q_dna
@@ -152,24 +150,25 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
     }
 
     # Call sfreemap.map for each {Q,prior} returned by the mcmc simulation
-    if (class(QP) == 'multiQ') {
+    if (class(QP) == "multiQ") {
         # prepare parameters
-        # this seems to weird... there must be a better way to do it.
+        # this seems weird... there must be a better way to do it.
         params <- list(
-            tree = tree
-            , tip_states = tip_states
-            , model = model
-            , type = type
-            , method = method
+            "tree" = tree
+            , "tip_states" = tip_states
+            , "model" = model
+            , "type" = type
+            , "method" = method
+            , "..." = ...
         )
 
-        res <- function(QP) {
-            params$Q <- QP$Q
-            params$prior <- QP$prior
+        res <- function(qp) {
+            params$Q <- qp$Q
+            params$prior <- qp$prior
             return (do.call(sfreemap.map, params))
         }
 
-        if (parallel == TRUE) {
+        if (isTRUE(parallel)) {
             mtrees <- mclapply(QP, res, mc.cores=detectCores())
         } else {
             mtrees <- lapply(QP, res)

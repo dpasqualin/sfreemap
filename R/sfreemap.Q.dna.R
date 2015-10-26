@@ -15,7 +15,7 @@ Q_dna <- function(data, tree, model) {
         c("a", "c", "g", "t", "-")
     )
 
-    m <- subsChoice(model)
+    m <- getModels()[[model]]
     data <- phyDat(data, type="USER", contrast=contrast)
     fit <- pml(tree, data)
     ctrl <- pml.control(trace=0)
@@ -33,9 +33,8 @@ Q_dna <- function(data, tree, model) {
 
 # from package phangorn
 # helps to get parameters for different DNA models
-subsChoice <- function(type=c("JC", "F81", "K80", "HKY", "TrNe", "TrN", "TPM1", "K81", "TPM1u", "TPM2", "TPM2u", "TPM3", "TPM3u", "TIM1e", "TIM1", "TIM2e", "TIM2", "TIM3e", "TIM3", "TVMe", "TVM", "SYM", "GTR")){
-    type = match.arg(type)
-    switch(type,
+getModels <- function() {
+    models <- list(
          JC = list(optQ=FALSE, optBf=FALSE,   subs=c(0, 0, 0, 0, 0, 0)),
          F81 = list(optQ=FALSE, optBf=TRUE,   subs=c(0, 0, 0, 0, 0, 0)),
          K80 = list(optQ=TRUE, optBf=FALSE,   subs=c(0, 1, 0, 0, 1, 0)),
@@ -59,5 +58,6 @@ subsChoice <- function(type=c("JC", "F81", "K80", "HKY", "TrNe", "TrN", "TPM1", 
          TVM = list(optQ=TRUE, optBf=TRUE,    subs=c(1, 2, 3, 4, 2, 0)),
          SYM = list(optQ=TRUE, optBf=FALSE,   subs=c(1, 2, 3, 4, 5, 0)),
          GTR = list(optQ=TRUE, optBf=TRUE,    subs=c(1, 2, 3, 4, 5, 0))
-         )
+    )
+    return (models)
 }
