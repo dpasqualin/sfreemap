@@ -2,7 +2,7 @@
 \alias{sfreemap.map}
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
-sfreemap.map(tree, tip_states, Q='empirical', model="SYM", ...)
+sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM", method="empirical", ...)
 
 }
 \arguments{
@@ -11,39 +11,53 @@ sfreemap.map(tree, tip_states, Q='empirical', model="SYM", ...)
 
 	\item{tip_states}{Two formats are accepted:
 		\itemize{
-			\item A named vector containing the states of the nodes at the
-			tips as values, and the taxa labels as names;
-			\item A matrix with taxa labels as rownames, states as colnames and the
-			numeric value 1 representing if the taxa is in the corresponding state, or
-			0 otherwise.
+			\item \bold{When type='standard'}: A named vector containing the states of the nodes at the
+			tips as values, and the taxa labels as names or a matrix with taxa
+            labels as rownames, states as colnames and the numeric value 1
+            representing if the taxa is in the corresponding state, or 0
+            otherwise.
+
+            \item \bold{When type='dna'}: A matrix with caracters as columns and
+            taxa as rows.
 		}
 	}
 
 	\item{Q}{
-		The transition rate matrix. Can be given as a matrix or estimated by the
-		program, according to the following options:
+		The transition rate matrix. Can be given as a matrix with state names on dimensons or estimated by the
+		program. Options for estimation depend on argumentos \code{method}, \code{model} and \code{type}.
+    }
+
+    \item{type}{
+        The type of the \code{tip_states} being analysed. It can be "standard", usually used for morphological characters, or "dna", for nucleotideos. Default to "standard".
+    }
+
+    \item{model}{
+    By choosing to estimate Q user can then select a model.
+
+    When \code{type="standard"} the available methods are:
+    \itemize{
+        \item \code{"SYM" (default)}: symmetrical model, e.g, \code{matric(c(0,1,2,1,0,3,2,3,0))};
+        \item \code{"ER"}: equal rates model, for example \code{matrix(c(0,1,1,0))};
+        \item \code{"ARD"}: all rates different model, for example \code{matrix(c(0,1,2,0))};
+    }
+
+    When \code{type="dna"} the available methods are JC, F81, K80, HKY, TrNe, TrN, TPM1, K81, TPM1u, TPM2, TPM2u, TPM3, TPM3u, TIM1e, TIM1, TIM2e, TIM2, TIM3e, TIM3, TVMe, TVM, SYM and GTR.
+
+    }
+
+    \item{method}{
+        The \code{method} argument is only used when \code{type='standard'} and the available options are:
 
 		\itemize{
-			\item \code{"empirical" (default)}: first it fits a continuous-time reversible Markov model for the evolution of x
+			\item \code{empirical (default)}: first it fits a continuous-time reversible Markov model for the evolution of x
 and then simulates stochastic character histories using that model and the tip states on the tree. This
 is the same procedure that is described in Bollback (2006), except that simulation is performed using
 a fixed value of the transition matrix, Q, instead of by sampling Q from its posterior distribution (\link[phytools]{phytools}).
 			\item \code{"mcmc"}: samples n_simulation Q matrices from the
             posterior probability distribution of Q using MCMC, then
             performs stochastic maps conditioned on each sampled value of Q.
-			\item A transition rate matrix. Make sure to name rows and columns
-            properly with the state labels. Also, \bold{this matrix must be symmetrical}.
 		}
 	}
-
-    \item{model}{
-    By choosing to estimate Q using either methods the user can then select a model from the list below:
-    \itemize{
-        \item \code{"SYM" (default)}: symmetrical model, e.g, \code{matric(c(0,1,2,1,0,3,2,3,0))};
-        \item \code{"ER"}: equal rates model, for example \code{matrix(c(0,1,1,0))};
-        \item \code{"ARD"}: all rates different model, for example \code{matrix(c(0,1,2,0))};
-    }
-    }
 
 	\item{...}{Optional parameters, listed below:
 
