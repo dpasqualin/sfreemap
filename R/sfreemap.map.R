@@ -19,10 +19,10 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     if ('multiPhylo' %in% class(tree)) {
         # For Just call the same program multiple times...
         if (parallel == TRUE) {
-            mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, method, model, type, ...,
+            mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...,
                                 mc.cores=detectCores())
         } else {
-            mtrees <- lapply(tree, sfreemap.map, tip_states, Q, method, model, type, ...)
+            mtrees <- lapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...)
         }
 
         # When method=mcmc we will have length(trees)*n_simulation trees at the end
