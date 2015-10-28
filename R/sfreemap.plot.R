@@ -136,6 +136,9 @@ join_tip_states <- function(tree, tip_states) {
     if (!is.matrix(tip_states)) {
         tip_states <- build_states_matrix(tree, tip_states)
     }
+
+    # FIXME: this is a hell of a work around, there should be a better way
+    # to do it
     a <- t(apply(tip_states, 1, function(x) ifelse(x==1, names(x), '')))
     b <- apply(a, 1, paste, collapse='')
     b <- b[tree$tip.label]

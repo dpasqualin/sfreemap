@@ -114,14 +114,14 @@ Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sa
 
 }
 
-build_states_matrix <- function(tree, tip_states) {
+build_states_matrix <- function(tip_labels, tip_states, possible_states=NULL) {
 
-    # Phytools uses the states as a matrix, we are adding
-    # it like this to avoid problems, but in the future might
-    # be better to have this states in one structure only.
-    # NOTE: to.matrix function might be useful when we initialize
-    # the fractional likelihood F
-    states <- to.matrix(tip_states, sort(unique(tip_states)))
-    return(states[tree$tip.label,])
+    if (!is.null(possible_states)) {
+        res <- to.matrix(tip_states, sort(unique(possible_states)))
+    } else {
+        res <- to.matrix(tip_states, sort(unique(tip_states)))
+        res <- res[tip_labels,]
+    }
+    return (res)
 
 }

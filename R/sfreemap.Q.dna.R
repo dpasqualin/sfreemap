@@ -19,11 +19,11 @@ Q_dna <- function(data, tree, model) {
     data <- phyDat(data, type="USER", contrast=contrast)
     fit <- pml(tree, data)
     ctrl <- pml.control(trace=0)
-    fit <- optim.pml(fit, optQ=m$optQ, optBf=m$optBf, subs=m$subs, control=ctrl)
+    fit <- suppressWarnings(optim.pml(fit, optQ=m$optQ, optBf=m$optBf, subs=m$subs, control=ctrl))
 
+    # Reconstruct Q matrix
     levels <- attr(fit$data, "levels")
     nc <- attr(fit$data, "nc")
-
     QM = matrix(0, nc, nc, dimnames = list(levels,levels))
     QM[lower.tri(QM)] = fit$Q
     QM = QM+t(QM)

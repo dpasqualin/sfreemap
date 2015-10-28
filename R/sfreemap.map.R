@@ -108,11 +108,9 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
         vQ <- list(...)$vQ
     }
 
-    # Define the tip states as a matrix
+    # Define the tip states asR a matrix
     if (!is.matrix(tip_states)) {
-        tip_states <- build_states_matrix(tree, tip_states)
-    } else {
-        tip_states <- tip_states[tree$tip.label,]
+        tip_states <- build_states_matrix(tree$tip.label, tip_states, rownames(Q))
     }
 
     # Estimating Q when using standard data
@@ -132,20 +130,20 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
         }
     # Estimating Q when using nucleotide data
     } else if (type == "dna") {
-        if (class(data) == "matrix" && nrow(data) > 1) {
+        if (ncol(tip_states) > 1) {
             if (parallel == TRUE) {
                 # FIXME: this "type=fork" only work on linux and macos. Not using
                 # this mean to pass on every single variable we will need in Q_dna
                 # as an environment variable. Quite annoying..
                 cl <- makeCluster(detectCores(), type="FORK")
-                QP <- parApply(cl, data, 1, Q_dna, tree, method)
+                QP <- parApply(cl, tip_states, 2, Q_dna, tree, model)
                 stopCluster(cl)
             } else {
-                QP <- apply(cl, data, 1, Q_dna, tree, method)
+                QP <- apply(tip_states, 2, Q_dna, tree, model)
             }
             class(QP) <- 'multiQ'
         } else {
-            QP <- apply(cl, data, 1, Q_dna, tree, method)
+            QP <- Q_dna(data, tree, model)
         }
     }
 
@@ -155,23 +153,27 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, method="empirical", model="SY
         # this seems weird... there must be a better way to do it.
         params <- list(
             "tree" = tree
-            , "tip_states" = tip_states
+            , "tip_states" <- tip_states
             , "model" = model
             , "type" = type
             , "method" = method
             , "..." = ...
         )
 
-        res <- function(qp) {
-            params$Q <- qp$Q
-            params$prior <- qp$prior
+        res <- function(idx, qp) {
+            params$Q <- qp[[idx]]$Q
+            params$prior <- qp[[idx]]$prior
+            if (type == 'dna' && ncol(tip_states) > 1) {
+                params$tip_states <- tip_states[,idx]
+            }
             return (do.call(sfreemap.map, params))
         }
 
+        len <- 1:length(QP)
         if (isTRUE(parallel)) {
-            mtrees <- mclapply(QP, res, mc.cores=detectCores())
+            mtrees <- mclapply(len, res, QP, mc.cores=detectCores())
         } else {
-            mtrees <- lapply(QP, res)
+            mtrees <- lapply(len, res, QP)
         }
 
         class(mtrees) <- "multiPhylo"
