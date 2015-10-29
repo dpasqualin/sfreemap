@@ -6,7 +6,7 @@ sfreemap.plot_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
                     , tip_states=NULL, fsize=0.7, ftype="i", lwd=3)
 }
 \examples{
-sm <- sfreemap.map(trees, tips, Q='empirical')
+sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, parallel=FALSE)
 map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
 tree <- sfreemap.plot_tree(map, state='1', tip_states=tips)
 }

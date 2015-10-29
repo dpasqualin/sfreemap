@@ -5,13 +5,13 @@
 sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE)
 }
 \examples{
-sm <- sfreemap.map(trees, tips, Q='empirical')
+sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, parallel=FALSE)
 map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
 result <- sfreemap.plot_distribution(map, 160)
 }
 \arguments{
     \item{base_tree}{A single tree, result of the function \link{sfreemap.map};}
-    \item{trees}{A \code{multiPhylo} object, result of \link{sfreemap.map;} execution}
+    \item{trees}{A \code{multiPhylo} object, result of \link{sfreemap.map} execution}
     \item{scale}{Whether the function should scale the dwelling times to the
     branch length, resulting in a proportion of the time instead of an absolute
     value (the expected number of transitions is not scaled).}

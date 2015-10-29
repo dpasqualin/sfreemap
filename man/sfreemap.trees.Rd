@@ -1,7 +1,7 @@
 \name{sfreemap.trees}
 \docType{data}
 \alias{sfreemap.trees}
-\title{302 phylogenetic trees}
+\title{901 phylogenetic trees}
 \description{
 Description of the data set
 }

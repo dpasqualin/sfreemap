@@ -5,7 +5,7 @@
 sfreemap.reorder(tree, order='cladewise')
 }
 \arguments{
-    \item{tree}{A tree, result of a \link{sfreemap.map execution};}
+    \item{tree}{A tree, result of a \link{sfreemap.map} execution;}
     \item{order}{The resulting order. Can be \code{cladewise} or \code{pruningwise}.}
 }
 \description{

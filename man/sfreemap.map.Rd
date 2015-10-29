@@ -2,7 +2,8 @@
 \alias{sfreemap.map}
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
-sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM", method="empirical", ...)
+sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM"
+                 , method="empirical", ...)
 
 }
 \arguments{
@@ -117,8 +118,6 @@ Biological Sciences, 363 (1512): 3985-3995, 2008.
 }
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
-\seealso{
-    %See Also
-}
+
 \keyword{phylogenetics}
 %\keyword{simulation}

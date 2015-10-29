@@ -18,7 +18,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # tree sanity check
     if ('multiPhylo' %in% class(tree)) {
         # For Just call the same program multiple times...
-        if (parallel == TRUE) {
+        if (isTRUE(parallel)) {
             mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...,
                                 mc.cores=detectCores())
         } else {
@@ -131,7 +131,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Estimating Q when using nucleotide data
     } else if (type == "dna") {
         if (ncol(tip_states) > 1) {
-            if (parallel == TRUE) {
+            if (isTRUE(parallel)) {
                 # FIXME: this "type=fork" only work on linux and macos. Not using
                 # this mean to pass on every single variable we will need in Q_dna
                 # as an environment variable. Quite annoying..

@@ -81,7 +81,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 	tree$maps <- list()
 
     # all but the root node
-    all_nodes <- unique(base_tree$edge[,2])
+    all_nodes <- unique(tree$edge[,2])
 
 	for (node in all_nodes) {
 

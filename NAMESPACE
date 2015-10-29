@@ -8,16 +8,23 @@ export(sfreemap.map
        , sfreemap.reorder
        , sfreemap.map_posterior_distribution
        , sfreemap.plot_distribution
-       , sfreemap.plot_tree)
+       , sfreemap.plot_tree
+       , sfreemap.correlation, add.data, plot)
 
-importFrom(ape, ace, di2multi, is.binary.tree, is.rooted)
-importFrom(ape, is.ultrametric, matexpo, multi2di, nodelabels, plot.phylo)
-importFrom(ape, read.tree, reorder.phylo, write.tree)
-importFrom(phytools, matchNodes, to.matrix, countSimmap, pbtree)
-importFrom(phytools, sim.history, make.simmap, describe.simmap)
-importFrom(parallel, mclapply, detectCores)
+importFrom(ape, ace, di2multi, is.binary.tree, is.rooted, is.ultrametric
+              , matexpo, multi2di, nodelabels, plot.phylo, read.tree
+              , reorder.phylo, write.tree, all.equal.phylo)
+
+importFrom(phytools, matchNodes, to.matrix, countSimmap, pbtree, sim.history
+                   , make.simmap, describe.simmap, plotSimmap)
+importFrom(parallel, mclapply, detectCores, makeCluster, parApply, stopCluster)
+
 importFrom(reshape2, melt)
-importFrom(ggplot2, ggplot, scale_alpha_discrete, scale_fill_discrete, aes)
-importFrom(ggplot2, geom_bar, ggtitle, theme, element_text, xlab, ylab)
-importFrom(ggplot2, scale_x_continuous, aes_string)
+
+importFrom(ggplot2, ggplot, scale_alpha_discrete, scale_fill_discrete, aes
+                  , geom_bar, ggtitle, theme, element_text, xlab, ylab
+                  , scale_x_continuous, aes_string)
+
 importFrom(seqinr, read.fasta)
+
+importFrom(phangorn, phyDat, pml, pml.control, optim.pml)
