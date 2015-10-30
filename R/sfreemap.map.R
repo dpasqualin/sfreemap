@@ -5,7 +5,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # Am I running on windows? Windows does not have support for the kind of
     # parallelism we are using
-    i_am_windows <- ! Sys.info()['sysname'] == 'Windows'
+    i_am_windows <- Sys.info()['sysname'] == 'Windows'
 
     # Should this program run in parallel?
     parallel <- !i_am_windows
@@ -21,6 +21,19 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     omp <- 1
     if (hasArg(omp)) {
         omp <- list(...)$omp
+    }
+
+    # Defining the prior distribution for the root node of the tree,
+    # also known as "pi"
+    prior <- "equal"
+    if (hasArg(prior)) {
+        prior <- list(...)$prior
+    }
+    # if prior e a list the number of elements should match the number of Q
+    # matrices
+    if (all(inherits(prior, list), !is.null(Q), length(prior) != length(Q)) {
+        stop("if prior is a list, the number of elements should match the number of Q
+        matrices. Type ?sfreemap.map for more information.")
     }
 
     # tree sanity check
@@ -65,13 +78,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # check for model
     if (! model %in% valid_models[[type]]) {
         stop('Unknown model ', model)
-    }
-
-    # Defining the prior distribution for the root node of the tree,
-    # also known as "pi"
-    prior <- "equal"
-    if (hasArg(prior)) {
-        prior <- list(...)$prior
     }
 
     # tol gives the tolerance for zero elements in Q.
@@ -167,6 +173,8 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
             , "..." = ...
         )
 
+        # a helper function to call sfreemap.map multiple times, combining
+        # trees with Q rate matrices
         res <- function(idx, qp) {
             params$Q <- qp[[idx]]$Q
             params$prior <- qp[[idx]]$prior
