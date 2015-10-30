@@ -3,11 +3,20 @@
 #           ape)
 sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", method="empirical", ...) {
 
+    # Am I running on windows? Windows does not have support for the kind of
+    # parallelism we are using
+    i_am_windows <- ! Sys.info()['sysname'] == 'Windows'
+
     # Should this program run in parallel?
-    parallel <- TRUE
+    parallel <- !i_am_windows
     if (hasArg(parallel)) {
         parallel <- list(...)$parallel
+        if (all(parallel, i_am_windows)) {
+            printWarn('parallel mode is not available on windows.')
+            parallel <- FALSE
+        }
     }
+    return(NULL)
 
     # how many omp threads should be created?
     omp <- 1
@@ -17,7 +26,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # tree sanity check
     if (inherits(tree, "multiPhylo")) {
-        # For Just call the same program multiple times...
+        # Just call sfreemap.map multiple times...
         if (isTRUE(parallel)) {
             mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...,
                                 mc.cores=detectCores())
@@ -115,8 +124,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # Estimating Q when using standard data
     if (is.matrix(Q)) {
-        # Phytools would replicate this result nsim times, but for now
-        # we will return just one result.
         QP <- Q_matrix(tree, tip_states, Q, model, prior, tol)
     } else if (type == 'standard') {
         # standard data type has currently two ways of estimating the rate
@@ -130,6 +137,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         }
     # Estimating Q when using nucleotide data
     } else if (type == "dna") {
+        # if we have more tan one character..
         if (ncol(tip_states) > 1) {
             if (isTRUE(parallel)) {
                 # FIXME: this "type=fork" only work on linux and macos. Not using

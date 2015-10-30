@@ -386,3 +386,10 @@ sfreemap.read.fasta <- function(file, ensure_dna=TRUE) {
     rownames(nucleo_data) <- paste('t', 1:nrow(nucleo_data), sep='')
     return (nucleo_data)
 }
+
+printWarn <- function(msg) {
+    ow <- options("warn")
+    options(warn = w)
+    cat("warn =", msg, "\n")
+    options(ow)
+}
