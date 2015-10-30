@@ -16,7 +16,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
             parallel <- FALSE
         }
     }
-    return(NULL)
 
     # how many omp threads should be created?
     omp <- 1
