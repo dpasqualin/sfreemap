@@ -324,10 +324,10 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
 }
 
 sfreemap.describe <- function (tree) {
-    if ('phylo' %in% class(tree)) {
+    if (inherits(tree, "phylo")) {
         lmt <- colSums(tree$mapped.edge.lmt)
         emr <- colSums(tree$mapped.edge)
-    } else if ('multiPhylo' %in% class(tree)) {
+    } else if (inherits(tree, "multiPhylo")) {
         lmt <- t(sapply(tree, function(x) colSums(x$mapped.edge.lmt)))
         lmt <- colMeans(lmt)
 

@@ -16,7 +16,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     }
 
     # tree sanity check
-    if ('multiPhylo' %in% class(tree)) {
+    if (inherits(tree, "multiPhylo")) {
         # For Just call the same program multiple times...
         if (isTRUE(parallel)) {
             mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...,
@@ -28,14 +28,14 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         # When method=mcmc we will have length(trees)*n_simulation trees at the end
         # of the execution. Instead of lists of multiPhylo objects we want to
         # return one multiPhylo object with all trees.
-        if (class(mtrees[[1]]) == "multiPhylo") {
+        if (inherits(mtrees[[1]], "multiPhylo")) {
             mtrees <- c(mapply(c, mtrees))
         }
 
         class(mtrees) <- "multiPhylo"
         return(mtrees)
 
-    } else if (! "phylo" %in% class(tree)) {
+    } else if (! inherits(tree, "phylo")) {
         stop("'tree' should be an object of class 'phylo'")
     } else if (!is.rooted(tree)) {
         stop("'tree' must be rooted")
