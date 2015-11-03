@@ -120,8 +120,7 @@ build_states_matrix <- function(tip_labels, tip_states, possible_states=NULL) {
         res <- to.matrix(tip_states, sort(unique(possible_states)))
     } else {
         res <- to.matrix(tip_states, sort(unique(tip_states)))
-        res <- res[tip_labels,]
     }
-    return (res)
+    return (res[tip_labels,])
 
 }

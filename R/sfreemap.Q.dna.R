@@ -1,4 +1,5 @@
-Q_dna <- function(data, tree, model) {
+Q_dna <- function(tip_states, tree, model, tol) {
+
     contrast = matrix(data = c(1,0,0,0,0,
                                0,1,0,0,0,
                                0,0,1,0,0,
@@ -16,17 +17,26 @@ Q_dna <- function(data, tree, model) {
     )
 
     m <- getModels()[[model]]
-    data <- phyDat(data, type="USER", contrast=contrast)
+    data <- phyDat(tip_states, type="USER", contrast=contrast)
     fit <- pml(tree, data)
     ctrl <- pml.control(trace=0)
-    fit <- suppressWarnings(optim.pml(fit, optQ=m$optQ, optBf=m$optBf, subs=m$subs, control=ctrl))
+    fit <- suppressWarnings(
+        optim.pml(fit, optQ=m$optQ, optBf=m$optBf, subs=m$subs, control=ctrl)
+    )
 
     # Reconstruct Q matrix
     levels <- attr(fit$data, "levels")
     nc <- attr(fit$data, "nc")
-    QM = matrix(0, nc, nc, dimnames = list(levels,levels))
-    QM[lower.tri(QM)] = fit$Q
-    QM = QM+t(QM)
+    QM <- matrix(0, nc, nc, dimnames = list(levels, levels))
+    QM[lower.tri(QM)] <- fit$Q
+    QM <- QM+t(QM)
+
+    # Value smaller than tol are set to tol
+    QM[QM<tol] <- tol
+
+    # set diagonal
+    diag(QM) <- 0
+    diag(QM) <- rowSums(QM) * -1
 
     return (list(Q=QM, prior=fit$bf, logL=fit$logLik))
 }

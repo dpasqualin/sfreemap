@@ -12,7 +12,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     if (hasArg(parallel)) {
         parallel <- list(...)$parallel
         if (all(parallel, i_am_windows)) {
-            printWarn('parallel mode is not available on windows.')
+            warning('parallel mode is not available on windows.', call. = FALSE)
             parallel <- FALSE
         }
     }
@@ -29,38 +29,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     if (hasArg(prior)) {
         prior <- list(...)$prior
     }
-    # if prior e a list the number of elements should match the number of Q
-    # matrices
-    if (all(inherits(prior, list), !is.null(Q), length(prior) != length(Q)) {
-        stop("if prior is a list, the number of elements should match the number of Q
-        matrices. Type ?sfreemap.map for more information.")
-    }
-
-    # tree sanity check
-    if (inherits(tree, "multiPhylo")) {
-        # Just call sfreemap.map multiple times...
-        if (isTRUE(parallel)) {
-            mtrees <- mclapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...,
-                                mc.cores=detectCores())
-        } else {
-            mtrees <- lapply(tree, sfreemap.map, tip_states, Q, type, model, method, ...)
-        }
-
-        # When method=mcmc we will have length(trees)*n_simulation trees at the end
-        # of the execution. Instead of lists of multiPhylo objects we want to
-        # return one multiPhylo object with all trees.
-        if (inherits(mtrees[[1]], "multiPhylo")) {
-            mtrees <- c(mapply(c, mtrees))
-        }
-
-        class(mtrees) <- "multiPhylo"
-        return(mtrees)
-
-    } else if (! inherits(tree, "phylo")) {
-        stop("'tree' should be an object of class 'phylo'")
-    } else if (!is.rooted(tree)) {
-        stop("'tree' must be rooted")
-    }
 
     # available types and models
     dna_models <- names(getModels())
@@ -70,6 +38,11 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         , "dna" = dna_models
     )
 
+    # check for tree object class
+    if (all(!inherits(tree, "phylo"), !inherits(tree, "multiPhylo"))) {
+        stop("'tree' should be an object of class 'phylo' or 'multiPhylo'")
+    }
+
     # check for type
     if (! type %in% names(valid_models)) {
         stop('Unknown type', type)
@@ -78,6 +51,94 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # check for model
     if (! model %in% valid_models[[type]]) {
         stop('Unknown model ', model)
+    }
+
+    if (all(inherits(prior, "list"), !inherits(Q, "list"))) {
+        stop ("if 'prior' is a list 'Q' should be a list with of same size.")
+    }
+
+    if (all(inherits(prior, "list"), inherits(Q, "list"), length(prior) != length(Q))) {
+        stop("if 'prior' and 'Q' are lists, their number of elements must match.")
+    }
+
+    if (all(inherits(Q, "list"), inherits(tree, "multiPhylo"), length(Q) != length(tree))) {
+        stop("if 'Q' is a list and 'tree' is a 'multiPhylo' object, their number of elements must match.")
+    }
+
+    # a helper function to call sfreemap.map multiple times, combining
+    # trees with Q rate matrices and priors
+    call_multiple <- function(idx, tree, tip_states, Q, prior) {
+        if (inherits(tree, "multiPhylo")) {
+            tree <- tree[[idx]]
+        }
+
+        if (all(type == "dna", inherits(tip_states, "matrix"), ncol(tip_states) > 1)) {
+            tip_states <- tip_states[,idx]
+        }
+
+        if (all(!is.null(Q), inherits(Q, "list"))) {
+            Q <- Q[[idx]]
+        }
+
+        if (inherits(prior, "list")) {
+            prior <- prior[[idx]]
+        }
+
+        params <- list(
+            "tree" <- tree
+            , "tip_states" <- tip_states
+            , "Q" = Q
+            , "prior" = prior
+            , "model" = model
+            , "type" = type
+            , "method" = method
+            , "..." = ...
+        )
+
+        return (do.call(sfreemap.map, params))
+    }
+
+    # helper to decide whether to call 'call_multiple' in serial or parallel
+    serial_or_parallel <- function(times, tree, tip_states, Q, prior) {
+        if (parallel) {
+            mtrees <- mclapply(1:times, call_multiple, tree, tip_states, Q
+                                      , prior, mc.cores=detectCores())
+        } else {
+            mtrees <- lapply(1:times, call_multiple, tree, tip_states, Q, prior)
+        }
+        return (fix_return(mtrees))
+    }
+
+    # with some combination of parameters we might have a list of multiPhylo
+    # objects (a list of a list), so we need to convert it to a single
+    # multiPhylo object
+    fix_return <- function(mtrees) {
+        if (inherits(mtrees[[1]], "multiPhylo")) {
+            mtrees <- c(mapply(c, mtrees))
+        }
+        class(mtrees) <- "multiPhylo"
+        return (mtrees)
+    }
+
+    # Everything below these tests assume the program is running on with a
+    # single tree, single rate matrix and single tip label. So here we check
+    # parameters and call sfreemap.map multiple times if needed.
+    if (inherits(tree, "multiPhylo")) {
+        # if 'multiPhylo', call sfreemap.map for each tree
+        return(serial_or_parallel(length(tree), tree, tip_states, Q, prior))
+    } else if (inherits(Q, "list")) {
+        # if multiple rate matrix, call sfreemap.map for each one.
+        # serial_or_parallell will handle the case when we have an equal number
+        # of rate matrices and trees, where sfreemap.map should match tree 1
+        # with rate matrix 1, 2 with 2, and so on..
+        return(serial_or_parallel(length(Q), tree, tip_states, Q, prior))
+    } else if (all(type == "dna", inherits(tip_states, "matrix"), ncol(tip_states) > 1)) {
+        # if single tree but multiple tip_states (dna type), call sfreemap.map
+        # for each set of tip label
+        return(serial_or_parallel(ncol(tip_states), tree, tip_states, Q, prior))
+    } else if (!is.rooted(tree)) {
+        # all trees must be rooted
+        stop("'tree' must be rooted")
     }
 
     # tol gives the tolerance for zero elements in Q.
@@ -122,13 +183,9 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         vQ <- list(...)$vQ
     }
 
-    # Define the tip states asR a matrix
-    if (!is.matrix(tip_states)) {
-        tip_states <- build_states_matrix(tree$tip.label, tip_states, rownames(Q))
-    }
-
     # Estimating Q when using standard data
-    if (is.matrix(Q)) {
+    if (all(!is.null(Q), !is.matrix(Q))) {
+        tip_states <- build_states_matrix(tree$tip.label, tip_states, rownames(Q))
         QP <- Q_matrix(tree, tip_states, Q, model, prior, tol)
     } else if (type == 'standard') {
         # standard data type has currently two ways of estimating the rate
@@ -138,61 +195,15 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         } else if (method == "mcmc") {
             QP <- Q_mcmc(tree, tip_states, prior, model, gamma_prior, tol, burn_in
                          , sample_freq, vQ, n_simulation, omp)
-            class(QP) <- 'multiQ'
+            Q <- lapply(QP, function(x) x$Q)
+            prior <- lapply(QP, function(x) x$prior)
+            # TODO: how to pass on logL?
+            return(serial_or_parallel(length(QP), tree, tip_states, Q, prior))
         }
     # Estimating Q when using nucleotide data
     } else if (type == "dna") {
-        # if we have more tan one character..
-        if (ncol(tip_states) > 1) {
-            if (isTRUE(parallel)) {
-                # FIXME: this "type=fork" only work on linux and macos. Not using
-                # this mean to pass on every single variable we will need in Q_dna
-                # as an environment variable. Quite annoying..
-                cl <- makeCluster(detectCores(), type="FORK")
-                QP <- parApply(cl, tip_states, 2, Q_dna, tree, model)
-                stopCluster(cl)
-            } else {
-                QP <- apply(tip_states, 2, Q_dna, tree, model)
-            }
-            class(QP) <- 'multiQ'
-        } else {
-            QP <- Q_dna(data, tree, model)
-        }
-    }
-
-    # Call sfreemap.map for each {Q,prior} returned by the mcmc simulation
-    if (class(QP) == "multiQ") {
-        # prepare parameters
-        # this seems weird... there must be a better way to do it.
-        params <- list(
-            "tree" = tree
-            , "tip_states" <- tip_states
-            , "model" = model
-            , "type" = type
-            , "method" = method
-            , "..." = ...
-        )
-
-        # a helper function to call sfreemap.map multiple times, combining
-        # trees with Q rate matrices
-        res <- function(idx, qp) {
-            params$Q <- qp[[idx]]$Q
-            params$prior <- qp[[idx]]$prior
-            if (type == 'dna' && ncol(tip_states) > 1) {
-                params$tip_states <- tip_states[,idx]
-            }
-            return (do.call(sfreemap.map, params))
-        }
-
-        len <- 1:length(QP)
-        if (isTRUE(parallel)) {
-            mtrees <- mclapply(len, res, QP, mc.cores=detectCores())
-        } else {
-            mtrees <- lapply(len, res, QP)
-        }
-
-        class(mtrees) <- "multiPhylo"
-        return(mtrees)
+        QP <- Q_dna(tip_states, tree, model, tol)
+        tip_states <- build_states_matrix(tree$tip.label, tip_states, rownames(QP$Q))
     }
 
     # Set the final value
@@ -252,8 +263,10 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     MAP[['Q']] <- Q
     MAP[['prior']] <- prior
 
+
     # Transistion probabilities
     MAP[['tp']] <- transition_probabilities(Q_eigen, tree$edge.length, omp)
+
 
     # Step 3
     # Employing the eigen decomposition above compute E(h, tp*) for
