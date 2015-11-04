@@ -1,4 +1,4 @@
-sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
+sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE, parallel=TRUE) {
 
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])
@@ -36,7 +36,11 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE) {
         return(tree)
     }
 
-    trees <- mclapply(trees, mymatch, mc.cores=detectCores())
+    if (parallel==TRUE) {
+        trees <- mclapply(trees, mymatch, mc.cores=detectCores())
+    } else {
+        trees <- lapply(trees, mymatch)
+    }
     class(trees) <- 'multiPhylo'
 
     for (node in all_nodes) {
