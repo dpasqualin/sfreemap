@@ -34,17 +34,3 @@ R CMD check sfreemapc && R CMD build sfreemapc && R CMD INSTALL sfreemapc
 
 If you choose to install using the command above, the documentation will be
 available in the directory `sfreemapc.Rcheck`.
-
-
-### Example
-
-```
-require(sfreemapc) # load package
-tree <- pbtree(n=100,scale=1) # create a tree with 100 taxa
-Q <- matrix(c(-1,1,1,-1),2,2) # create a transition rate matrix
-rownames(Q)<-colnames(Q)<-letters[1:nrow(Q)] # give name to the states
-tree <- sim.history(tree,Q,anc="a") # simulate a history for the tree
-
-# estimate the history
-sm <- sfreemap.map(tree, tree$states, Q='empirical')
-```
