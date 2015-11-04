@@ -8,3 +8,4 @@ visual_test
 ^cran-comments.md$
 ^\.git
 ^README.md$
+^\.RDataTmp$

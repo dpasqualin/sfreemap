@@ -7,7 +7,7 @@ sfreemap.plot_distribution(map, node, states=NULL, conf_level=95
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, parallel=FALSE)
-map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
+map <- sfreemap.map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
 p <- sfreemap.plot_distribution(map, 160)
 print(p)
 }

@@ -23,7 +23,7 @@ test_that ('works for phylo, standard, empirical, Q given', {
 
 test_that ('works for phylo, standard, mcmc', {
 
-    sm <- sfreemap.map(sfreemap.trees[[1]], sfreemap.tips, type="standard", method="mcmc", n_simulations=10)
+    sm <- sfreemap.map(sfreemap.trees[[1]], sfreemap.tips, type="standard", method="mcmc", n_simulation=10)
 
     expect_true(inherits(sm, "multiPhylo"))
     expect_equal(length(sm), 10)

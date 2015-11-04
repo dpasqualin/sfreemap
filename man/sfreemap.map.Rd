@@ -91,6 +91,16 @@ a fixed value of the transition matrix, Q, instead of by sampling Q from its pos
 \description{
   This function performs an analitic stochastic character mapping on a
 	phylogenetic tree (algorithym proposed by Minin and Suchard).
+
+ It can be called with a combination of parameters, much like any vectorized
+ function in R. In other words, calling it with \code{N} trees (\code{multiPhylo}
+ object) and a single rate matrix \code{Q} will return \code{N} mapped trees.
+ Calling \code{sfreemap.map} with a single tree (\code{phylo} object) and \code{M}
+ \code{Q} matrices will result in \code{M} mapped trees, replicas of the single
+ tree with the algorithm applied to it using all \code{Q} matrices. Same logic
+ applies to \code{prior} as well. It is important to note though that it you
+ pass on \code{N > 1} trees and \code{M > 1} rate matrices (or priors), \code{M}
+  and \code{N} should be equal.
 }
 
 %\details{

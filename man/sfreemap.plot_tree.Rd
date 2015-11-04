@@ -7,7 +7,7 @@ sfreemap.plot_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
 }
 \examples{
 sm <- sfreemap.map(sfreemap.trees, sfreemap.tips, parallel=FALSE)
-map <- sfreemap.map_posterior_distribution(sm[[1]], sm)
+map <- sfreemap.map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
 tree <- sfreemap.plot_tree(map, state='1', tip_states=tips)
 }
 \arguments{

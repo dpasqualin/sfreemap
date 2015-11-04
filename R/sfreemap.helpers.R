@@ -376,7 +376,7 @@ freq_to_prob <- function(x) {
     return (result)
 }
 
-sfreemap.read.fasta <- function(file, ensure_dna=TRUE) {
+sfreemap.read.fasta <- function(file, ensure_dna=FALSE) {
     nucleo_data <- read.fasta(file)
     nucleo_data <- sapply(nucleo_data, cbind)
     if (ensure_dna) {

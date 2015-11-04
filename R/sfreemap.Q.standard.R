@@ -114,13 +114,15 @@ Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sa
 
 }
 
+# This function creates a matrix with rownames being states, colnames being
+# the tip labels and values being 1, if the tip label has the correspondent
+# states and 0 otherwise.
+# "possible_states" is useful mainly because DNA can always have A, C, T and G,
+# but data might not have one of this letters.
 build_states_matrix <- function(tip_labels, tip_states, possible_states=NULL) {
-
-    if (!is.null(possible_states)) {
-        res <- to.matrix(tip_states, sort(unique(possible_states)))
-    } else {
-        res <- to.matrix(tip_states, sort(unique(tip_states)))
+    if (is.null(possible_states)) {
+        possible_states <- tip_states
     }
+    res <- to.matrix(tip_states, sort(unique(possible_states)))
     return (res[tip_labels,])
-
 }
