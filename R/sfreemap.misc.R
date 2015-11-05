@@ -342,6 +342,12 @@ sfreemap.describe <- function (tree) {
 # function reorders simmap tree
 # written Liam Revell 2011, 2013
 sfreemap.reorder <- function(tree, order='cladewise') {
+
+    if (attr(tree, 'order') == order) {
+        # already ordered
+        return (tree)
+    }
+
     x <- reorder(tree, order)
     o <- whichorder(x$edge[,2], tree$edge[,2])
     x$mapped.edge <- tree$mapped.edge[o,]
@@ -384,5 +390,5 @@ sfreemap.read.fasta <- function(file, ensure_dna=FALSE) {
         nucleo_data[nucleo_data == 'u'] <- 't'
     }
     rownames(nucleo_data) <- paste('t', 1:nrow(nucleo_data), sep='')
-    return (nucleo_data)
+    return (t(nucleo_data))
 }
