@@ -12,14 +12,10 @@ sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM"
 
 	\item{tip_states}{Two formats are accepted:
 		\itemize{
-			\item \bold{When type='standard'}: A named vector containing the states of the nodes at the
-			tips as values, and the taxa labels as names or a matrix with taxa
-            labels as rownames, states as colnames and the numeric value 1
-            representing if the taxa is in the corresponding state, or 0
-            otherwise.
-
-            \item \bold{When type='dna'}: A matrix with caracters as columns and
-            taxa as rows.
+			\item A named vector containing the states of the nodes at the
+			tips as values, and the taxa labels as names;
+            \item A matrix with characters as columns, tip labels
+            as rows and the state as values.
 		}
 	}
 
