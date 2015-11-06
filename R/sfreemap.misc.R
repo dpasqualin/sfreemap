@@ -107,11 +107,6 @@ sfreemap.describe <- function (tree) {
 # written Liam Revell 2011, 2013
 sfreemap.reorder <- function(tree, order='cladewise') {
 
-    if (attr(tree, 'order') == order) {
-        # already ordered
-        return (tree)
-    }
-
     x <- reorder(tree, order)
     o <- whichorder(x$edge[,2], tree$edge[,2])
     x$mapped.edge <- tree$mapped.edge[o,]
