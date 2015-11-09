@@ -260,7 +260,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Step 1
     # Compute Eigen values and Eigen vectors for the transition rate matrix
     # Q, assuming Q is symmetrical
-    Q_eigen <- eigen(Q, TRUE, only.values = FALSE)
+    Q_eigen <- eigen(Q, TRUE, only.values = FALSE, symmetric = TRUE)
     # The inverse of Q_eigen vectors
     Q_eigen[['vectors_inv']] <- solve(Q_eigen$vectors)
 
