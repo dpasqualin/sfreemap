@@ -87,7 +87,7 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
     return (res)
 }
 
-sfreemap.describe <- function (tree) {
+summary.sfreemap <- function (tree) {
     if (inherits(tree, "phylo")) {
         lmt <- colSums(tree$mapped.edge.lmt)
         emr <- colSums(tree$mapped.edge)
@@ -105,9 +105,9 @@ sfreemap.describe <- function (tree) {
 
 # function reorders simmap tree
 # written Liam Revell 2011, 2013
-sfreemap.reorder <- function(tree, order='cladewise') {
+reorder.sfreemap <- function(tree, order='cladewise') {
 
-    x <- reorder(tree, order)
+    x <- reorder.phylo(tree, order)
     o <- whichorder(x$edge[,2], tree$edge[,2])
     x$mapped.edge <- tree$mapped.edge[o,]
     x$mapped.edge.lmt <- tree$mapped.edge.lmt[o,]

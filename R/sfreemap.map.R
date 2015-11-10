@@ -116,7 +116,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         if (inherits(mtrees[[1]], "multiPhylo")) {
             mtrees <- c(mapply(c, mtrees))
         }
-        class(mtrees) <- "multiPhylo"
+        class(mtrees) <- c("sfreemap", "multiPhylo")
         return (mtrees)
     }
 
@@ -315,8 +315,10 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     tree[['mapped.edge']] <- MAP[['ev']]$emr
     tree[['mapped.edge.lmt']] <- MAP[['ev']]$lmt
 
+    class(tree) <- c("sfreemap", "phylo")
+
     # Return the tree in the original order
-    return (sfreemap.reorder(tree, 'cladewise'))
+    return (reorder(tree, 'cladewise'))
 }
 
 # The final answer!
