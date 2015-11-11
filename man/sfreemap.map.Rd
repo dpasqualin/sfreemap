@@ -3,7 +3,7 @@
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
 sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM"
-                 , method="empirical", ...)
+    , method="empirical", ...)
 
 }
 \arguments{
