@@ -14,7 +14,6 @@ export(sfreemap.map
        , describe.sfreemap
        )
 
-S3method(describe, sfreemap)
 S3method(reorder, sfreemap)
 S3method(summary, sfreemap)
 

@@ -13,6 +13,15 @@ vignette: >
 # set global chunk options: images will be 7x5 inches
 knitr::opts_chunk$set(fig.width=7, fig.height=10, fig.path="figs/")
 options(digits = 4)
+library(ape)
+library(sfreemapc)
+
+# load datasets
+data(sfreemap.corals.trees)
+data(sfreemap.corals.tips)
+data(sfreemap.primates.dna.tips)
+data(sfreemap.primates.trees)
+data(sfreemap.primates.summary.tree)
 ```
 
 *sfreemap*: We do some stuff and it's nice
@@ -34,7 +43,7 @@ install.packages("sfreemap")
 
 Then, to load the package, use:
 ```{r}
-library("sfreemap")
+library("sfreemapc")
 ```
 
 ## New object classes
@@ -63,9 +72,9 @@ The command *sfreemap.map* runs by default with *method='empirical'* and *type='
 we don't have suply it. Please check the package documentation for more details.
 
 ```{r}
-map <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
-class(map)
-map
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
+class(data)
+data
 ```
 
 All trees have the objects *mapped.edge* and *mapped.edge.lmt*, representing the expected
