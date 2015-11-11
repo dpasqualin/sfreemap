@@ -17,6 +17,8 @@ export(sfreemap.map
 S3method(reorder, sfreemap)
 S3method(summary, sfreemap)
 
+importFrom(stats, reorder)
+
 importFrom(ape, ace, di2multi, is.binary.tree, is.rooted, is.ultrametric
               , matexpo, multi2di, nodelabels, plot.phylo, read.tree
               , reorder.phylo, write.tree, all.equal.phylo)
@@ -29,7 +31,7 @@ importFrom(reshape2, melt)
 
 importFrom(ggplot2, ggplot, scale_alpha_discrete, scale_fill_discrete, aes
                   , geom_bar, ggtitle, theme, element_text, xlab, ylab
-                  , scale_x_continuous, aes_string)
+                  , scale_x_continuous, aes_string, geom_histogram)
 
 importFrom(seqinr, read.fasta)
 
