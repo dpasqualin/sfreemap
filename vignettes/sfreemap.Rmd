@@ -33,16 +33,16 @@ Put some description here so people don't lose their minds...
 To install the development version from github:
 ```{r, eval=FALSE}
 library(devtools)
-install_github("dpasqualin/sfreemap")
+install_github("dpasqualin/sfreemapc")
 ```
 
 The stable version can be installed from CRAN using:
 ```{r, eval=FALSE}
-install.packages("sfreemap")
+install.packages(sfreemapc)
 ```
 
 Then, to load the package, use:
-```{r}
+```{r, eval=FALSE}
 library("sfreemapc")
 ```
 
@@ -131,7 +131,7 @@ the number of transitions and dwelling times as follow:
 ```{r}
 # Using result from the last execution
 mean.dt <- Reduce('+', lapply(res, function(x) x$mapped.edge)) / length(res)
-mean.dt[1:10] # just the first ten rows to give an idea..
+mean.dt[1:10,] # just the first ten rows to give an idea..
 ```
 
 Although the command above is quite typical for an R experienced programmer, it
