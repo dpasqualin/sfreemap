@@ -69,10 +69,13 @@ plot.phylo(sfreemap.corals.trees[[1]], cex=0.7)
 ```
 
 The command *sfreemap.map* runs by default with *method='empirical'* and *type='standard'*, so
-we don't have suply it. Please check the package documentation for more details.
+we don't have supply it now. Please check the package documentation for more details.
+
+Also, this command can run in parallel, with a number of process equal to the number of cores
+in your machine. If you want to run in parallel just omit the parameter *parallel=FALSE*.
 
 ```{r}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 class(data)
 data
 ```
@@ -117,12 +120,12 @@ In this case each have ten trees as result, each one with a mapping that corresp
 a character.
 
 ```{r}
-sfreemap.map(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10])
+sfreemap.map(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
 ```
 Of course, the user can also map a single character into multiple trees, like following:
 
 ```{r}
-res <- sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1])
+res <- sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1], parallel=FALSE)
 ```
 
 When using a single tree one can compute the mean value across trees for
