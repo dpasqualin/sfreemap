@@ -1,0 +1,141 @@
+---
+title: "Sfreemap"
+author: "Diego Pasqualin, Marcos Barbeitos and Fabiano Silva"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{apex: Phylogenetic Methods for Multiple Gene Data.}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r setup, echo=FALSE}
+# set global chunk options: images will be 7x5 inches
+knitr::opts_chunk$set(fig.width=7, fig.height=10, fig.path="figs/")
+options(digits = 4)
+```
+
+*sfreemap*: We do some stuff and it's nice
+==========================================
+Put some description here so people don't lose their minds...
+
+## Installing *sfreemap*
+
+To install the development version from github:
+```{r, eval=FALSE}
+library(devtools)
+install_github("dpasqualin/sfreemap")
+```
+
+The stable version can be installed from CRAN using:
+```{r, eval=FALSE}
+install.packages("sfreemap")
+```
+
+Then, to load the package, use:
+```{r}
+library("sfreemap")
+```
+
+## New object classes
+
+One new class of object extend existing data structure for phylogenetic trees:
+* **sfreemap:** complements "phylo" and "multiPhylo" classes from ape and phytools with *mapped.edge.lmt*, a matrix containing the expected value for the number of transitions among states.
+
+
+## Examples
+
+### Simple stochastic mapping
+
+#### Standard type
+
+The program accepts the parameter *type=standard* which should be used when the
+character is of morphological type. The dataset *sfreemap.corals.trees* and its
+corresponding tip values *sfreemap.corals.tips* can be used as example here.
+
+Just to have an idea of the dataset we are working on, let's have a look at the first tree:
+
+```{r}
+plot.phylo(sfreemap.corals.trees[[1]], cex=0.7)
+```
+
+The command *sfreemap.map* runs by default with *method='empirical'* and *type='standard'*, so
+we don't have suply it. Please check the package documentation for more details.
+
+```{r}
+map <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
+class(map)
+map
+```
+
+All trees have the objects *mapped.edge* and *mapped.edge.lmt*, representing the expected
+dwelling times and expected number of transitions for each state on each
+branch of the tree. The following commands shows how to use these objects.
+
+```{r}
+t <- data[[1]] # Let's work with the first tree
+t
+
+# Get the list of the first 10 edges
+t$edge[1:10,]
+
+# Get the dwelling times for the first edge, the one connecting node 82 with 83
+t$mapped.edge[1,]
+# Do the same thing using the branch name
+t$mapped.edge['82,83',]
+
+# Do the same thing for number of transitions
+t$mapped.edge.lmt['82,83',]
+```
+
+#### DNA type
+
+Use *type=dna* when working with nucleotides. The datasets *sfreemap.primates.trees* and
+*sfreemap.primates.dna.tips* can be used as example.
+
+Again, we will run the program with only the first ten trees. The tips dataset
+has several characters, and again we are going to use just the first ten. What the
+program will do in this case is to run each tree against each character, in the order
+they appear in their respective objects. The result will be ten mapped trees.
+Same logic would apply for standard type.
+
+```{r}
+sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10])
+```
+
+It is also possible to run the program passing a single tree as parameter and multiple characters.
+In this case each have ten trees as result, each one with a mapping that corresponds to
+a character.
+
+```{r}
+sfreemap.map(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10])
+```
+Of course, the user can also map a single character into multiple trees, like following:
+
+```{r}
+res <- sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1])
+```
+
+When using a single tree one can compute the mean value across trees for
+the number of transitions and dwelling times as follow:
+
+```{r}
+# Using result from the last execution
+mean.dt <- Reduce('+', lapply(res, function(x) x$mapped.edge)) / length(res)
+mean.dt[1:10] # just the first ten rows to give an idea..
+```
+
+Although the command above is quite typical for an R experienced programmer, it
+might not be as simple to remember and understand for a more regular user. Besides, what if
+we want the median instead of the mean? The command would be completely different.
+That is why we provide some tools to analyse the mappings produced by *sfreemap.map* command, which will be described in the next section.
+
+### Analysing mapped data
+
+As we have shown, the object created by *sfreemap.map* can be analysed by experienced
+users and manipulated to produce summaries and plots, but in the sections we will show some
+tools to make this task a lot easier.
+
+For the examples we will be using the object named *data*, which was calculated in
+the first example of the previous section and corresponds to
+`r length(data)` mapped trees.
