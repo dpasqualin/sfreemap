@@ -1,12 +1,14 @@
-\name{sfreemap.reorder}
-\alias{sfreemap.reorder}
+\name{reorderSfreemap}
+\alias{reorderSfreemap}
 \title{Reorder a \code{phylo} object modified by sfreemap.map}
 \usage{
-sfreemap.reorder(tree, order='cladewise')
+reorderSfreemap(tree, order='cladewise', index.only = FALSE, ...)
 }
 \arguments{
     \item{tree}{A tree, result of a \link{sfreemap.map} execution;}
     \item{order}{The resulting order. Can be \code{cladewise} or \code{pruningwise}.}
+    \item{index.only}{logical value indicating whether only an index should be returned.}
+    \item{...}{other arguments, passed to \link[ape]{reorder.phylo}}
 }
 \description{
     This function reorders the edges (and all related objects) of an object \code{phylo} modified by \link{sfreemap.map}.
@@ -28,7 +30,7 @@ sfreemap.reorder(tree, order='cladewise')
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap.map}}, \code{\link{reorder.phylo}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}

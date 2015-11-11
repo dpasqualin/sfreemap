@@ -1,13 +1,12 @@
-\name{sfreemap.describe}
-\alias{sfreemap.describe}
+\name{describe.sfreemap}
+\alias{describe.sfreemap}
 \title{describe a \code{phylo} object modified by sfreemap.map}
 \usage{
-sfreemap.describe(tree)
+describe.sfreemap(tree, ...)
 }
 \arguments{
-    \item{tree}{A result of a sfreemap.map execution, can be of types
-\code{phylo} or \code{multiPhylo}}
-
+    \item{tree}{A result of a sfreemap.map execution, can be of types \code{phylo} or \code{multiPhylo}}
+    \item{...}{Other arguments}
 }
 \description{
     This function returns the expected number of transitions and dwelling times

@@ -10,9 +10,13 @@ export(sfreemap.map
        , sfreemap.correlation
        , add.data
        , plot
-       , reorder.sfreemap
-       , summary.sfreemap
+       , reorderSfreemap
+       , describe.sfreemap
        )
+
+S3method(describe, sfreemap)
+S3method(reorder, sfreemap)
+S3method(summary, sfreemap)
 
 importFrom(ape, ace, di2multi, is.binary.tree, is.rooted, is.ultrametric
               , matexpo, multi2di, nodelabels, plot.phylo, read.tree

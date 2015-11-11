@@ -87,7 +87,7 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
     return (res)
 }
 
-summary.sfreemap <- function (tree) {
+describe.sfreemap <- function (tree, ...) {
     if (inherits(tree, "phylo")) {
         lmt <- colSums(tree$mapped.edge.lmt)
         emr <- colSums(tree$mapped.edge)
@@ -103,20 +103,35 @@ summary.sfreemap <- function (tree) {
     return (list(transitions=lmt, dwelling_times=emr))
 }
 
-# function reorders simmap tree
-# written Liam Revell 2011, 2013
-reorder.sfreemap <- function(tree, order='cladewise') {
+summary.sfreemap <- function (object, ...) describe.sfreemap(object, ...)
 
-    x <- reorder.phylo(tree, order)
-    o <- whichorder(x$edge[,2], tree$edge[,2])
-    x$mapped.edge <- tree$mapped.edge[o,]
-    x$mapped.edge.lmt <- tree$mapped.edge.lmt[o,]
-    if (!is.null(tree$maps)) {
-        x$maps <- tree$maps[o]
+# function reorders sfreemap tree
+# based on reorderSimmap, written by Liam Revell 2011, 2013
+reorderSfreemap <- function(tree, order="cladewise", index.only=FALSE, ...) {
+    if (!inherits(tree, "phylo")) {
+        stop("tree should be an object of class \"phylo\".")
     }
-
-    return(x)
+    index <- reorder.phylo(tree, order, index.only=TRUE, ...)
+    if (!index.only) {
+        if (inherits(index, "phylo")) {
+            ## bug workaround, from phytools package
+            index <- whichorder(index$edge[,2], tree$edge[,2])
+        }
+        tree$edge <- tree$edge[index,]
+        tree$edge.length <- tree$edge.length[index]
+        if (!is.null(tree$mapped.edge)) {
+            tree$mapped.edge <- tree$mapped.edge[index,]
+            tree$mapped.edge.lmt <- tree$mapped.edge.lmt[index,]
+        }
+        attr(tree, "order") <- order
+        return (tree)
+    } else {
+        return (index)
+    }
 }
+
+# S3 method for reorder function for objects of class sfreemap
+reorder.sfreemap <- function(x, ...) reorderSfreemap(x, ...)
 
 # function whichorder
 # written by Liam Revell 2011, 2013
