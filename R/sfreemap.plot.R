@@ -83,6 +83,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
     # all but the root node
     all_nodes <- unique(tree$edge[,2])
 
+
 	for (node in all_nodes) {
 
 		data <- get_state_data(map$emr[,,node], state, conf_level, ticks, na.rm=FALSE)
@@ -134,7 +135,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 join_tip_states <- function(tree, tip_states) {
     # Define the tip states as a matrix
     if (!is.matrix(tip_states)) {
-        tip_states <- build_states_matrix(tree, tip_states)
+        tip_states <- build_states_matrix(tree$tip.label, tip_states)
     }
 
     # FIXME: this is a hell of a work around, there should be a better way
