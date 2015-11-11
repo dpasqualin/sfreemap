@@ -5,7 +5,8 @@ visual_test
 ^/\.gitattributes$
 ^inst/web$
 ^notes$
-^cran-comments.md$
 ^\.git
 ^README.md$
 ^\.RDataTmp$
+^cran-comments.Rmd$
+^cran-comments.md$
