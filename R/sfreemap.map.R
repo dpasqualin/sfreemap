@@ -186,6 +186,9 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         vQ <- list(...)$vQ
     }
 
+    # We set the class here so we can use functions like reorder.sfreemap
+    class(tree) <- c("sfreemap", "phylo")
+
     # FIXME: This function should not exist, it's too complicated.
     # The problem is that for function Q_dna the tip_states should not be a
     # matrix, but a character vector instead. For other situtations it should be
@@ -314,8 +317,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     tree[['mapped.edge']] <- MAP[['ev']]$emr
     tree[['mapped.edge.lmt']] <- MAP[['ev']]$lmt
-
-    class(tree) <- c("sfreemap", "phylo")
 
     # Return the tree in the original order
     return (reorder(tree, 'cladewise'))
