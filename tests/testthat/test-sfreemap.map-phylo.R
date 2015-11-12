@@ -14,7 +14,7 @@ test_that ('works for phylo, standard, empirical', {
 test_that ('works for phylo, standard, empirical, Q given', {
 
     sm1 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, type="standard", method="empirical")
-    sm2 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, Q=sm$Q, type="standard", method="empirical")
+    sm2 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, Q=sm1$Q, type="standard", method="empirical")
 
     expect_true(inherits(sm1, "phylo"))
     expect_true(inherits(sm2, "phylo"))
@@ -30,7 +30,6 @@ test_that ('works for phylo, standard, mcmc', {
 
     expect_false(any(sapply(sm, function(x) any(is.nan(x$mapped.edge)))))
     expect_false(any(sapply(sm, function(x) any(is.nan(x$mapped.edge.lmt)))))
-
 })
 
 test_that ('works for phylo, dna, single taxa', {

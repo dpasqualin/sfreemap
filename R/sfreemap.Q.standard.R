@@ -1,6 +1,8 @@
 # Return the transition matrix Q calculated empirically
 Q_empirical <- function(tree, tip_states, prior, model, tol, omp) {
 
+    tip_states <- build_states_matrix(tree$tip.label, tip_states)
+
     states <- tip_states/rowSums(tip_states)
 
     n_states <- ncol(states)
@@ -38,7 +40,15 @@ Q_empirical <- function(tree, tip_states, prior, model, tol, omp) {
 }
 
 # Return the transition matrix Q if it has been passed as a matrix
-Q_matrix <- function(tree, tip_states, Q, model, prior, tol) {
+Q_matrix <- function(tree, tip_states, Q, model, prior, tol, type) {
+
+    if (type == "dna") {
+        states <- c("a", "c", "t", "g", "-")
+    } else {
+        states <- NULL
+    }
+
+    tip_states <- build_states_matrix(tree$tip.label, tip_states, states)
 
     states <- tip_states/rowSums(tip_states)
 
@@ -67,6 +77,8 @@ Q_matrix <- function(tree, tip_states, Q, model, prior, tol) {
 
 # Return the transition matrix Q calculated using a markov chain
 Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sample_freq, vQ, n_simulations, omp) {
+
+    tip_states <- build_states_matrix(tree$tip.label, tip_states)
 
     states <- tip_states/rowSums(tip_states)
 

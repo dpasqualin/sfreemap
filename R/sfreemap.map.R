@@ -187,27 +187,11 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     }
 
     # We set the class here so we can use functions like reorder.sfreemap
-    class(tree) <- c("sfreemap", "phylo")
-
-    # FIXME: This function should not exist, it's too complicated.
-    # The problem is that for function Q_dna the tip_states should not be a
-    # matrix, but a character vector instead. For other situtations it should be
-    # a matrix. One option is to adapt Q_dna to work with a matrix..
-    check_tip_states <- function() {
-        if (type == "dna") {
-            possible_states <- c("a", "c", "t", "g", "-")
-        } else {
-            possible_states <- NULL
-        }
-        tip_states <- build_states_matrix(tree$tip.label, tip_states, possible_states)
-        return(tip_states)
-    }
+    class(tree) <- c("phylo", "sfreemap")
 
     if (all(!is.null(Q), is.matrix(Q))) {
-        tip_states <- check_tip_states()
-        QP <- Q_matrix(tree, tip_states, Q, model, prior, tol)
+        QP <- Q_matrix(tree, tip_states, Q, model, prior, tol, type)
     } else if (type == 'standard') {
-        tip_states <- check_tip_states()
         # standard data type has currently two ways of estimating the rate
         # matrix
         if (method == "empirical") {
@@ -223,8 +207,14 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Estimating Q when using nucleotide data
     } else if (all(type == "dna", is.null(Q))) {
         QP <- Q_dna(tip_states, tree, model, tol)
-        tip_states <- check_tip_states()
     }
+
+    if (type == "dna") {
+        states <- c("a", "c", "t", "g", "-")
+    } else {
+        states <- NULL
+    }
+    tip_states <- build_states_matrix(tree$tip.label, tip_states, states)
 
     # Set the final value
     Q <- QP$Q

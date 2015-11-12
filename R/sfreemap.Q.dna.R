@@ -16,6 +16,12 @@ Q_dna <- function(tip_states, tree, model, tol) {
         c("a", "c", "g", "t", "-")
     )
 
+    # FIXME:
+    # Workaround because pml does not uses inherits, so objects with multiple
+    # inheritance causes a warning message. I've sent a pull request for them,
+    # when it's accepted and published on cran we can remove this
+    class(tree) <- "phylo"
+
     m <- getModels()[[model]]
     data <- phyDat(tip_states, type="USER", contrast=contrast)
     fit <- pml(tree, data)
