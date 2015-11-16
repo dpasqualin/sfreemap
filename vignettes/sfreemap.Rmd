@@ -2,19 +2,22 @@
 title: "Sfreemap"
 author: "Diego Pasqualin, Marcos Barbeitos and Fabiano Silva"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output:
+    html_document:
+        toc: true
+        theme: united
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{apex: Phylogenetic Methods for Multiple Gene Data.}
   \usepackage[utf8]{inputenc}
 ---
 
-```{r setup, echo=FALSE}
+```{r, echo=FALSE}
 # set global chunk options: images will be 7x5 inches
 knitr::opts_chunk$set(fig.width=7, fig.height=10, fig.path="figs/")
 options(digits = 4)
-library(ape)
-library(sfreemapc)
+require(ape)
+require(sfreemapc)
 
 # load datasets
 data(sfreemap.corals.trees)
@@ -24,11 +27,11 @@ data(sfreemap.primates.trees)
 data(sfreemap.primates.summary.tree)
 ```
 
-*sfreemap*: We do some stuff and it's nice
-==========================================
+# Sfreemap
+
 Put some description here so people don't lose their minds...
 
-## Installing *sfreemap*
+# Installing *sfreemap*
 
 To install the development version from github:
 ```{r, eval=FALSE}
@@ -46,17 +49,15 @@ Then, to load the package, use:
 library("sfreemapc")
 ```
 
-## New object classes
+# New object classes
 
 One new class of object extend existing data structure for phylogenetic trees:
 * **sfreemap:** complements "phylo" and "multiPhylo" classes from ape and phytools with *mapped.edge.lmt*, a matrix containing the expected value for the number of transitions among states.
 
 
-## Examples
+# Simple stochastic mapping
 
-### Simple stochastic mapping
-
-#### Standard type
+## Standard type
 
 The program accepts the parameter *type=standard* which should be used when the
 character is of morphological type. The dataset *sfreemap.corals.trees* and its
@@ -100,7 +101,7 @@ t$mapped.edge['82,83',]
 t$mapped.edge.lmt['82,83',]
 ```
 
-#### DNA type
+## DNA type
 
 Use *type=dna* when working with nucleotides. The datasets *sfreemap.primates.trees* and
 *sfreemap.primates.dna.tips* can be used as example.
@@ -112,7 +113,7 @@ they appear in their respective objects. The result will be ten mapped trees.
 Same logic would apply for standard type.
 
 ```{r}
-sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10])
+sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], paralel=FALSE)
 ```
 
 It is also possible to run the program passing a single tree as parameter and multiple characters.
@@ -142,10 +143,10 @@ might not be as simple to remember and understand for a more regular user. Besid
 we want the median instead of the mean? The command would be completely different.
 That is why we provide some tools to analyse the mappings produced by *sfreemap.map* command, which will be described in the next section.
 
-### Analysing mapped data
+# Analysing mapped data with histograms
 
-As we have shown, the object created by *sfreemap.map* can be analysed by experienced
-users and manipulated to produce summaries and plots, but in the sections we will show some
+As we have shown, the object created by *sfreemap.map* can be analysed and
+manipulated to produce summaries and plots. In this section we will show some
 tools to make this task a lot easier.
 
 For the examples we will be using the object named *data*, which was calculated in
