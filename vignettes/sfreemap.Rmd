@@ -27,7 +27,7 @@ data(sfreemap.primates.trees)
 data(sfreemap.primates.summary.tree)
 ```
 
-# Sfreemap
+# Introduction
 
 Put some description here so people don't lose their minds...
 
@@ -72,11 +72,12 @@ plot.phylo(sfreemap.corals.trees[[1]], cex=0.7)
 The command *sfreemap.map* runs by default with *method='empirical'* and *type='standard'*, so
 we don't have supply it now. Please check the package documentation for more details.
 
-Also, this command can run in parallel, with a number of process equal to the number of cores
-in your machine. If you want to run in parallel just omit the parameter *parallel=FALSE*.
+*This function will run in parallel with a number of processes equal to the number of cores
+in your machine. If you want to disable parallel processing you can pass parallel=FALSE as a third parameter.
+Many other function of sfreemap presents this parameter.*
 
 ```{r}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
 class(data)
 data
 ```
@@ -152,3 +153,46 @@ tools to make this task a lot easier.
 For the examples we will be using the object named *data*, which was calculated in
 the first example of the previous section and corresponds to
 `r length(data)` mapped trees.
+
+First we will run the function below, which analysis mapping results on all trees, creating
+an object with the dwelling times and the number of transitions for every node
+of every tree. It tries to match nodes using function *matchNodes* from *phytools*
+packages, which consider two nodes to be the same when they share the same taxa.
+
+```{r}
+mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale=TRUE)
+```
+
+The first parameter of the function is the so called "base tree", the tree on which the
+existence of branches will be compared to. Second parameter is all other trees to be
+analysed and the last one is whether we want to scale the dwelling times to the
+branch length, resulting in a proportion of the time spent instead of an absolute
+value (the expected number of transitions cannot be scaled).
+
+
+## Expected dwelling times
+
+Let's suppose we want to check the posterior distribution of states on a specific branch of
+the tree. Branches don't usually have names, so we will define a branch by it's ending node.
+For example, the code below will plot our base tree and it's correspondent node numbers.
+
+```{r}
+plot.phylo(data[[1]], cex=0.7)
+nodelabels(cex = .75, bg = "yellow")
+```
+
+Picking one node, let's say *89*, we can see the posterior distribution for dwelling times on
+the branch that **ends** on node *89* by typing the following command (these are
+the default values for arguments *conf_level*, *number_of_ticks* and *type*,
+so you can omit them and get the same results):
+
+```{r}
+sfreemap.plot_distribution(mpd, 89, conf_level=95, number_of_ticks=20, type='emr')
+```
+
+The interpretation is as follows: the *colonial* state was present with 95% certainty
+around 10% and 45% of the time on the branch ending on node 89 and, with equal
+certainty, the state *solitary* was present during 55% to 90% of the time on this branch.
+At the top of the chart, the text *branch posterior probability: 100%* means that this
+particular branch was present on 100% of the trees given as argument to the function
+*sfreemap.map_posterior_distribution* and compared to out *base tree*.
