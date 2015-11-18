@@ -241,8 +241,8 @@ get_ticks <- function(node, type, number_of_ticks) {
 	if (type == 'emr') {
 		ticks <- seq(0, 100, 100/number_of_ticks)
 	} else if (type == 'lmt') {
-		begin <- min(node)
-		end <- max(node)
+		begin <- min(node, na.rm=TRUE)
+		end <- max(node, na.rm=TRUE)
 		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
 	} else {
 		stop(paste('unrecognized type:', type))
