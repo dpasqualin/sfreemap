@@ -187,7 +187,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     }
 
     # We set the class here so we can use functions like reorder.sfreemap
-    class(tree) <- c("phylo", "sfreemap")
+    class(tree) <- c("sfreemap", "phylo")
 
     if (all(!is.null(Q), is.matrix(Q))) {
         QP <- Q_matrix(tree, tip_states, Q, model, prior, tol, type)
