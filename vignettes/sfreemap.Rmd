@@ -170,7 +170,7 @@ branch length, resulting in a proportion of the time spent instead of an absolut
 value (the expected number of transitions cannot be scaled).
 
 
-## Expected dwelling times
+## Expected dwelling times for states of a branch across all trees
 
 Let's suppose we want to check the posterior distribution of states on a specific branch of
 the tree. Branches don't usually have names, so we will define a branch by it's ending node.
@@ -184,9 +184,9 @@ nodelabels(cex = .75, bg = "yellow")
 Picking one node, let's say *89*, we can see the posterior distribution for dwelling times on
 the branch that **ends** on node *89* by typing the following command (these are
 the default values for arguments *conf_level*, *number_of_ticks* and *type*,
-so you can omit them and get the same results):
+so you can omit it and get the same results):
 
-```{r}
+```{r, fig.width=6, fig.height=4}
 sfreemap.plot_distribution(mpd, 89, conf_level=95, number_of_ticks=20, type='emr')
 ```
 
@@ -196,3 +196,49 @@ certainty, the state *solitary* was present during 55% to 90% of the time on thi
 At the top of the chart, the text *branch posterior probability: 100%* means that this
 particular branch was present on 100% of the trees given as argument to the function
 *sfreemap.map_posterior_distribution* and compared to out *base tree*.
+
+It is also possible to plot only one of the states by supplying the *states* argument.
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, 89, states='colonial')
+```
+
+## Expected dwelling times for states for all branches across all trees
+
+Quite easy to do that, just omit the *node* parameter and the function will consider
+the distribution over all nodes.
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, type='emr')
+```
+
+If you want to plot the distribution over a specific set of nodes just pass it
+as a vector, like this:
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, nodes=c(89,90), type='emr')
+```
+
+## Expected number of transitions for states of onde or more branches across all trees
+
+Similar plots can be generated for the number of transitions using the same function
+and *mpd* object created before, just changing the parameter *type* from *emr* to *lmt*
+(labelled markov transitions).
+
+As stated before, it doesn't make sense to scale the number of transitions according to the branch length, so here
+the absolute values are represented in the x-axis.
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, 89, type='lmt')
+```
+
+Needless to say, but you can plot a single state here in the same way as before:
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, 89, states='solitary', type='lmt')
+```
+Example considering all nodes and all states:
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, type='lmt')
+```
