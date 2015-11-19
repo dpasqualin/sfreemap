@@ -1,23 +1,29 @@
-sfreemap.plot_distribution <- function(map, node, states=NULL, conf_level=95
+sfreemap.plot_distribution <- function(map, nodes=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
 	# TODO: add sanity check for parameters
 
-    node <- map[[type]][,,node]
+    # this bit of a hack here gives an object that doesn't make much sense by
+    # it's own, but works nicely in this function
+    if(is.null(nodes)) {
+        nodes <- apply(map[[type]], 2, c)
+    } else {
+        nodes <- apply(map[[type]][,,nodes], 2, c)
+    }
 
 	# all states or states passed as argument
 	if (is.null(states)) {
-		states <- colnames(node)
+		states <- colnames(nodes)
 	} else {
 	 	states <- c(states)
 	}
 
 	# first divide the dataset
-	ticks <- get_ticks(node, type, number_of_ticks)
+	ticks <- get_ticks(map[[type]], type, number_of_ticks)
 
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (state in states) {
-		data <- get_state_data(node, state, conf_level, ticks)
+		data <- get_state_data(nodes, state, conf_level, ticks)
 
 		to_plot[[as.character(state)]] <- data$final_prob
 		to_plot$alpha[data$final_idx] <- TRUE
@@ -172,7 +178,6 @@ get_state_data <- function(node, state, conf_level, ticks, na.rm=TRUE) {
 
 	# group values into the closest ticknames(b) <- NULL
 	group <- gen_group(data, ticks)
-	# just make sure all ticks have a value, even if it's zero
 
 	# translate frequencies into probabilities of seem a particular values
 	# in a tick
