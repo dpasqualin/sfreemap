@@ -5,7 +5,8 @@ date: "`r Sys.Date()`"
 output:
     html_document:
         toc: true
-        theme: united
+        theme: spacelab
+        highligh: textmate
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{apex: Phylogenetic Methods for Multiple Gene Data.}
