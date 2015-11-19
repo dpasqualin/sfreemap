@@ -36,12 +36,13 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE, pa
         return(tree)
     }
 
+    prev_class <- class(trees)
     if (parallel==TRUE) {
         trees <- mclapply(trees, mymatch, mc.cores=detectCores())
     } else {
         trees <- lapply(trees, mymatch)
     }
-    class(trees) <- 'multiPhylo'
+    class(trees) <- prev_class
 
     for (node in all_nodes) {
         tree_number <- 1 # index for result
