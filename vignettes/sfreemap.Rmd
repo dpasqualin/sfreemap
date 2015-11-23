@@ -220,7 +220,19 @@ as a vector, like this:
 sfreemap.plot_distribution(mpd, nodes=c(89,90), type='emr')
 ```
 
-## Expected number of transitions for states of onde or more branches across all trees
+## Expected dwelling times for states for all branches on a group of trees
+
+To filter or limit the distribution over a specific group of trees, or maybe
+a single tree, pass on the argument *trees*, which work in the same way as
+*nodes* and *states*.
+
+```{r, fig.width=6, fig.height=4}
+# get the odd trees
+trees <- seq(1, length(sfreemap.corals.trees), 2)
+sfreemap.plot_distribution(mpd, nodes=89, trees=trees)
+```
+
+## Expected number of transitions for states of one or more branches across all trees
 
 Similar plots can be generated for the number of transitions using the same function
 and *mpd* object created before, just changing the parameter *type* from *emr* to *lmt*
