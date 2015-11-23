@@ -2,7 +2,7 @@
 \alias{sfreemap.plot_distribution}
 \title{Plot the distribution of states in a given node}
 \usage{
-sfreemap.plot_distribution(map, nodes=NULL, states=NULL, conf_level=95
+sfreemap.plot_distribution(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                        , number_of_ticks=20, type='emr')
 }
 \examples{
@@ -13,8 +13,9 @@ print(p)
 }
 \arguments{
 	\item{map}{A result of a \link{sfreemap.map_posterior_distribution} execution;}
-    \item{nodes}{A vector containing the nodes to consider. Defaults to all nodes;}
-    \item{states}{The states to be plotted}
+    \item{nodes}{A vector containing the nodes to filter, or NULL to not filter;}
+    \item{trees}{A vector containing the trees to filter, or NULL to not filter;}
+    \item{states}{A vector containing the states to filter, or NULL to not filter;}
 	\item{conf_level}{An integer representing the confidence level desired, ranging from 0 to 100. Defaults to 95 percent;}
 	\item{number_of_ticks}{The number of intervals in the x axis. Defaults to 20;}
 	\item{type}{\code{emr} for expected markov reward (dwelling times) or

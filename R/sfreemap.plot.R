@@ -1,14 +1,24 @@
-sfreemap.plot_distribution <- function(map, nodes=NULL, states=NULL, conf_level=95
+sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
 	# TODO: add sanity check for parameters
 
-    # this bit of a hack here gives an object that doesn't make much sense by
-    # it's own, but works nicely in this function
-    if(is.null(nodes)) {
-        nodes <- apply(map[[type]], 2, c)
+    # Filtering data for type and trees
+    if (!is.null(trees)) {
+        map <- map[[type]][trees,,]
     } else {
-        nodes <- apply(map[[type]][,,nodes], 2, c)
+        map <- map[[type]]
+    }
+
+    # Filtering by nodes
+    # NOTE: this bit of a hack here gives an object that doesn't make much sense
+    # by it's own, but works nicely in this function
+    if (is.null(nodes) && inherits(map, "array")) {
+        nodes <- apply(map, 2, c)
+    } else if (inherits(map, "array")) {
+        nodes <- apply(map[,,nodes], 2, c)
+    } else {
+        nodes <- t(map)
     }
 
 	# all states or states passed as argument
@@ -19,7 +29,8 @@ sfreemap.plot_distribution <- function(map, nodes=NULL, states=NULL, conf_level=
 	}
 
 	# first divide the dataset
-	ticks <- get_ticks(map[[type]], type, number_of_ticks)
+	ticks <- get_ticks(map, type, number_of_ticks)
+    print('aqui')
 
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (state in states) {
