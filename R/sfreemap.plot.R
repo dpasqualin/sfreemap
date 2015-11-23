@@ -30,7 +30,6 @@ sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL,
 
 	# first divide the dataset
 	ticks <- get_ticks(map, type, number_of_ticks)
-    print('aqui')
 
 	to_plot <- data.frame(x=ticks, alpha=rep(FALSE, length(ticks)))
 	for (state in states) {
