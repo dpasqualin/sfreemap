@@ -151,24 +151,31 @@ As we have shown, the object created by *sfreemap.map* can be analysed and
 manipulated to produce summaries and plots. In this section we will show some
 tools to make this task a lot easier.
 
-For the examples we will be using the object named *data*, which was calculated in
-the first example of the previous section and corresponds to
-`r length(data)` mapped trees.
+For the examples we will map again the *sfreemap.corals.trees* dataset, but this time
+scaling the trees to have the same distance from the root to the terminals. This is
+important for analysing the number of transitions considering the same proportion on all trees,
+avoiding the case where a tree with higher depth showing a higher number of transitions, but
+actually having the same number as a "shorter" tree, which just happen to be in a different scale.
 
-First we will run the function below, which analysis mapping results on all trees, creating
+```
+trees <- sfreemap.rescale(sfreemap.corals.trees, height=1)
+data <- sfreemap.map(trees, sfreemap.corals.tips)
+```
+
+Now we will run the function below, which analysis mapping results on all trees, creating
 an object with the dwelling times and the number of transitions for every node
 of every tree. It tries to match nodes using function *matchNodes* from *phytools*
 packages, which consider two nodes to be the same when they share the same taxa.
 
 ```{r}
-mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale=TRUE)
+mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale.branches=TRUE)
 ```
 
 The first parameter of the function is the so called "base tree", the tree on which the
-existence of branches will be compared to. Second parameter is all other trees to be
-analysed and the last one is whether we want to scale the dwelling times to the
-branch length, resulting in a proportion of the time spent instead of an absolute
-value (the expected number of transitions cannot be scaled).
+branches of the other trees will be compared to. Second parameter is all other trees to be
+analysed, *scale.branches* is used to represent the dwelling times regarding the percentage
+of time spent in the branch, instead of the absolute value (the expected number
+of transitions is not scaled, as it doesn't make sense to do so).
 
 
 ## Expected dwelling times for states of a branch across all trees
@@ -255,3 +262,5 @@ Example considering all nodes and all states:
 ```{r, fig.width=6, fig.height=4}
 sfreemap.plot_distribution(mpd, type='lmt')
 ```
+
+# Correlation matrix

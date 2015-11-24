@@ -5,7 +5,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # Am I running on windows? Windows does not have support for the kind of
     # parallelism we are using
-    i_am_windows <- Sys.info()['sysname'] == 'Windows'
+    i_am_windows <- on_windows()
 
     # Should this program run in parallel?
     parallel <- !i_am_windows

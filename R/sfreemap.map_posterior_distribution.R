@@ -1,4 +1,4 @@
-sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE, parallel=TRUE) {
+sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, scale.trees=FALSE, parallel=TRUE) {
 
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])
@@ -16,6 +16,11 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE, pa
     # correspondent nodes of base_tree in tree
     # NA when there is no correspondent
     mymatch <- function(tree) {
+
+        if (is.numeric(scale.trees)) {
+            tree <- sfreemap.rescale(tree, scale.trees)
+        }
+
         # match of internal nodes
         internal <- matchNodes(base_tree, tree, method='descendants')
 
@@ -65,7 +70,7 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale=TRUE, pa
         }
     }
 
-    if (isTRUE(scale)) {
+    if (isTRUE(scale.branches)) {
         result$emr <- freq_to_prob(result$emr)
     }
 

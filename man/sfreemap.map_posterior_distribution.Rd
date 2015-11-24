@@ -2,7 +2,8 @@
 \alias{sfreemap.map_posterior_distribution}
 \title{Analyses a set of trees regarding to a specific tree and output an object that can be used by many other functions of this package}
 \usage{
-sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE, parallel=TRUE)
+sfreemap.map_posterior_distribution(base_tree, trees, scale.branches=TRUE
+                                    , scale.trees=FALSE, parallel=TRUE)
 }
 \examples{
     sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
@@ -13,9 +14,10 @@ sfreemap.map_posterior_distribution(base_tree, trees, scale=TRUE, parallel=TRUE)
 \arguments{
     \item{base_tree}{A single tree, result of the function \link{sfreemap.map};}
     \item{trees}{A \code{multiPhylo} object, result of \link{sfreemap.map} execution}
-    \item{scale}{Whether the function should scale the dwelling times to the
+    \item{scale.branches}{Whether the function should scale the dwelling times to the
     branch length, resulting in a proportion of the time instead of an absolute
     value (the expected number of transitions is not scaled).}
+    \item{scale.trees}{A value representing the maximum height to scale the tree, or FALSE if the trees should not be scaled.}
     \item{parallel}{Whether the function should run in parallel (defaults to TRUE)}
 }
 \description{

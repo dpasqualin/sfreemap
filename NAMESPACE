@@ -24,7 +24,7 @@ importFrom(ape, ace, di2multi, is.binary.tree, is.rooted, is.ultrametric
               , reorder.phylo, write.tree, all.equal.phylo)
 
 importFrom(phytools, matchNodes, to.matrix, countSimmap, pbtree, sim.history
-                   , make.simmap, describe.simmap, plotSimmap)
+                   , make.simmap, describe.simmap, plotSimmap, nodeHeights)
 importFrom(parallel, mclapply, detectCores, makeCluster, parApply, stopCluster)
 
 importFrom(reshape2, melt)
