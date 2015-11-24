@@ -78,7 +78,7 @@ in your machine. If you want to disable parallel processing you can pass paralle
 Many other function of sfreemap presents this parameter.*
 
 ```{r}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips)
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 class(data)
 data
 ```
@@ -115,7 +115,7 @@ they appear in their respective objects. The result will be ten mapped trees.
 Same logic would apply for standard type.
 
 ```{r}
-sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], paralel=FALSE)
+sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
 ```
 
 It is also possible to run the program passing a single tree as parameter and multiple characters.
@@ -168,7 +168,7 @@ of every tree. It tries to match nodes using function *matchNodes* from *phytool
 packages, which consider two nodes to be the same when they share the same taxa.
 
 ```{r}
-mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale.branches=TRUE)
+mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale.branches=TRUE, parallel=FALSE)
 ```
 
 The first parameter of the function is the so called "base tree", the tree on which the
