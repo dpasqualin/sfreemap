@@ -169,6 +169,41 @@ sfreemap.read.fasta <- function(file, ensure_dna=FALSE) {
     return (t(nucleo_data))
 }
 
+## based on function to rescale simmap style trees
+## written by Liam J. Revell 2012, 2013, 2014, 2015
+sfreemap.rescale <- function(tree, height=NULL, parallel=FALSE) {
+    if (inherits(tree, "multiPhylo")){
+        tree <- unclass(tree)
+        if (parallel==TRUE && !on_windows()) {
+            tree <- mclapply(tree, sfreemap.rescale, height, mc.cores=detectCores())
+        } else {
+            tree <- lapply(tree, sfreemap.rescale, height)
+        }
+        class(tree) <- "multiPhylo"
+        return (tree)
+    } else if (inherits(tree, "phylo")) {
+        max_height <- max(nodeHeights(tree))
+        if (is.null(height)) {
+            height <- max_height
+        }
+        if (height != max_height) {
+            s <- height/max_height
+            tree$edge.length <- tree$edge.length * s
+            if (inherits(tree, "sfreemap")) {
+                tree$mapped.edge <- tree$mapped.edge * s
+                tree$mapped.edge.lmt <- tree$mapped.edge.lmt * s
+            }
+        }
+        return(tree)
+    } else {
+        message("tree should be an object of class \"phylo\" or \"multiPhylo\"")
+    }
+}
+
+on_windows <- function() {
+    return(Sys.info()['sysname'] == 'Windows')
+}
+
 # This function creates a matrix with rownames being states, colnames being
 # the tip labels and values being 1, if the tip label has the correspondent
 # states and 0 otherwise.
