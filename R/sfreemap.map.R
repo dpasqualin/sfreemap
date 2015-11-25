@@ -289,7 +289,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # (expected number of markov transitions) and equation 2.12
     # (expected markov rewards).
     MAP[['h']] <- func_H(Q, Q_eigen, tree, tree_extra, omp)
-
     # Step 4 and 5
     # Traverse the tree once and calculate Fu and Sb for each node u and
     # each edge b;
@@ -329,9 +328,11 @@ expected_value <- function(tree, Q, map) {
     EV[['emr']] <- prm[['emr']] / likelihood
 
     # the rownames of the mapped objects
-    mapped_names <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
-    rownames(EV[['lmt']]) <- rownames(EV[['emr']]) <- mapped_names
-    colnames(EV[['emr']]) <- colnames(EV[['lmt']]) <- colnames(Q)
+    colnames(EV[['emr']]) <- colnames(Q)
+    rownames(EV[['emr']]) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
+
+    rownames(EV[['lmt']]) <- colnames(EV[['lmt']]) <- colnames(Q)
+
 
     return (EV)
 }

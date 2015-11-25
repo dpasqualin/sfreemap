@@ -121,7 +121,7 @@ reorderSfreemap <- function(tree, order="cladewise", index.only=FALSE, ...) {
         tree$edge.length <- tree$edge.length[index]
         if (!is.null(tree$mapped.edge)) {
             tree$mapped.edge <- tree$mapped.edge[index,]
-            tree$mapped.edge.lmt <- tree$mapped.edge.lmt[index,]
+            tree$mapped.edge.lmt <- tree$mapped.edge.lmt[,,index]
         }
         attr(tree, "order") <- order
         return (tree)
