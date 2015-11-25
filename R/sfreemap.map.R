@@ -151,6 +151,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         tol <- list(...)$tol
     }
 
+    # FIXME: this was not tested yet, not sure it it works
     # prior a list containing alpha and beta parameters for the gamma
     # prior distribution on the transition rates in Q. Note that alpha
     # and beta can be single values or vectors, if different prior
@@ -179,6 +180,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         n_simulation <- list(...)$n_simulation
     }
 
+    # FIXME: this was not tested yet, not sure it it works
     # A single numeric value or a vector containing the (normal)
     # sampling variances for the MCMC
     vQ <- 0.1
@@ -215,6 +217,10 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         states <- NULL
     }
     tip_states <- build_states_matrix(tree$tip.label, tip_states, states)
+
+    # NOTE: It's important to notice that below this point it is garantee that
+    # we are dealing with a single tree (a "phylo" object), a single Q matrix,
+    # a single prior and a single character.
 
     # Set the final value
     Q <- QP$Q
@@ -277,7 +283,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Transistion probabilities
     MAP[['tp']] <- transition_probabilities(Q_eigen, tree$edge.length, omp)
 
-
     # Step 3
     # Employing the eigen decomposition above compute E(h, tp*) for
     # each edge b* in the set of interest Omega using equation 2.4
@@ -320,8 +325,6 @@ expected_value <- function(tree, Q, map) {
     prm <- map[['prm']]
 
     EV = list()
-    #EV[['lmt']] <- apply(prm[['lmt']], 2, sum) / likelihood
-    #EV[['emr']] <- apply(prm[['emr']], 2, sum) / likelihood
     EV[['lmt']] <- prm[['lmt']] / likelihood
     EV[['emr']] <- prm[['emr']] / likelihood
 
