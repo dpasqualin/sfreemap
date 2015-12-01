@@ -12,24 +12,24 @@ arma::cube array_to_cube(NumericVector v, int x, int y, int z) {
     return cube_array;
 }
 
-arma::cube get_E(int n_states, arma::mat qvec, arma::mat qvec_inv) {
-    arma::cube E(n_states, n_states, n_states);
-    arma::mat E_i(n_states, n_states, arma::fill::zeros);
+arma::cube get_S(int n_states, arma::mat qvec, arma::mat qvec_inv) {
+    arma::cube S(n_states, n_states, n_states);
+    arma::mat S_i(n_states, n_states, arma::fill::zeros);
     int i;
 
     for (i=0; i<n_states; i++) {
-        E_i(i,i) = 1;
-        E.slice(i) = qvec * E_i * qvec_inv;
-        E_i(i,i) = 0;
+        S_i(i,i) = 1;
+        S.slice(i) = qvec * S_i * qvec_inv;
+        S_i(i,i) = 0;
     }
 
-    return E;
+    return S;
 }
 
-arma::cube get_Si(int n_states, arma::cube E, arma::mat m) {
+arma::cube get_Si(int n_states, arma::cube S, arma::mat m) {
     arma::cube Si(n_states, n_states, n_states);
     for (int i=0; i<n_states; i++) {
-        Si.slice(i) = E.slice(i) * m;
+        Si.slice(i) = S.slice(i) * m;
     }
     return Si;
 }
@@ -91,9 +91,9 @@ List func_H(arma::mat Q, List Q_eigen, List tree, List tree_extra, int omp) {
     QL.diag().zeros();
     List ret;
 
-    arma::cube E = get_E(n_states, vectors, vectors_inv);
-    arma::cube s_lmt = get_Si(n_states, E, QL);
-    arma::cube s_emr = get_Si(n_states, E, emr_diag);
+    arma::cube S = get_S(n_states, vectors, vectors_inv);
+    arma::cube si_lmt = get_Si(n_states, S, QL);
+    arma::cube si_emr = get_Si(n_states, S, emr_diag);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
@@ -107,8 +107,8 @@ List func_H(arma::mat Q, List Q_eigen, List tree, List tree_extra, int omp) {
             for (i=0; i<n_states; i++) {
                 for (j=0; j<n_states; j++) {
                     Iij = build_Iij(edge, d, i, j);
-                    lmt.slice(b) += s_lmt.slice(i) * E.slice(j) * Iij;
-                    emr.slice(b) += s_emr.slice(i) * E.slice(j) * Iij;
+                    lmt.slice(b) += si_lmt.slice(i) * S.slice(j) * Iij;
+                    emr.slice(b) += si_emr.slice(i) * S.slice(j) * Iij;
                 }
             }
         }
@@ -139,7 +139,7 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
     // the output object
     List ret;
     arma::mat prm_emr(n_edges, n_states, arma::fill::zeros);
-    arma::cube prm_lmt(n_states, n_states, n_edges, arma::fill::zeros);
+    arma::cube prm_lmt(n_states, n_states, n_edges);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
@@ -162,7 +162,7 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
                 for (j=0; j<n_states; j++) {
                     gsf = g(p,i) * s(b,i) * f(c,j);
                     prm_emr(e,i) += gsf * emr_e(i,j);
-                    prm_lmt(i,j,e) += gsf * lmt_e(i,j);
+                    prm_lmt(i,j,e) = gsf * lmt_e(i,j);
                 }
             }
         }
