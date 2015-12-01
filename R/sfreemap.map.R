@@ -300,7 +300,6 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Posterior restricted moment for branches
     # This is the "per branch" expected value for lmt and emr
     MAP[['prm']] <- posterior_restricted_moment(tree, tree_extra, MAP, omp)
-
     # This is the global mean, not sure why we need it..
     MAP[['ev']] <- expected_value(tree, Q, MAP)
 
@@ -332,7 +331,6 @@ expected_value <- function(tree, Q, map) {
     rownames(EV[['emr']]) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
 
     rownames(EV[['lmt']]) <- colnames(EV[['lmt']]) <- colnames(Q)
-
 
     return (EV)
 }
