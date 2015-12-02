@@ -117,7 +117,13 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         if (inherits(tmp, "multiPhylo") || inherits(tmp, "list")) {
             mtrees <- c(mapply(c, mtrees))
         }
-        class(mtrees) <- c("sfreemap", "multiPhylo")
+
+        if (length(mtrees) > 1) {
+            class(mtrees) <- c("sfreemap", "multiPhylo")
+        } else {
+            mtrees <- mtrees[[1]]
+        }
+
         return (mtrees)
     }
 
