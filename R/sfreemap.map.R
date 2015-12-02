@@ -113,7 +113,8 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # objects (a list of a list), so we need to convert it to a single
     # multiPhylo object
     fix_return <- function(mtrees) {
-        if (inherits(mtrees[[1]], "multiPhylo")) {
+        tmp <- mtrees[[1]]
+        if (inherits(tmp, "multiPhylo") || inherits(tmp, "list")) {
             mtrees <- c(mapply(c, mtrees))
         }
         class(mtrees) <- c("sfreemap", "multiPhylo")
