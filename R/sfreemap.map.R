@@ -300,7 +300,8 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Posterior restricted moment for branches
     # This is the "per branch" expected value for lmt and emr
     MAP[['prm']] <- posterior_restricted_moment(tree, tree_extra, MAP, omp)
-    # This is the global mean, not sure why we need it..
+
+    # This is the global expected value
     MAP[['ev']] <- expected_value(tree, Q, MAP)
 
     # Let's set the elements back to the original tree
@@ -322,15 +323,16 @@ expected_value <- function(tree, Q, map) {
     # posterior restricted moment...
     prm <- map[['prm']]
 
-    EV = list()
-    EV[['lmt']] <- prm[['lmt']] / likelihood
-    EV[['emr']] <- prm[['emr']] / likelihood
+    ev_lmt <- prm[['lmt']] / likelihood
+    ev_emr <- prm[['emr']] / likelihood
 
     # the rownames of the mapped objects
-    colnames(EV[['emr']]) <- colnames(Q)
-    rownames(EV[['emr']]) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
+    b_names <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
 
-    rownames(EV[['lmt']]) <- colnames(EV[['lmt']]) <- colnames(Q)
+    colnames(ev_emr) <- colnames(ev_lmt) <- colnames(Q)
+    rownames(ev_emr) <- rownames(ev_lmt) <- b_names
 
-    return (EV)
+    ev <- list('lmt'=ev_lmt, 'emr'=ev_emr)
+
+    return (ev)
 }

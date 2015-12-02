@@ -139,7 +139,7 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
     // the output object
     List ret;
     arma::mat prm_emr(n_edges, n_states, arma::fill::zeros);
-    arma::cube prm_lmt(n_states, n_states, n_edges);
+    arma::mat prm_lmt(n_edges, n_states, arma::fill::zeros);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
@@ -162,7 +162,7 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
                 for (j=0; j<n_states; j++) {
                     gsf = g(p,i) * s(b,i) * f(c,j);
                     prm_emr(e,i) += gsf * emr_e(i,j);
-                    prm_lmt(i,j,e) = gsf * lmt_e(i,j);
+                    prm_lmt(e,i) += gsf * lmt_e(i,j);
                 }
             }
         }
