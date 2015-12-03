@@ -9,7 +9,7 @@ output:
         highligh: textmate
 vignette: >
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{apex: Phylogenetic Methods for Multiple Gene Data.}
+  %\VignetteIndexEntry{sfreemap: Simulation free stochastic mapping for Phylogenetic data.}
   \usepackage[utf8]{inputenc}
 ---
 
@@ -264,3 +264,49 @@ sfreemap.plot_distribution(mpd, type='lmt')
 ```
 
 # Correlation matrix
+
+It is possible to plot a correlation matrix to compare results provided by
+different parameters on *sfreemp.map* or even different programs, as long as
+they return a *phylo* object with mapping on *mapped.edge*.
+
+Let's first create the object that will hold our data to plot the correlation matrix.
+The only parameter is the name of the state that will be used for the comparison.
+
+```{r}
+cor <- sfreemap.correlation('colonial')
+```
+
+Now we can run the mapping and add the results in the correlation matrix. You
+can compare as many mappings as you with by just repeating the commands below. Note
+that *add.data* receives the object we created above, the mapping and, as the last
+paramater, the name we will in the resulting matrix to tell apart the different
+data we are comparing.
+
+```{r}
+# Estimate Q using empirical method
+data <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='empirical')
+cor <- add.data(cor, data, 'sfreemap empirical')
+
+# Estimate Q using mcmc method
+data <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='mcmc', n_simulation=1)
+cor <- add.data(cor, data, 'sfreemap mcmc')
+
+```
+
+Like we said before, it is possible to use data from different programs, as long as they
+return (or you adapt) something similar as what *sfreemap.map* returns. In fact, we
+based our return object on the return of the *make.simmap* function from *phytools* package,
+which are using running below to compare with *sfreemap.map*.
+
+```{r, results="hide"}
+
+require(phytools)
+
+data <- make.simmap(sfreemap.corals.trees[[1]], sfreemap.corals.tips, Q='mcmc', n_simulation=1)
+cor <- add.data(cor, data, 'simmap mcmc')
+```
+At last, let's see the result in a nice image:
+
+```{r, fig.width=7, fig.height=7}
+plot(cor)
+```
