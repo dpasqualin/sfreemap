@@ -51,18 +51,21 @@ arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp) {
     arma::mat q_vec_inv = Q_eigen["vectors_inv"];
     arma::mat q_vec = Q_eigen["vectors"];
 
-    int n = q_val.size();
-    arma::cube P(n, n, edges.size());
+    int n_states = q_val.size();
+    arma::cube P(n_states, n_states, edges.size());
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
     {
-        arma::mat aux(n, n);
+        arma::mat aux(n_states, n_states);
         int i, j;
 
+        // P(t) = U X diag(e**d1t, ... e**dmt) X U**-1
+        // t is an arbitrary edge length
+        // exp(n) is nth power of e (euler number)
         #pragma omp for nowait
         for (i=0; i<edges.size(); i++) {
-            for (j=0; j<n; j++) {
+            for (j=0; j<n_states; j++) {
                 aux.col(j) = q_vec.col(j) * exp(q_val(j) * edges(i));
             }
             P.slice(i) = aux * q_vec_inv;
