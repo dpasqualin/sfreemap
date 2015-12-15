@@ -80,23 +80,18 @@ arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp) {
 // TODO: find a better name for this function =P
 // [[Rcpp::depends("RcppArmadillo")]]
 // [[Rcpp::export]]
-List func_H(arma::mat Q, List Q_eigen, List tree, List tree_extra, int omp) {
+arma::cube func_H(arma::mat multiplier, List Q_eigen, List tree, List tree_extra, int omp) {
     int n_edges = tree_extra["n_edges"];
     int n_states = tree_extra["n_states"];
-    arma::cube lmt(n_states, n_states, n_edges, arma::fill::zeros);
-    arma::cube emr(n_states, n_states, n_edges, arma::fill::zeros);
     arma::vec d = Q_eigen["values"];
+    arma::vec edges = tree["edge.length"];
     arma::mat vectors = Q_eigen["vectors"];
     arma::mat vectors_inv = Q_eigen["vectors_inv"];
-    arma::mat emr_diag = arma::diagmat(as<arma::vec>(tree_extra["rewards"]));
-    arma::vec edges = tree["edge.length"];
-    arma::mat QL = Q;
-    QL.diag().zeros();
-    List ret;
 
     arma::cube S = get_S(n_states, vectors, vectors_inv);
-    arma::cube si_lmt = get_Si(n_states, S, QL);
-    arma::cube si_emr = get_Si(n_states, S, emr_diag);
+    arma::cube Si = get_Si(n_states, S, multiplier);
+
+    arma::cube ret(n_states, n_states, n_edges, arma::fill::zeros);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
@@ -110,47 +105,41 @@ List func_H(arma::mat Q, List Q_eigen, List tree, List tree_extra, int omp) {
             for (i=0; i<n_states; i++) {
                 for (j=0; j<n_states; j++) {
                     Iij = build_Iij(edge, d, i, j);
-                    lmt.slice(b) += si_lmt.slice(i) * S.slice(j) * Iij;
-                    emr.slice(b) += si_emr.slice(i) * S.slice(j) * Iij;
+                    ret.slice(b) += Si.slice(i) * S.slice(j) * Iij;
                 }
             }
         }
     }
 
-    ret["lmt"] = lmt;
-    ret["emr"] = emr;
     return ret;
 }
 
 
 // [[Rcpp::depends("RcppArmadillo")]]
 // [[Rcpp::export]]
-List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) {
+arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extra, List map, int omp) {
     int n_edges = tree_extra["n_edges"];
     int n_states = tree_extra["n_states"];
 
     List h = map["h"];
     List fl = map["fl"];
 
-    arma::cube emr = array_to_cube(h["emr"], n_states, n_states, n_edges);
-    arma::cube lmt = array_to_cube(h["lmt"], n_states, n_states, n_edges);
+    arma::cube multiplier = array_to_cube(m, n_states, n_states, n_edges);
+
     arma::mat f = fl["F"];
     arma::mat g = fl["G"];
     arma::mat s = fl["S"];
     arma::mat edges = tree["edge"];
 
     // the output object
-    List ret;
-    arma::mat prm_emr(n_edges, n_states, arma::fill::zeros);
-    arma::mat prm_lmt(n_edges, n_states, arma::fill::zeros);
+    arma::vec mult(n_edges, arma::fill::zeros);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
     {
         int e, i, j, p, c, b;
-        double gsf;
-        arma::mat lmt_e(n_states, n_states);
-        arma::mat emr_e(n_states, n_states);
+        double gsf, tmp;
+        arma::mat mult_e(n_states, n_states);
 
         #pragma omp for nowait
         for (e=0; e<n_edges; e++) {
@@ -158,22 +147,20 @@ List posterior_restricted_moment(List tree, List tree_extra, List map, int omp) 
             c = edges(e,1)-1; // nodes start at 1 in R..
             b = (e%2==0? edges(e+1,1) : edges(e-1,1)) - 1;
 
-            lmt_e = lmt.slice(e);
-            emr_e = emr.slice(e);
+            mult_e = multiplier.slice(e);
 
+            tmp = 0;
             for (i=0; i<n_states; i++) {
                 for (j=0; j<n_states; j++) {
                     gsf = g(p,i) * s(b,i) * f(c,j);
-                    prm_emr(e,i) += gsf * emr_e(i,j);
-                    prm_lmt(e,i) += gsf * lmt_e(i,j);
+                    tmp += gsf * mult_e(i,j);
                 }
             }
+            mult(e) = tmp;
         }
     }
 
-    ret["lmt"] = prm_lmt;
-    ret["emr"] = prm_emr;
-    return ret;
+    return mult;
 }
 
 // [[Rcpp::depends("RcppArmadillo")]]

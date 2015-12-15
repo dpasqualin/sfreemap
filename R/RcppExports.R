@@ -5,12 +5,12 @@ transition_probabilities <- function(Q_eigen, edges, omp) {
     .Call('sfreemapc_transition_probabilities', PACKAGE = 'sfreemapc', Q_eigen, edges, omp)
 }
 
-func_H <- function(Q, Q_eigen, tree, tree_extra, omp) {
-    .Call('sfreemapc_func_H', PACKAGE = 'sfreemapc', Q, Q_eigen, tree, tree_extra, omp)
+func_H <- function(multiplier, Q_eigen, tree, tree_extra, omp) {
+    .Call('sfreemapc_func_H', PACKAGE = 'sfreemapc', multiplier, Q_eigen, tree, tree_extra, omp)
 }
 
-posterior_restricted_moment <- function(tree, tree_extra, map, omp) {
-    .Call('sfreemapc_posterior_restricted_moment', PACKAGE = 'sfreemapc', tree, tree_extra, map, omp)
+posterior_restricted_moment <- function(m, tree, tree_extra, map, omp) {
+    .Call('sfreemapc_posterior_restricted_moment', PACKAGE = 'sfreemapc', m, tree, tree_extra, map, omp)
 }
 
 fractional_likelihoods <- function(tree, tree_extra, q, q_eigen, prior, trans_prob, tol) {

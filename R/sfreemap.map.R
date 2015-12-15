@@ -218,16 +218,16 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         QP <- Q_dna(tip_states, tree, model, tol)
     }
 
+    # NOTE: It's important to notice that below this point it is garantee that
+    # we are dealing with a single tree (a "phylo" object), a single Q matrix,
+    # a single prior and a single character.
+
     if (type == "dna") {
         states <- c("a", "c", "t", "g", "-")
     } else {
         states <- NULL
     }
     tip_states <- build_states_matrix(tree$tip.label, tip_states, states)
-
-    # NOTE: It's important to notice that below this point it is garantee that
-    # we are dealing with a single tree (a "phylo" object), a single Q matrix,
-    # a single prior and a single character.
 
     # Set the final value
     Q <- QP$Q
@@ -236,17 +236,24 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # Vector with rewards
     rewards <- rep(1,nrow(Q))
-    # FIXME: according to Minin & Suchar article this was suppose to be a
-    # parameters and user could provide different rewards for the states. But
-    # we tried with different values and the result just doesn't make sense.
-    # We've tried to reach the authors but got no answer on this matter.
-    #if (hasArg(rewards)) {
-    #    rewards <- list(...)$rewards
-    #    if (length(rewards) != nrow(Q)) {
-    #        stop("The rewards vector should represent the states of Q")
-    #    }
-    #}
+    if (hasArg(rewards)) {
+        rewards <- list(...)$rewards
+        if (length(rewards) != nrow(Q)) {
+            stop("The rewards vector should represent the states")
+        }
+    }
     names(rewards) <- colnames(Q)
+
+    # Defining the transitions of interest. By default, all transitions.
+    QL <- matrix(1, nrow=nrow(Q), ncol=ncol(Q))
+    diag(QL) <- 0
+    if (hasArg(QL)) {
+        QL <- list(...)$QL
+        if (!all(dim(Q) == dim(QL))) {
+            stop("QL must have same dimensions as Q")
+        }
+    }
+    rownames(QL) <- colnames(QL) <- rownames(Q)
 
     # Acquire more info about the tree.
     tree_extra <- list(
@@ -255,13 +262,16 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         , n_edges = length(tree$edge.length)
         , n_tips = nrow(tip_states)
         , n_nodes = nrow(tip_states) + tree$Nnode
-        , rewards = rewards
     )
 
     # Reorder the tree so the root is the first row of the matrix.
     # We save the original order to make sure we have the result
     # in same order of the tree;
     tree <- reorder(tree, 'pruningwise')
+    # Let's set the elements back to the original tree
+    tree[['Q']] <- Q
+    tree[['prior']] <- prior
+    tree[['logL']] <- logL
 
     # Step 1
     # Compute Eigen values and Eigen vectors for the transition rate matrix
@@ -270,76 +280,71 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # The inverse of Q_eigen vectors
     Q_eigen[['vectors_inv']] <- solve(Q_eigen$vectors)
 
+    MAP <- list()
     # Step 2
     # Compute P(tp), the transistion probability, for each edge length t of T
-    # Q = U X diag(d1,...,dm) X U**-1
-    # U are the eigenvectors of Q
-    # d1,...,dm are the eigenvalues of Q
-    # diag(d1,...,dm) is a diagonal matrix with d1,...,dm on it's main
-    # diagonal
-    # For now I'm doing this just where it is needed, in the
-    # fractional_likelihood calculation. I don't know yet if I'm going
-    # to need it somewhere else. It might be useful to compute it here
-    # and use it in all different places if that's the case.
-    MAP <- list()
-
-    MAP[['Q']] <- Q
-    MAP[['prior']] <- prior
-
-
-    # Transistion probabilities
     MAP[['tp']] <- transition_probabilities(Q_eigen, tree$edge.length, omp)
 
-    # Step 3
-    # Employing the eigen decomposition above compute E(h, tp*) for
-    # each edge b* in the set of interest Omega using equation 2.4
-    # (expected number of markov transitions) and equation 2.12
-    # (expected markov rewards).
-    MAP[['h']] <- func_H(Q, Q_eigen, tree, tree_extra, omp)
     # Step 4 and 5
-    # Traverse the tree once and calculate Fu and Sb for each node u and
-    # each edge b;
-    # Compute the data likelihood Pr(D) as the dot product of Froot and root
-    # distribution pi.
     MAP[['fl']] <- fractional_likelihoods(tree, tree_extra, Q, Q_eigen
                                           , prior, MAP$tp, tol)
 
-    # Posterior restricted moment for branches
-    # This is the "per branch" expected value for lmt and emr
-    MAP[['prm']] <- posterior_restricted_moment(tree, tree_extra, MAP, omp)
+    MAP[['h']] <- list()
 
-    # This is the global expected value
-    MAP[['ev']] <- expected_value(tree, Q, MAP)
+    tree[['mapped.edge']] <- NULL
+    for (i in 1:length(rewards)) {
+        value <- rewards[i]
+        state <- names(value)
 
-    # Let's set the elements back to the original tree
-    tree[['Q']] <- Q
-    tree[['prior']] <- prior
-    tree[['logL']] <- logL
+        if (value == 0) next
 
-    tree[['mapped.edge']] <- MAP[['ev']]$emr
-    tree[['mapped.edge.lmt']] <- MAP[['ev']]$lmt
+        multiplier <- matrix(0, nrow=nrow(Q), ncol=ncol(Q))
+        multiplier[i,i] <- value
+        # Step 3
+        lmt <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
+        prm <- posterior_restricted_moment(lmt, tree, tree_extra, MAP, omp)
+        ev <- expected_value(tree, Q, MAP, prm)
+
+        tree[['mapped.edge']] <- cbind(tree[['mapped.edge']], ev)
+    }
+    colnames(tree[['mapped.edge']]) <- names(rewards)
+
+    tree[['mapped.edge.lmt']] <- tname <- NULL
+    for (i in 1:nrow(QL)) {
+        for (j in 1:ncol(QL)) {
+            value <- QL[i,j]
+            if (value == 0) next
+
+            state_from <- rownames(QL)[i]
+            state_to <- rownames(QL)[j]
+
+            multiplier <- matrix(0, nrow=nrow(QL), ncol=ncol(QL))
+            multiplier[i,j] <- Q[i,j]
+            # Step 3
+            lmt <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
+            prm <- posterior_restricted_moment(lmt, tree, tree_extra, MAP, omp)
+            ev <- expected_value(tree, Q, MAP, prm)
+
+            tname <- c(tname, paste(state_from, state_to, sep='->'))
+
+            tree[['mapped.edge.lmt']] <- cbind(tree[['mapped.edge.lmt']], ev)
+        }
+    }
+    colnames(tree[['mapped.edge.lmt']]) <- tname
 
     # Return the tree in the original order
     return (reorder(tree, 'cladewise'))
 }
 
 # The final answer!
-expected_value <- function(tree, Q, map) {
+expected_value <- function(tree, Q, map, multiplier) {
 
     likelihood <- map[['fl']][['L']]
-    # posterior restricted moment...
-    prm <- map[['prm']]
 
-    ev_lmt <- prm[['lmt']] / likelihood
-    ev_emr <- prm[['emr']] / likelihood
+    ret <- multiplier / likelihood
 
     # the rownames of the mapped objects
-    b_names <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
+    rownames(ret) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
 
-    colnames(ev_emr) <- colnames(ev_lmt) <- colnames(Q)
-    rownames(ev_emr) <- rownames(ev_lmt) <- b_names
-
-    ev <- list('lmt'=ev_lmt, 'emr'=ev_emr)
-
-    return (ev)
+    return(ret)
 }

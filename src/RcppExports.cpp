@@ -20,31 +20,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // func_H
-List func_H(arma::mat Q, List Q_eigen, List tree, List tree_extra, int omp);
-RcppExport SEXP sfreemapc_func_H(SEXP QSEXP, SEXP Q_eigenSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP ompSEXP) {
+arma::cube func_H(arma::mat multiplier, List Q_eigen, List tree, List tree_extra, int omp);
+RcppExport SEXP sfreemapc_func_H(SEXP multiplierSEXP, SEXP Q_eigenSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP ompSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
-    Rcpp::traits::input_parameter< arma::mat >::type Q(QSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type multiplier(multiplierSEXP);
     Rcpp::traits::input_parameter< List >::type Q_eigen(Q_eigenSEXP);
     Rcpp::traits::input_parameter< List >::type tree(treeSEXP);
     Rcpp::traits::input_parameter< List >::type tree_extra(tree_extraSEXP);
     Rcpp::traits::input_parameter< int >::type omp(ompSEXP);
-    __result = Rcpp::wrap(func_H(Q, Q_eigen, tree, tree_extra, omp));
+    __result = Rcpp::wrap(func_H(multiplier, Q_eigen, tree, tree_extra, omp));
     return __result;
 END_RCPP
 }
 // posterior_restricted_moment
-List posterior_restricted_moment(List tree, List tree_extra, List map, int omp);
-RcppExport SEXP sfreemapc_posterior_restricted_moment(SEXP treeSEXP, SEXP tree_extraSEXP, SEXP mapSEXP, SEXP ompSEXP) {
+arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extra, List map, int omp);
+RcppExport SEXP sfreemapc_posterior_restricted_moment(SEXP mSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP mapSEXP, SEXP ompSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
+    Rcpp::traits::input_parameter< NumericVector >::type m(mSEXP);
     Rcpp::traits::input_parameter< List >::type tree(treeSEXP);
     Rcpp::traits::input_parameter< List >::type tree_extra(tree_extraSEXP);
     Rcpp::traits::input_parameter< List >::type map(mapSEXP);
     Rcpp::traits::input_parameter< int >::type omp(ompSEXP);
-    __result = Rcpp::wrap(posterior_restricted_moment(tree, tree_extra, map, omp));
+    __result = Rcpp::wrap(posterior_restricted_moment(m, tree, tree_extra, map, omp));
     return __result;
 END_RCPP
 }
