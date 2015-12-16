@@ -100,6 +100,12 @@ describe.sfreemap <- function (tree, ...) {
     } else {
         stop ("tree must be an object of type \"phylo\" or \"multiPhylo\"")
     }
+
+    emr_total <- sum(emr)
+    names(emr_total) <- 'total'
+    emr <- c(emr, emr_total)
+    emr <- rbind(emr, prop=emr/emr_total)
+
     return (list(transitions=lmt, dwelling_times=emr))
 }
 
