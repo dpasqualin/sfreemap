@@ -121,7 +121,6 @@ arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extr
     int n_edges = tree_extra["n_edges"];
     int n_states = tree_extra["n_states"];
 
-    List h = map["h"];
     List fl = map["fl"];
 
     arma::cube multiplier = array_to_cube(m, n_states, n_states, n_edges);

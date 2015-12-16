@@ -291,45 +291,46 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     MAP[['h']] <- list()
 
-    tree[['mapped.edge']] <- NULL
-    for (i in 1:length(rewards)) {
-        value <- rewards[i]
-        state <- names(value)
+    # Build dwelling times
+    tree[['mapped.edge']] <- tree[['mapped.edge.lmt']] <- tname <- NULL
+    states <- rownames(QL)
+    n_states <- tree_extra$n_states
+    multiplier <- matrix(0, nrow=n_states, ncol=n_states)
 
-        if (value == 0) next
+    for (i in 1:n_states) {
+        for (j in 1:n_states) {
 
-        multiplier <- matrix(0, nrow=nrow(Q), ncol=ncol(Q))
-        multiplier[i,i] <- value
-        # Step 3
-        lmt <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
-        prm <- posterior_restricted_moment(lmt, tree, tree_extra, MAP, omp)
-        ev <- expected_value(tree, Q, MAP, prm)
+            if (i == j) {
+                value <- rewards[i] # dwelling times
+            } else {
+                value <- QL[i,j] * Q[i,j] # number of transitions
+            }
 
-        tree[['mapped.edge']] <- cbind(tree[['mapped.edge']], ev)
-    }
-    colnames(tree[['mapped.edge']]) <- names(rewards)
+            if (value == 0) {
+                next
+            }
+            multiplier[i,j] <- value
 
-    tree[['mapped.edge.lmt']] <- tname <- NULL
-    for (i in 1:nrow(QL)) {
-        for (j in 1:ncol(QL)) {
-            value <- QL[i,j]
-            if (value == 0) next
-
-            state_from <- rownames(QL)[i]
-            state_to <- rownames(QL)[j]
-
-            multiplier <- matrix(0, nrow=nrow(QL), ncol=ncol(QL))
-            multiplier[i,j] <- Q[i,j]
             # Step 3
             lmt <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
             prm <- posterior_restricted_moment(lmt, tree, tree_extra, MAP, omp)
             ev <- expected_value(tree, Q, MAP, prm)
 
-            tname <- c(tname, paste(state_from, state_to, sep='->'))
+            if (i == j) {
+                # dwelling times
+                tree[['mapped.edge']] <- cbind(tree[['mapped.edge']], ev)
+            } else {
+                # number of transitions
+                state_from <- states[i]
+                state_to <- states[j]
+                tname <- c(tname, paste(state_from, state_to, sep=','))
+                tree[['mapped.edge.lmt']] <- cbind(tree[['mapped.edge.lmt']], ev)
+            }
 
-            tree[['mapped.edge.lmt']] <- cbind(tree[['mapped.edge.lmt']], ev)
+            multiplier[i,j] <- 0
         }
     }
+    colnames(tree[['mapped.edge']]) <- names(rewards)
     colnames(tree[['mapped.edge.lmt']]) <- tname
 
     # Return the tree in the original order
