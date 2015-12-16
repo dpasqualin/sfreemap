@@ -289,6 +289,9 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     MAP[['fl']] <- fractional_likelihoods(tree, tree_extra, Q, Q_eigen
                                           , prior, MAP$tp, tol)
 
+    # FIXME: for some unknown reason if I remove this line I get a 'out of
+    # bounds' error in posterior_restricted_moment(). This line doesn't need to
+    # exist
     MAP[['h']] <- list()
 
     # Build dwelling times
@@ -312,8 +315,8 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
             multiplier[i,j] <- value
 
             # Step 3
-            lmt <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
-            prm <- posterior_restricted_moment(lmt, tree, tree_extra, MAP, omp)
+            h <- func_H(multiplier, Q_eigen, tree, tree_extra, omp)
+            prm <- posterior_restricted_moment(h, tree, tree_extra, MAP, omp)
             ev <- expected_value(tree, Q, MAP, prm)
 
             if (i == j) {
@@ -338,14 +341,14 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 }
 
 # The final answer!
-expected_value <- function(tree, Q, map, multiplier) {
+expected_value <- function(tree, Q, map, prm) {
 
     likelihood <- map[['fl']][['L']]
 
-    ret <- multiplier / likelihood
+    ret <- prm / likelihood
 
     # the rownames of the mapped objects
-    rownames(ret) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
+    names(ret) <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
 
     return(ret)
 }

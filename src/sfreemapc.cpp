@@ -81,6 +81,7 @@ arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp) {
 // [[Rcpp::depends("RcppArmadillo")]]
 // [[Rcpp::export]]
 arma::cube func_H(arma::mat multiplier, List Q_eigen, List tree, List tree_extra, int omp) {
+    
     int n_edges = tree_extra["n_edges"];
     int n_states = tree_extra["n_states"];
     arma::vec d = Q_eigen["values"];
@@ -131,14 +132,14 @@ arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extr
     arma::mat edges = tree["edge"];
 
     // the output object
-    arma::vec mult(n_edges, arma::fill::zeros);
+    arma::vec ret(n_edges, arma::fill::zeros);
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
     {
         int e, i, j, p, c, b;
         double gsf, tmp;
-        arma::mat mult_e(n_states, n_states);
+        arma::mat partial(n_states, n_states);
 
         #pragma omp for nowait
         for (e=0; e<n_edges; e++) {
@@ -146,20 +147,20 @@ arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extr
             c = edges(e,1)-1; // nodes start at 1 in R..
             b = (e%2==0? edges(e+1,1) : edges(e-1,1)) - 1;
 
-            mult_e = multiplier.slice(e);
+            partial = multiplier.slice(e);
 
             tmp = 0;
             for (i=0; i<n_states; i++) {
                 for (j=0; j<n_states; j++) {
                     gsf = g(p,i) * s(b,i) * f(c,j);
-                    tmp += gsf * mult_e(i,j);
+                    tmp += gsf * partial(i,j);
                 }
             }
-            mult(e) = tmp;
+            ret(e) = tmp;
         }
     }
 
-    return mult;
+    return ret;
 }
 
 // [[Rcpp::depends("RcppArmadillo")]]
