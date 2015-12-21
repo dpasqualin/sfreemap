@@ -93,7 +93,8 @@ sfreemap.plot_tree <- function(map, state, type='emr'
                                 , lwd=3) {
 
     tree <- map$base_tree
-	ticks <- get_ticks(node, type, number_of_ticks)
+    map <- map[[type]]
+	ticks <- get_ticks(map, type, number_of_ticks)
 	tree$maps <- list()
 
     # all but the root node
@@ -102,7 +103,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 
 	for (node in all_nodes) {
 
-		data <- get_state_data(map$emr[,,node], state, conf_level, ticks, na.rm=FALSE)
+		data <- get_state_data(map[,,node], state, conf_level, ticks, na.rm=FALSE)
 
 		if (data$final_conf_level >= conf_level) {
 			value <- freq_to_prob(data$final_prob[data$final_idx])
