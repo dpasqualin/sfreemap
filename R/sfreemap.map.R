@@ -333,8 +333,10 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
             multiplier[i,j] <- 0
         }
     }
+    bname <- paste(tree$edge[,1], ",", tree$edge[,2], sep="")
     colnames(tree[['mapped.edge']]) <- names(rewards)
     colnames(tree[['mapped.edge.lmt']]) <- tname
+    rownames(tree[['mapped.edge']]) <- rownames(tree[['mapped.edge.lmt']]) <- bname
 
     # Return the tree in the original order
     return (reorder(tree, 'cladewise'))
