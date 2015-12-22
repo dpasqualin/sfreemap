@@ -7,16 +7,19 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches
     states <- colnames(base_tree$mapped.edge)
     transitions <- colnames(base_tree$mapped.edge.lmt)
     tree_names <- 1:length(trees)
+    node_names <- 1:max(all_nodes)
     result_emr_dim <- c(length(trees), length(states), max(all_nodes))
     result_lmt_dim <- c(length(trees), length(transitions), max(all_nodes))
+
     result <- list(
         base_tree = base_tree
         , emr = array(NA, result_emr_dim, dimnames=list(tree_names, states))
         , lmt = array(NA, result_lmt_dim, dimnames=list(tree_names, transitions))
+        , mr = array(NA, result_lmt_dim, dimnames=list(tree_names, transitions))
     )
 
     # correspondent nodes of base_tree in tree
-    # NA when there is no correspondent
+    # NA when there is no correspondence
     mymatch <- function(tree) {
 
         if (is.numeric(scale.trees)) {
@@ -44,7 +47,7 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches
     }
 
     prev_class <- class(trees)
-    if (parallel==TRUE) {
+    if (isTRUE(parallel) && !on_windows()) {
         trees <- mclapply(trees, mymatch, mc.cores=detectCores())
     } else {
         trees <- lapply(trees, mymatch)
@@ -56,16 +59,22 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches
         for (tree in trees) {
             # correspondent node
             cn <- tree$match[as.character(node),2]
+            # get branch that ends on cn
+            edge <- which(tree$edge[,2]==cn)
 
             if (!is.na(cn)) {
-                # search for branch ending in "cn" on tree and add corresponding
-                # values for states
-                emr <- tree$mapped.edge[tree$edge[,2]==cn,]
+                # add dwelling times data
+                emr <- tree$mapped.edge[edge,]
                 result$emr[tree_number,,node] <- emr
 
                 if (!is.null(tree$mapped.edge.lmt)) {
-                    lmt <- tree$mapped.edge.lmt[tree$edge[,2]==cn,]
+                    # add number of transitions
+                    lmt <- tree$mapped.edge.lmt[edge,]
                     result$lmt[tree_number,,node] <- lmt
+
+                    # add mutation rate
+                    mr <- lmt/tree$edge.length[edge]
+                    result$mr[tree_number,,node] <- mr
                 }
             }
             tree_number <- tree_number + 1 # index for result

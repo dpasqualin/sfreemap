@@ -1,18 +1,24 @@
 sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
-	# TODO: add sanity check for parameters
+
+    if (!type %in% c('lmt', 'emr', 'mr')) {
+        stop(paste('Unrecognized type', type))
+    }
 
     # Filtering data for type and trees
+    map <- map[[type]]
     if (!is.null(trees)) {
-        map <- map[[type]][trees,,]
-    } else {
-        map <- map[[type]]
+        map <- map[trees,,]
+    }
+    # check whether states exists
+    if (!is.null(states) && !all(states %in% names(map[1,,1]))) {
+        stop(paste('Unrecognized state:', states))
     }
 
     # Filtering by nodes
-    # NOTE: this bit of a hack here gives an object that doesn't make much sense
-    # by it's own, but works nicely in this function
+    # NOTE: this is a bit of a hack here that gives an object that doesn't make
+    # much sense by it's own, but works nicely in this function
     if (is.null(nodes) && inherits(map, "array")) {
         nodes <- apply(map, 2, c)
     } else if (inherits(map, "array")) {
@@ -21,7 +27,7 @@ sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL,
         nodes <- t(map)
     }
 
-	# all states or states passed as argument
+	# all states, or states passed as argument
 	if (is.null(states)) {
 		states <- colnames(nodes)
 	} else {
@@ -47,17 +53,19 @@ sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL,
 	title <- "Posterior Distribution of Branch Lengths"
 	subtitle <- paste("Branch posterior probability: ", bpp, "%", sep="")
 	ylabel <- "Probability"
+    # label angle
+    angle <- 0
 	if (type == 'emr') {
 		xlabel <- "Dwelling time (% of branch length)"
 		# shift bars do it fits within intervals
-		to_plot$x <- to_plot$x + 2.5
-		# label angle
-		angle <- 0
+        to_plot$x <- to_plot$x + 2.5
 	} else if (type == 'lmt') {
-		# label angle
 		angle <- 90
 		xlabel <- "Expected number of state transitions"
-	}
+	} else if (type == 'mr') {
+        angle <- 90
+        xlabel <- "Mutation rate"
+    }
 
 	melted <- melt(to_plot, id=c('x', 'alpha'))
 
@@ -92,6 +100,10 @@ sfreemap.plot_tree <- function(map, state, type='emr'
                                 , tip_states=NULL, fsize=0.7, ftype="i"
                                 , lwd=3) {
 
+    if (!type %in% c('lmt', 'emr', 'mr')) {
+        stop(paste('Unrecognized type', type))
+    }
+
     tree <- map$base_tree
     map <- map[[type]]
 	ticks <- get_ticks(map, type, number_of_ticks)
@@ -104,9 +116,9 @@ sfreemap.plot_tree <- function(map, state, type='emr'
     # all but the root node
     all_nodes <- unique(tree$edge[,2])
 
-    if (type == 'lmt') {
+    if (type %in% c('mr', 'lmt')) {
         color_names <- as.character(format(ticks, digits=4, trim=TRUE, scientific=TRUE))
-    } else {
+    } else if (type == 'emr') {
         color_names <- as.character(ticks)
     }
 
@@ -155,7 +167,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 	plotSimmap(tree, colors=colors, fsize=fsize, ftype=ftype, ylim=ylim, lwd=lwd)
 
     vertical <- FALSE
-    if (type == 'lmt') {
+    if (type %in% c('mr', 'lmt')) {
         vertical <- TRUE
     }
 
@@ -270,12 +282,12 @@ get_ticks <- function(data, type, number_of_ticks) {
 	# first divide the dataset
 	if (type == 'emr') {
 		ticks <- seq(0, 100, 100/number_of_ticks)
-	} else if (type == 'lmt') {
+	} else if (type %in% c('lmt', 'mr')) {
 		begin <- min(data, na.rm=TRUE)
 		end <- max(data, na.rm=TRUE)
 		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
 	} else {
-		stop(paste('unrecognized type:', type))
+		stop(paste('Unrecognized type:', type))
 	}
 	return(ticks)
 }
