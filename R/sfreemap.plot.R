@@ -100,6 +100,11 @@ sfreemap.plot_tree <- function(map, state, type='emr'
     # all but the root node
     all_nodes <- unique(tree$edge[,2])
 
+    if (type == 'lmt') {
+        color_names <- as.character(format(ticks, digits=4, trim=TRUE, scientific=TRUE))
+    } else {
+        color_names <- as.character(ticks)
+    }
 
 	for (node in all_nodes) {
 
@@ -108,7 +113,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 		if (data$final_conf_level >= conf_level) {
 			value <- freq_to_prob(data$final_prob[data$final_idx])
 			# workaround to set <NA> as a character
-			tmp <- as.character((as.numeric(names(value))-1) * 5)
+			tmp <- as.character(as.numeric(names(value)))
 			tmp[is.na(tmp)] <- 'NA'
 			names(value) <- tmp
 
@@ -116,6 +121,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
             # branch. The more relevant probabilities are the ones either closer
             # to zero or to one hundred percent
             tmp <- as.numeric(tmp)
+            names(value) <- color_names[data$final_idx]
             if (tmp[1] < 100 - tail(tmp, n=1)) {
                value <- value[order(tmp, decreasing=TRUE)]
             }
@@ -132,7 +138,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
     }
 
 	# color grandient
-	colors <- get_color_pallete()
+	colors <- get_color_pallete(color_names)
 
 	# make room for the legend
 	ylim <- c(-2, length(tree$tip.label))
@@ -144,7 +150,12 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 
 	plotSimmap(tree, colors=colors, fsize=fsize, ftype=ftype, ylim=ylim, lwd=lwd)
 
-	sfreemap.add.legend(colors=colors)
+    vertical <- FALSE
+    if (type == 'lmt') {
+        vertical <- TRUE
+    }
+
+	sfreemap.add.legend(colors=colors, vertical=vertical)
 
 	return(tree)
 }
@@ -165,7 +176,7 @@ join_tip_states <- function(tree, tip_states) {
     return (res)
 }
 
-get_color_pallete <- function() {
+get_color_pallete <- function(color_names) {
     red <- c(1,1,2,2,3,4,5,7,9,12,16,21,28,37,48,64,84,111,147,193,255)
     green <- c(0,48,92,130,163,191,214,232,245,252,255,252,245,232,214,191,163,130,92,48,0)
     blue <- c(255,193,147,111,84,64,48,37,28,21,16,12,9,7,5,4,3,2,2,1,1)
@@ -173,9 +184,8 @@ get_color_pallete <- function() {
     colors <- rgb(red, green, blue, maxColorValue=255)
 
     # set color names
-    color_names <- c(as.character(seq(0, 100, 5)), 'NA')
-    colors['NA'] <- '#B3B3B3FF' # grey 30%
     names(colors) <- color_names
+    colors['NA'] <- '#B3B3B3FF' # grey 30%
 
     return (colors)
 }
@@ -224,7 +234,7 @@ gen_group <- function(data, ticks) {
 		return (ifelse(x %in% ng, group[[as.character(x)]], 0))
 	})
 	res <- c(res, tail(group,1)) # add na again...
-	names(res) <- c(1:length(ticks), 'NA')
+	names(res) <- c(ticks, 'NA')
 	return(res)
 }
 
@@ -252,13 +262,13 @@ get_max_percent <- function(prob, limit) {
 	return(res)
 }
 
-get_ticks <- function(node, type, number_of_ticks) {
+get_ticks <- function(data, type, number_of_ticks) {
 	# first divide the dataset
 	if (type == 'emr') {
 		ticks <- seq(0, 100, 100/number_of_ticks)
 	} else if (type == 'lmt') {
-		begin <- min(node, na.rm=TRUE)
-		end <- max(node, na.rm=TRUE)
+		begin <- min(data, na.rm=TRUE)
+		end <- max(data, na.rm=TRUE)
 		ticks <- seq(begin, end, (end-begin)/number_of_ticks)
 	} else {
 		stop(paste('unrecognized type:', type))

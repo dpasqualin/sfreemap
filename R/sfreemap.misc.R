@@ -8,34 +8,34 @@ sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
       shape <- list(...)$shape
     }
 
+    if (hasArg(fsize)) {
+        fsize <- list(...)$fsize
+    } else {
+        fsize <- ifelse(isTRUE(vertical), 0.7, 1)
+    }
+
+    h <- fsize * strheight(LETTERS[1])
+    usr <- par()$usr
+    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.5
+
     if (prompt) {
         cat("Click where you want to draw the legend\n")
         pos <- unlist(locator(1))
         x <- pos[1]
         y <- pos[2]
     } else {
-        x <- ifelse(hasArg(x), list(...)$x, 0)
+        x <- ifelse(hasArg(x), list(...)$x, -4)
         y <- ifelse(hasArg(y), list(...)$y, -4)
-    }
-
-    fsize <- 1
-    if (hasArg(fsize)) {
-        fsize <- list(...)$fsize
     }
 
     if (is.null(leg)) {
       leg <- names(colors)
     }
 
-    h <- fsize*strheight(LETTERS[1])
-
-    usr <- par()$usr
-    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.5
-
     if (vertical) {
-        y <- y-0:(length(leg)-1)*1.5*h
-        x <- rep(x+w/2,length(y))
-        text(x+w, y, leg, pos=4, cex=fsize/par()$cex)
+        y <- y+0:(length(leg)-1)*1.5*h
+        x <- rep(x,length(y))
+        text(x+w/2, y+0.5, leg, pos=4, cex=fsize/par()$cex)
     } else {
         x <- x + (0:(length(leg)-2) * w)
         # add NA a bit separate from the rest
@@ -43,15 +43,13 @@ sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
         y <- rep(y,length(x))
 
         labels <- leg
-        # remove some labels, to make it more compact
-        #suppressWarnings(labels[as.numeric(labels) %% 10 != 0] <- '')
 
         text(x, y+0.5, labels, pos=3, cex=0.7*fsize)
     }
 
     if (shape=="rect") {
-        rects <- cbind(rep(w, length(x)), rep(h*0.75, length(x)))
-        y <- y + h*0.5
+        rects <- cbind(rep(w, length(x)), rep(h*1, length(x)))
+        y <- y + h/2
         symbols(x, y, rectangles=rects, bg=colors, add=TRUE, inches=FALSE)
     } else if (shape=="square") {
         symbols(x, y, squares=rep(w,length(x)), bg=colors, add=TRUE, inches=FALSE)
