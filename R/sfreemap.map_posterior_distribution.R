@@ -5,12 +5,14 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches
 
     # create tree dimentional matrix for the result
     states <- colnames(base_tree$mapped.edge)
+    transitions <- colnames(base_tree$mapped.edge.lmt)
     tree_names <- 1:length(trees)
-    result_dim <- c(length(trees), length(states), max(all_nodes))
+    result_emr_dim <- c(length(trees), length(states), max(all_nodes))
+    result_lmt_dim <- c(length(trees), length(transitions), max(all_nodes))
     result <- list(
         base_tree = base_tree
-        , emr = array(NA, result_dim, dimnames=list(tree_names, states))
-        , lmt = array(NA, result_dim, dimnames=list(tree_names, states))
+        , emr = array(NA, result_emr_dim, dimnames=list(tree_names, states))
+        , lmt = array(NA, result_lmt_dim, dimnames=list(tree_names, transitions))
     )
 
     # correspondent nodes of base_tree in tree

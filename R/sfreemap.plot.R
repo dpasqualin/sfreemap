@@ -97,6 +97,10 @@ sfreemap.plot_tree <- function(map, state, type='emr'
 	ticks <- get_ticks(map, type, number_of_ticks)
 	tree$maps <- list()
 
+    if (!state %in% names(map[1,,1])) {
+        stop ('Unrecognized state')
+    }
+
     # all but the root node
     all_nodes <- unique(tree$edge[,2])
 
