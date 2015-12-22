@@ -263,6 +263,40 @@ Example considering all nodes and all states:
 sfreemap.plot_distribution(mpd, type='lmt')
 ```
 
+# Analysing mapped data by plotting a tree
+
+Sfreemap can show up mutation rate and dwelling times in a graphical representation
+of a tree. Fist let's generate a mapping for all trees of *sfreemap.corals.trees*
+dataset, and then map the postero distribution (as we did before).
+
+```{r, fig.width=7, fig.height=14}
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical')
+mpd <- sfreemap.map_posterior_distribution(data[[1]], data)
+```
+Now we can use the function below to plot a tree showing the distribution of time
+spent by a particular state (second argument). As the legend says, red shifted
+colors indicates that the state was more present, and on the other side of the
+spectrum, blue indicates less time spent for the state on that particular branch.
+
+```{r, fig.width=7, fig.height=12}
+sfreemap.plot_tree(mpd, 'colonial', type='emr', conf_level=95)
+```
+
+Now the same for the other state:
+
+```{r, fig.width=6, fig.height=12}
+sfreemap.plot_tree(mpd, 'solitary', type='emr', conf_level=95)
+```
+
+It is also possible to analyse the number of transitions on each branch by
+changing the ``type'' parameter to ``lmt'' and specifying a transition between
+two state instead of just one state (comma separated). In this case the legend
+doesn't show a percentage, but the absolute expected value.
+
+```{r, fig.width=6, fig.height=12}
+sfreemap.plot_tree(mpd, 'colonial,solitary', type='lmt', conf_level=95)
+```
+
 # Correlation matrix
 
 It is possible to plot a correlation matrix to compare results provided by
