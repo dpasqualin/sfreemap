@@ -153,9 +153,7 @@ tools to make this task a lot easier.
 
 For the examples we will map again the *sfreemap.corals.trees* dataset, but this time
 scaling the trees to have the same distance from the root to the terminals. This is
-important for analysing the number of transitions considering the same proportion on all trees,
-avoiding the case where a tree with higher depth showing a higher number of transitions, but
-actually having the same number as a "shorter" tree, which just happen to be in a different scale.
+important for analysing the number of transitions considering the same proportion on all trees.
 
 ```
 trees <- sfreemap.rescale(sfreemap.corals.trees, height=1)
@@ -166,9 +164,12 @@ Now we will run the function below, which analysis mapping results on all trees,
 an object with the dwelling times and the number of transitions for every node
 of every tree. It tries to match nodes using function *matchNodes* from *phytools*
 packages, which consider two nodes to be the same when they share the same taxa.
+If you haven't rescaled the trees before but want to do it now, just pass on
+*scale.trees=1* (or any other value) to the function below.
 
 ```{r}
-mpd <- sfreemap.map_posterior_distribution(data[[1]], data, scale.branches=TRUE, parallel=FALSE)
+base_tree <- data[[1]]
+mpd <- sfreemap.map_posterior_distribution(base_tree, data, scale.branches=TRUE, parallel=FALSE)
 ```
 
 The first parameter of the function is the so called "base tree", the tree on which the
@@ -249,18 +250,28 @@ As stated before, it doesn't make sense to scale the number of transitions accor
 the absolute values are represented in the x-axis.
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 89, type='lmt')
+sfreemap.plot_distribution(mpd, 85, type='lmt')
 ```
 
-Needless to say, but you can plot a single state here in the same way as before:
+Needless to say, but you can plot a single state transition here:
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 89, states='solitary', type='lmt')
+sfreemap.plot_distribution(mpd, 85, states='solitary,colonial', type='lmt')
 ```
 Example considering all nodes and all states:
 
 ```{r, fig.width=6, fig.height=4}
 sfreemap.plot_distribution(mpd, type='lmt')
+```
+
+## Expected mutation rate for states of one or more branches across all trees
+
+As the last type of distribution plot, *mr (mutation rate)* shows the rate of mutation
+for states per branch. Parameters are very similar than before. It is possible to
+filter by trees, nodes and/or states.
+
+```{r, fig.width=6, fig.height=4}
+sfreemap.plot_distribution(mpd, type='mr')
 ```
 
 # Analysing mapped data by plotting a tree
