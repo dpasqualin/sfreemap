@@ -16,10 +16,7 @@ You need to have R installed on your system. If you are using a debian/ubuntu ba
 
 ### Install
 
-Before installing *sfreemap* make sure you have the package *phytools*:
-
 ```
-install.packages('phytools')
 install.packages('devtools')
 install_github('dpasqualin/sfreemap')
 ```
@@ -34,3 +31,14 @@ R CMD check sfreemap && R CMD build sfreemap && R CMD INSTALL sfreemap
 
 If you choose to install using the command above, the documentation will be
 available in the directory `sfreemap.Rcheck`.
+
+Some people might have problems with package `Briostrings` as well, which is
+a dependency of `phangorn`, which is a dependency of `sfreemap`. If you do,
+the official Biostrings website suggest the following commands to install
+it:
+
+```
+## try http:// if https:// URLs are not supported
+source('https://bioconductor.org/biocLite.R')
+biocLite('Biostrings')
+```
