@@ -85,6 +85,22 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
     return (res)
 }
 
+# return t1 only with tips that are in t2 too
+# optionally reroot at node 'reroot'
+sfreemap.pruning <- function(t1, t2, reroot=NULL) {
+    tips_to_remove <- t1$tip.label[!t1$tip.label %in% t2$tip.label]
+    t <- drop.tip(t1, tips_to_remove)
+    if (!is.null(reroot)) {
+        if (reroot %in% t$tip.label) {
+            t <- root(t, reroot)
+        } else {
+            msg <- paste('trying to root tree but tip', reroot, 'doesn\'t exist')
+            stop(msg)
+        }
+    }
+    return(t)
+}
+
 describe.sfreemap <- function (tree, ...) {
     if (inherits(tree, "phylo")) {
         lmt <- colSums(tree$mapped.edge.lmt)

@@ -8,6 +8,7 @@ export(sfreemap.map
        , sfreemap.plot_distribution
        , sfreemap.plot_tree
        , sfreemap.correlation
+       , sfreemap.pruning
        , add.data
        , plot
        , reorderSfreemap
