@@ -18,7 +18,7 @@ vignette: >
 knitr::opts_chunk$set(fig.width=7, fig.height=10, fig.path="figs/")
 options(digits = 4)
 require(ape)
-require(sfreemapc)
+require(sfreemap)
 
 # load datasets
 data(sfreemap.corals.trees)
@@ -37,17 +37,17 @@ Put some description here so people don't lose their minds...
 To install the development version from github:
 ```{r, eval=FALSE}
 library(devtools)
-install_github("dpasqualin/sfreemapc")
+install_github("dpasqualin/sfreemap")
 ```
 
 The stable version can be installed from CRAN using:
 ```{r, eval=FALSE}
-install.packages(sfreemapc)
+install.packages(sfreemap)
 ```
 
 Then, to load the package, use:
 ```{r, eval=FALSE}
-library("sfreemapc")
+library("sfreemap")
 ```
 
 # New object classes
@@ -280,7 +280,7 @@ Sfreemap can show up mutation rate and dwelling times in a graphical representat
 of a tree. Fist let's generate a mapping for all trees of *sfreemap.corals.trees*
 dataset, and then map the postero distribution (as we did before).
 
-```{r, fig.width=7, fig.height=14}
+```{r, fig.width=10, fig.height=14}
 data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical')
 mpd <- sfreemap.map_posterior_distribution(data[[1]], data)
 ```
@@ -289,13 +289,13 @@ spent by a particular state (second argument). As the legend says, red shifted
 colors indicates that the state was more present, and on the other side of the
 spectrum, blue indicates less time spent for the state on that particular branch.
 
-```{r, fig.width=7, fig.height=12}
+```{r, fig.width=10, fig.height=12}
 sfreemap.plot_tree(mpd, 'colonial', type='emr', conf_level=95)
 ```
 
 Now the same for the other state:
 
-```{r, fig.width=6, fig.height=12}
+```{r, fig.width=10, fig.height=12}
 sfreemap.plot_tree(mpd, 'solitary', type='emr', conf_level=95)
 ```
 
@@ -304,7 +304,7 @@ changing the ``type'' parameter to ``lmt'' and specifying a transition between
 two state instead of just one state (comma separated). In this case the legend
 doesn't show a percentage, but the absolute expected value.
 
-```{r, fig.width=6, fig.height=12}
+```{r, fig.width=10, fig.height=12}
 sfreemap.plot_tree(mpd, 'colonial,solitary', type='lmt', conf_level=95)
 ```
 

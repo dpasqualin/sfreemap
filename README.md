@@ -16,21 +16,21 @@ You need to have R installed on your system. If you are using a debian/ubuntu ba
 
 ### Install
 
-Before installing *sfreemapc* make sure you have the package *phytools*:
+Before installing *sfreemap* make sure you have the package *phytools*:
 
 ```
 install.packages('phytools')
 install.packages('devtools')
-install_github('dpasqualin/sfreemapc')
+install_github('dpasqualin/sfreemap')
 ```
 
 If you have troubles installing the `devtools` package, try downloading
-`sfreemapc` and then building and installing it using the following commands:
+`sfreemap` and then building and installing it using the following commands:
 
 ```
-git clone https://github.com/dpasqualin/sfreemapc.git
-R CMD check sfreemapc && R CMD build sfreemapc && R CMD INSTALL sfreemapc
+git clone https://github.com/dpasqualin/sfreemap.git
+R CMD check sfreemap && R CMD build sfreemap && R CMD INSTALL sfreemap
 ```
 
 If you choose to install using the command above, the documentation will be
-available in the directory `sfreemapc.Rcheck`.
+available in the directory `sfreemap.Rcheck`.

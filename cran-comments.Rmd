@@ -1,6 +1,6 @@
 Dear CRAN maintainer,
 
-I have just submitted a new version of the package *sfreemapc* to CRAN.
+I have just submitted a new version of the package *sfreemap* to CRAN.
 This version passes the check on the following R version:
 ```{r Rversion}
 R.version

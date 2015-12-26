@@ -2,18 +2,18 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 transition_probabilities <- function(Q_eigen, edges, omp) {
-    .Call('sfreemapc_transition_probabilities', PACKAGE = 'sfreemapc', Q_eigen, edges, omp)
+    .Call('sfreemap_transition_probabilities', PACKAGE = 'sfreemap', Q_eigen, edges, omp)
 }
 
 func_H <- function(multiplier, Q_eigen, tree, tree_extra, omp) {
-    .Call('sfreemapc_func_H', PACKAGE = 'sfreemapc', multiplier, Q_eigen, tree, tree_extra, omp)
+    .Call('sfreemap_func_H', PACKAGE = 'sfreemap', multiplier, Q_eigen, tree, tree_extra, omp)
 }
 
 posterior_restricted_moment <- function(m, tree, tree_extra, map, omp) {
-    .Call('sfreemapc_posterior_restricted_moment', PACKAGE = 'sfreemapc', m, tree, tree_extra, map, omp)
+    .Call('sfreemap_posterior_restricted_moment', PACKAGE = 'sfreemap', m, tree, tree_extra, map, omp)
 }
 
 fractional_likelihoods <- function(tree, tree_extra, q, q_eigen, prior, trans_prob, tol) {
-    .Call('sfreemapc_fractional_likelihoods', PACKAGE = 'sfreemapc', tree, tree_extra, q, q_eigen, prior, trans_prob, tol)
+    .Call('sfreemap_fractional_likelihoods', PACKAGE = 'sfreemap', tree, tree_extra, q, q_eigen, prior, trans_prob, tol)
 }
 

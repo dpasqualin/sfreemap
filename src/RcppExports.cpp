@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // transition_probabilities
 arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp);
-RcppExport SEXP sfreemapc_transition_probabilities(SEXP Q_eigenSEXP, SEXP edgesSEXP, SEXP ompSEXP) {
+RcppExport SEXP sfreemap_transition_probabilities(SEXP Q_eigenSEXP, SEXP edgesSEXP, SEXP ompSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -21,7 +21,7 @@ END_RCPP
 }
 // func_H
 arma::cube func_H(arma::mat multiplier, List Q_eigen, List tree, List tree_extra, int omp);
-RcppExport SEXP sfreemapc_func_H(SEXP multiplierSEXP, SEXP Q_eigenSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP ompSEXP) {
+RcppExport SEXP sfreemap_func_H(SEXP multiplierSEXP, SEXP Q_eigenSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP ompSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -36,7 +36,7 @@ END_RCPP
 }
 // posterior_restricted_moment
 arma::vec posterior_restricted_moment(NumericVector m, List tree, List tree_extra, List map, int omp);
-RcppExport SEXP sfreemapc_posterior_restricted_moment(SEXP mSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP mapSEXP, SEXP ompSEXP) {
+RcppExport SEXP sfreemap_posterior_restricted_moment(SEXP mSEXP, SEXP treeSEXP, SEXP tree_extraSEXP, SEXP mapSEXP, SEXP ompSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
@@ -51,7 +51,7 @@ END_RCPP
 }
 // fractional_likelihoods
 List fractional_likelihoods(List tree, List tree_extra, arma::mat q, List q_eigen, arma::rowvec prior, NumericVector trans_prob, double tol);
-RcppExport SEXP sfreemapc_fractional_likelihoods(SEXP treeSEXP, SEXP tree_extraSEXP, SEXP qSEXP, SEXP q_eigenSEXP, SEXP priorSEXP, SEXP trans_probSEXP, SEXP tolSEXP) {
+RcppExport SEXP sfreemap_fractional_likelihoods(SEXP treeSEXP, SEXP tree_extraSEXP, SEXP qSEXP, SEXP q_eigenSEXP, SEXP priorSEXP, SEXP trans_probSEXP, SEXP tolSEXP) {
 BEGIN_RCPP
     Rcpp::RObject __result;
     Rcpp::RNGScope __rngScope;
