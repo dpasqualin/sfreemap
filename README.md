@@ -12,8 +12,6 @@ You need to have R installed on your system. If you are using a debian/ubuntu ba
 
 `sudo apt-get install r-base-core texlive-full`
 
-###  R Dependencies
-
 ### Install
 
 ```
@@ -26,7 +24,7 @@ If you have troubles installing the `devtools` package, try downloading
 
 ```
 git clone https://github.com/dpasqualin/sfreemap.git
-R CMD check sfreemap && R CMD build sfreemap && R CMD INSTALL sfreemap
+R CMD build sfreemap && R CMD INSTALL sfreemap
 ```
 
 If you choose to install using the command above, the documentation will be
