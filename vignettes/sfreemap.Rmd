@@ -3,14 +3,18 @@ title: "Sfreemap"
 author: "Diego Pasqualin, Marcos Barbeitos and Fabiano Silva"
 date: "`r Sys.Date()`"
 output:
+    pdf_document:
+        toc: true
+        number_sections: true
     html_document:
         toc: true
         theme: spacelab
         highligh: textmate
 vignette: >
+  %\VignetteIndexEntry{sfreemap}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteIndexEntry{sfreemap: Simulation free stochastic mapping for Phylogenetic data.}
-  \usepackage[utf8]{inputenc}
+  %\usepackage[utf8]{inputenc}
 ---
 
 ```{r, echo=FALSE}
@@ -300,7 +304,7 @@ sfreemap.plot_tree(mpd, 'solitary', type='emr', conf_level=95)
 ```
 
 It is also possible to analyse the number of transitions on each branch by
-changing the ``type'' parameter to ``lmt'' and specifying a transition between
+changing the *type* parameter to *lmt* and specifying a transition between
 two state instead of just one state (comma separated). In this case the legend
 doesn't show a percentage, but the absolute expected value.
 
