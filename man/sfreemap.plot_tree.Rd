@@ -1,14 +1,14 @@
-\name{sfreemap.plot_tree}
-\alias{sfreemap.plot_tree}
+\name{plot_distribution_tree}
+\alias{plot_distribution_tree}
 \title{Plot the dwelling times distribution of a state in a given tree}
 \usage{
-sfreemap.plot_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
+plot_distribution_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
                     , tip_states=NULL, fsize=0.7, ftype="i", lwd=3)
 }
 \examples{
 sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
-tree <- sfreemap.plot_tree(map, state='colonial', tip_states=sfreemap.corals.tips)
+tree <- plot_distribution_tree(map, state='colonial', tip_states=sfreemap.corals.tips)
 }
 \arguments{
     \item{map}{A result of a \link{map_posterior_distribution} execution;}

@@ -6,7 +6,7 @@ export(sfreemap.map
        , sfreemap.read_tips
        , map_posterior_distribution
        , plot_distribution_chart
-       , sfreemap.plot_tree
+       , plot_distribution_tree
        , sfreemap.pruning
        , correlation
        , plot.correlation

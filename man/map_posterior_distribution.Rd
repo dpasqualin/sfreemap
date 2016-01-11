@@ -23,7 +23,7 @@ map_posterior_distribution(base_tree, trees, scale.branches=TRUE
 \description{
     This function will compared the \code{trees} against the \code{base_tree} and return an object that can be used with
     \link{plot_distribution_chart} to plot the posterior distribution for
-    dwelling times and number of transistions on a particular node and \link{sfreemap.plot_tree}, which plots the posterior distribution in the entire tree.
+    dwelling times and number of transistions on a particular node and \link{plot_distribution_tree}, which plots the posterior distribution in the entire tree.
 }
 %\details{
 %    Details

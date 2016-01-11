@@ -293,13 +293,13 @@ colors indicates that the state was more present, and on the other side of the
 spectrum, blue indicates less time spent for the state on that particular branch.
 
 ```{r, fig.width=10, fig.height=12}
-sfreemap.plot_tree(mpd, 'colonial', type='emr', conf_level=95)
+plot_distribution_tree(mpd, 'colonial', type='emr', conf_level=95)
 ```
 
 Now the same for the other state:
 
 ```{r, fig.width=10, fig.height=12}
-sfreemap.plot_tree(mpd, 'solitary', type='emr', conf_level=95)
+plot_distribution_tree(mpd, 'solitary', type='emr', conf_level=95)
 ```
 
 It is also possible to analyse the number of transitions on each branch by
@@ -308,7 +308,7 @@ two state instead of just one state (comma separated). In this case the legend
 doesn't show a percentage, but the absolute expected value.
 
 ```{r, fig.width=10, fig.height=12}
-sfreemap.plot_tree(mpd, 'colonial,solitary', type='lmt', conf_level=95)
+plot_distribution_tree(mpd, 'colonial,solitary', type='lmt', conf_level=95)
 ```
 
 # Correlation matrix
