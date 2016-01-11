@@ -1,6 +1,6 @@
 # adds legend to an open stochastic map style plot
 # modified from phytools (written by Liam J. Revell 2013)
-sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
+add_subtitle <- function(leg=NULL, colors, prompt=FALSE
                                 , vertical=FALSE, ...) {
 
     shape <- "rect"

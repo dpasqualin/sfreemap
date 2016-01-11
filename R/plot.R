@@ -171,7 +171,7 @@ plot_distribution_tree <- function(map, state, type='emr'
         vertical <- TRUE
     }
 
-	sfreemap.add.legend(colors=colors, vertical=vertical)
+	add_subtitle(colors=colors, vertical=vertical)
 
 	return(tree)
 }
