@@ -205,9 +205,9 @@ rescale <- function(tree, height=NULL, parallel=FALSE) {
     if (inherits(tree, "multiPhylo")){
         tree <- unclass(tree)
         if (parallel==TRUE && !on_windows()) {
-            tree <- mclapply(tree, sfreemap.rescale, height, mc.cores=detectCores())
+            tree <- mclapply(tree, rescale, height, mc.cores=detectCores())
         } else {
-            tree <- lapply(tree, sfreemap.rescale, height)
+            tree <- lapply(tree, rescale, height)
         }
         class(tree) <- "multiPhylo"
         return (tree)
