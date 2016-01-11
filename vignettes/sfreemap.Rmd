@@ -159,7 +159,7 @@ scaling the trees to have the same distance from the root to the terminals. This
 important for analysing the number of transitions considering the same proportion on all trees.
 
 ```
-trees <- sfreemap.rescale(sfreemap.corals.trees, height=1)
+trees <- rescale(sfreemap.corals.trees, height=1)
 data <- sfreemap.map(trees, sfreemap.corals.tips)
 ```
 

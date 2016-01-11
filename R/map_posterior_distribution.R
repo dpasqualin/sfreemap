@@ -23,7 +23,7 @@ map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, sc
     mymatch <- function(tree) {
 
         if (is.numeric(scale.trees)) {
-            tree <- sfreemap.rescale(tree, scale.trees)
+            tree <- rescale(tree, scale.trees)
         }
 
         # match of internal nodes

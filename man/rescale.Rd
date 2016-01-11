@@ -1,8 +1,8 @@
-\name{sfreemap.rescale}
-\alias{sfreemap.rescale}
+\name{rescale}
+\alias{rescale}
 \title{Rescale branches of a \code{phylo} or \code{multiPhylo} object to a given height}
 \usage{
-sfreemap.rescale(tree, height=NULL, parallel=FALSE)
+rescale(tree, height=NULL, parallel=FALSE)
 }
 \arguments{
     \item{tree}{One or more trees, result of a \link{sfreemap.map} execution;}

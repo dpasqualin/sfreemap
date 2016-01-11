@@ -201,7 +201,7 @@ read_fasta <- function(file, ensure_dna=FALSE) {
 
 ## based on function to rescale simmap style trees
 ## written by Liam J. Revell 2012, 2013, 2014, 2015
-sfreemap.rescale <- function(tree, height=NULL, parallel=FALSE) {
+rescale <- function(tree, height=NULL, parallel=FALSE) {
     if (inherits(tree, "multiPhylo")){
         tree <- unclass(tree)
         if (parallel==TRUE && !on_windows()) {
