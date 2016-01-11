@@ -1,8 +1,8 @@
-\name{sfreemap.read_tips}
-\alias{sfreemap.read_tips}
+\name{read_tips}
+\alias{read_tips}
 \title{Read the tip states and labels from a file}
 \usage{
-sfreemap.read_tips(file, character=1, sep="\t")
+read_tips(file, character=1, sep="\t")
 }
 \arguments{
     \item{file}{The path to the file containing the data.}

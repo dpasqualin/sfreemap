@@ -60,7 +60,7 @@ add_subtitle <- function(leg=NULL, colors, prompt=FALSE
     }
 }
 
-sfreemap.read_tips <- function(file, character=1, sep="\t") {
+read_tips <- function(file, character=1, sep="\t") {
 
     data <- read.csv(file, sep=sep, header=FALSE, colClasses = "character"
                          , fill=FALSE, strip.white = TRUE)
@@ -87,7 +87,7 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
 
 # return t1 only with tips that are in t2 too
 # optionally reroot at node 'reroot'
-sfreemap.pruning <- function(t1, t2, reroot=NULL) {
+pruning <- function(t1, t2, reroot=NULL) {
     tips_to_remove <- t1$tip.label[!t1$tip.label %in% t2$tip.label]
     t <- drop.tip(t1, tips_to_remove)
     if (!is.null(reroot)) {

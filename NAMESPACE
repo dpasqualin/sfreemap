@@ -3,11 +3,11 @@ useDynLib(sfreemap)
 importFrom(Rcpp, evalCpp)
 
 export(sfreemap.map
-       , sfreemap.read_tips
+       , read_tips
        , map_posterior_distribution
        , plot_distribution_chart
        , plot_distribution_tree
-       , sfreemap.pruning
+       , pruning
        , correlation
        , plot.correlation
        , reorder.sfreemap
