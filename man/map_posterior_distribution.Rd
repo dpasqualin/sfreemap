@@ -8,7 +8,7 @@ map_posterior_distribution(base_tree, trees, scale.branches=TRUE
 \examples{
     sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
     map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
-    p <- sfreemap.plot_distribution(map, 160)
+    p <- plot_distribution_chart(map, 160)
     print(p)
 }
 \arguments{
@@ -22,7 +22,7 @@ map_posterior_distribution(base_tree, trees, scale.branches=TRUE
 }
 \description{
     This function will compared the \code{trees} against the \code{base_tree} and return an object that can be used with
-    \link{sfreemap.plot_distribution} to plot the posterior distribution for
+    \link{plot_distribution_chart} to plot the posterior distribution for
     dwelling times and number of transistions on a particular node and \link{sfreemap.plot_tree}, which plots the posterior distribution in the entire tree.
 }
 %\details{

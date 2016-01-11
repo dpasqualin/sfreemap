@@ -1,4 +1,4 @@
-sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
+plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
 

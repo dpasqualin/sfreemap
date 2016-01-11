@@ -1,14 +1,14 @@
-\name{sfreemap.plot_distribution}
-\alias{sfreemap.plot_distribution}
+\name{plot_distribution_chart}
+\alias{plot_distribution_chart}
 \title{Plot the distribution of states in a given node}
 \usage{
-sfreemap.plot_distribution(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
+plot_distribution_chart(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                        , number_of_ticks=20, type='emr')
 }
 \examples{
 sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
-p <- sfreemap.plot_distribution(map, 160)
+p <- plot_distribution_chart(map, 160)
 print(p)
 }
 \arguments{

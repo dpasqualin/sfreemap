@@ -5,7 +5,7 @@ importFrom(Rcpp, evalCpp)
 export(sfreemap.map
        , sfreemap.read_tips
        , map_posterior_distribution
-       , sfreemap.plot_distribution
+       , plot_distribution_chart
        , sfreemap.plot_tree
        , sfreemap.pruning
        , correlation

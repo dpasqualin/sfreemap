@@ -199,7 +199,7 @@ the default values for arguments *conf_level*, *number_of_ticks* and *type*,
 so you can omit it and get the same results):
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 89, conf_level=95, number_of_ticks=20, type='emr')
+plot_distribution_chart(mpd, 89, conf_level=95, number_of_ticks=20, type='emr')
 ```
 
 The interpretation is as follows: the *colonial* state was present with 95% certainty
@@ -212,7 +212,7 @@ particular branch was present on 100% of the trees given as argument to the func
 It is also possible to plot only one of the states by supplying the *states* argument.
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 89, states='colonial')
+plot_distribution_chart(mpd, 89, states='colonial')
 ```
 
 ## Expected dwelling times for states for all branches across all trees
@@ -221,14 +221,14 @@ Quite easy to do that, just omit the *node* parameter and the function will cons
 the distribution over all nodes.
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, type='emr')
+plot_distribution_chart(mpd, type='emr')
 ```
 
 If you want to plot the distribution over a specific set of nodes just pass it
 as a vector, like this:
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, nodes=c(89,90), type='emr')
+plot_distribution_chart(mpd, nodes=c(89,90), type='emr')
 ```
 
 ## Expected dwelling times for states for all branches on a group of trees
@@ -240,7 +240,7 @@ a single tree, pass on the argument *trees*, which work in the same way as
 ```{r, fig.width=6, fig.height=4}
 # get the odd trees
 trees <- seq(1, length(sfreemap.corals.trees), 2)
-sfreemap.plot_distribution(mpd, nodes=89, trees=trees)
+plot_distribution_chart(mpd, nodes=89, trees=trees)
 ```
 
 ## Expected number of transitions for states of one or more branches across all trees
@@ -253,18 +253,18 @@ As stated before, it doesn't make sense to scale the number of transitions accor
 the absolute values are represented in the x-axis.
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 85, type='lmt')
+plot_distribution_chart(mpd, 85, type='lmt')
 ```
 
 Needless to say, but you can plot a single state transition here:
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, 85, states='solitary,colonial', type='lmt')
+plot_distribution_chart(mpd, 85, states='solitary,colonial', type='lmt')
 ```
 Example considering all nodes and all states:
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, type='lmt')
+plot_distribution_chart(mpd, type='lmt')
 ```
 
 ## Expected mutation rate for states of one or more branches across all trees
@@ -274,7 +274,7 @@ for states per branch. Parameters are very similar than before. It is possible t
 filter by trees, nodes and/or states.
 
 ```{r, fig.width=6, fig.height=4}
-sfreemap.plot_distribution(mpd, type='mr')
+plot_distribution_chart(mpd, type='mr')
 ```
 
 # Analysing mapped data by plotting a tree
