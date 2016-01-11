@@ -1,8 +1,8 @@
-\name{sfreemap.map}
-\alias{sfreemap.map}
+\name{sfreemap}
+\alias{sfreemap}
 \title{Simulation free stochastic character mapping on a phylogenetic tree}
 \usage{
-sfreemap.map(tree, tip_states, Q=NULL, type="standard", model="SYM"
+sfreemap(tree, tip_states, Q=NULL, type="standard", model="SYM"
     , method="empirical", ...)
 
 }
@@ -91,7 +91,7 @@ a fixed value of the transition matrix, Q, instead of by sampling Q from its pos
  It can be called with a combination of parameters, much like any vectorized
  function in R. In other words, calling it with \code{N} trees (\code{multiPhylo}
  object) and a single rate matrix \code{Q} will return \code{N} mapped trees.
- Calling \code{sfreemap.map} with a single tree (\code{phylo} object) and \code{M}
+ Calling \code{sfreemap} with a single tree (\code{phylo} object) and \code{M}
  \code{Q} matrices will result in \code{M} mapped trees, replicas of the single
  tree with the algorithm applied to it using all \code{Q} matrices. Same logic
  applies to \code{prior} as well. It is important to note though that it you

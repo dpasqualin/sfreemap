@@ -6,7 +6,7 @@ plot_distribution_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
                     , tip_states=NULL, fsize=0.7, ftype="i", lwd=3)
 }
 \examples{
-sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
+sm <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
 tree <- plot_distribution_tree(map, state='colonial', tip_states=sfreemap.corals.tips)
 }
@@ -17,7 +17,7 @@ tree <- plot_distribution_tree(map, state='colonial', tip_states=sfreemap.corals
 	\code{lmt} for labelled makov transistions (number of transitions). Defaults to \code{emr};}
 	\item{conf_level}{An integer representing the confidence level desired, ranging from 0 to 100. Defaults to 95 percent;}
 	\item{number_of_ticks}{The number of intervals in which the data will be divided. Defaults to 20;}
-    \item{tip_states}{tip states as provided to \code{\link{sfreemap.map}};}
+    \item{tip_states}{tip states as provided to \code{\link{sfreemap}};}
     \item{fsize}{relative font size for tip labels;}
     \item{ftype}{font type - options are "reg", "i" (italics), "b" (bold), or "bi" (bold-italics);}
     \item{lwd}{line width for three branches.}

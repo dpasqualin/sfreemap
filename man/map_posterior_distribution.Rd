@@ -6,14 +6,14 @@ map_posterior_distribution(base_tree, trees, scale.branches=TRUE
                                     , scale.trees=FALSE, parallel=TRUE)
 }
 \examples{
-    sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
+    sm <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
     map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
     p <- plot_distribution_chart(map, 160)
     print(p)
 }
 \arguments{
-    \item{base_tree}{A single tree, result of the function \link{sfreemap.map};}
-    \item{trees}{A \code{multiPhylo} object, result of \link{sfreemap.map} execution}
+    \item{base_tree}{A single tree, result of the function \link{sfreemap};}
+    \item{trees}{A \code{multiPhylo} object, result of \link{sfreemap} execution}
     \item{scale.branches}{Whether the function should scale the dwelling times to the
     branch length, resulting in a proportion of the time instead of an absolute
     value (the expected number of transitions is not scaled).}
@@ -46,7 +46,7 @@ map_posterior_distribution(base_tree, trees, scale.branches=TRUE
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}

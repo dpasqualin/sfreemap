@@ -2,7 +2,7 @@ useDynLib(sfreemap)
 #exportPattern("^[[:alpha:]]+")
 importFrom(Rcpp, evalCpp)
 
-export(sfreemap.map
+export(sfreemap
        , read_tips
        , map_posterior_distribution
        , plot_distribution_chart

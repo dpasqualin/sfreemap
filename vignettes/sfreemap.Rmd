@@ -73,7 +73,7 @@ Just to have an idea of the dataset we are working on, let's have a look at the 
 plot.phylo(sfreemap.corals.trees[[1]], cex=0.7)
 ```
 
-The command *sfreemap.map* runs by default with *method='empirical'* and *type='standard'*, so
+The command *sfreemap* runs by default with *method='empirical'* and *type='standard'*, so
 we don't have supply it now. Please check the package documentation for more details.
 
 *This function will run in parallel with a number of processes equal to the number of cores
@@ -81,7 +81,7 @@ in your machine. If you want to disable parallel processing you can pass paralle
 Many other function of sfreemap presents this parameter.*
 
 ```{r}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
+data <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 class(data)
 data
 ```
@@ -118,7 +118,7 @@ they appear in their respective objects. The result will be ten mapped trees.
 Same logic would apply for standard type.
 
 ```{r}
-sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
+sfreemap(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
 ```
 
 It is also possible to run the program passing a single tree as parameter and multiple characters.
@@ -126,12 +126,12 @@ In this case each have ten trees as result, each one with a mapping that corresp
 a character.
 
 ```{r}
-sfreemap.map(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
+sfreemap(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
 ```
 Of course, the user can also map a single character into multiple trees, like following:
 
 ```{r}
-res <- sfreemap.map(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1], parallel=FALSE)
+res <- sfreemap(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1], parallel=FALSE)
 ```
 
 When using a single tree one can compute the mean value across trees for
@@ -146,11 +146,11 @@ mean.dt[1:10,] # just the first ten rows to give an idea..
 Although the command above is quite typical for an R experienced programmer, it
 might not be as simple to remember and understand for a more regular user. Besides, what if
 we want the median instead of the mean? The command would be completely different.
-That is why we provide some tools to analyse the mappings produced by *sfreemap.map* command, which will be described in the next section.
+That is why we provide some tools to analyse the mappings produced by *sfreemap* command, which will be described in the next section.
 
 # Analysing mapped data with histograms
 
-As we have shown, the object created by *sfreemap.map* can be analysed and
+As we have shown, the object created by *sfreemap* can be analysed and
 manipulated to produce summaries and plots. In this section we will show some
 tools to make this task a lot easier.
 
@@ -160,7 +160,7 @@ important for analysing the number of transitions considering the same proportio
 
 ```
 trees <- rescale(sfreemap.corals.trees, height=1)
-data <- sfreemap.map(trees, sfreemap.corals.tips)
+data <- sfreemap(trees, sfreemap.corals.tips)
 ```
 
 Now we will run the function below, which analysis mapping results on all trees, creating
@@ -284,7 +284,7 @@ of a tree. Fist let's generate a mapping for all trees of *sfreemap.corals.trees
 dataset, and then map the postero distribution (as we did before).
 
 ```{r, fig.width=10, fig.height=14}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical', parallel=FALSE)
+data <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical', parallel=FALSE)
 mpd <- map_posterior_distribution(data[[1]], data, parallel=FALSE)
 ```
 Now we can use the function below to plot a tree showing the distribution of time
@@ -322,8 +322,8 @@ the *+* operator, so you can easily accumulate results.
 
 ```{r, results="hide"}
 # Estimate Q using 'empirical' and 'mcmc' methods
-data1 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='empirical', parallel=FALSE)
-data2 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='mcmc', n_simulation=1, parallel=FALSE)
+data1 <- sfreemap(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='empirical', parallel=FALSE)
+data2 <- sfreemap(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='mcmc', n_simulation=1, parallel=FALSE)
 
 # Now using make.simmap from the package phytools
 require(phytools)

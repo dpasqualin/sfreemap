@@ -1,11 +1,11 @@
 \name{describe.sfreemap}
 \alias{describe.sfreemap}
-\title{describe a \code{phylo} object modified by sfreemap.map}
+\title{describe a \code{phylo} object modified by sfreemap}
 \usage{
 describe.sfreemap(tree, ...)
 }
 \arguments{
-    \item{tree}{A result of a sfreemap.map execution, can be of types \code{phylo} or \code{multiPhylo}}
+    \item{tree}{A result of a sfreemap execution, can be of types \code{phylo} or \code{multiPhylo}}
     \item{...}{Other arguments}
 }
 \description{
@@ -23,12 +23,12 @@ describe.sfreemap(tree, ...)
 }
 
 %\references{
-%    \code{\link{sfreemap.map}}
+%    \code{\link{sfreemap}}
 %}
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap}}
 }
 \keyword{utilities}
 %\keyword{simulation}

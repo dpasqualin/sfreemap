@@ -6,7 +6,7 @@ plot_distribution_chart(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                        , number_of_ticks=20, type='emr')
 }
 \examples{
-sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
+sm <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
 map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
 p <- plot_distribution_chart(map, 160)
 print(p)
@@ -35,7 +35,7 @@ print(p)
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
     \code{\link{map_posterior_distribution}},
-    \code{\link{sfreemap.map}}
+    \code{\link{sfreemap}}
 }
 \keyword{phylogenetics}
 %\keyword{simulation}
