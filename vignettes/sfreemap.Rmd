@@ -11,10 +11,9 @@ output:
         theme: spacelab
         highligh: textmate
 vignette: >
-  %\VignetteIndexEntry{sfreemap}
+  %\VignetteIndexEntry{Sfreemap}
   %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{sfreemap: Simulation free stochastic mapping for Phylogenetic data.}
-  %\usepackage[utf8]{inputenc}
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r, echo=FALSE}
@@ -285,8 +284,8 @@ of a tree. Fist let's generate a mapping for all trees of *sfreemap.corals.trees
 dataset, and then map the postero distribution (as we did before).
 
 ```{r, fig.width=10, fig.height=14}
-data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical')
-mpd <- sfreemap.map_posterior_distribution(data[[1]], data)
+data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical', parallel=FALSE)
+mpd <- sfreemap.map_posterior_distribution(data[[1]], data, parallel=FALSE)
 ```
 Now we can use the function below to plot a tree showing the distribution of time
 spent by a particular state (second argument). As the legend says, red shifted
@@ -318,42 +317,27 @@ It is possible to plot a correlation matrix to compare results provided by
 different parameters on *sfreemp.map* or even different programs, as long as
 they return a *phylo* object with mapping on *mapped.edge*.
 
-Let's first create the object that will hold our data to plot the correlation matrix.
-The only parameter is the name of the state that will be used for the comparison.
-
-```{r}
-cor <- sfreemap.correlation('colonial')
-```
-
-Now we can run the mapping and add the results in the correlation matrix. You
-can compare as many mappings as you with by just repeating the commands below. Note
-that *add.data* receives the object we created above, the mapping and, as the last
-paramater, the name we will in the resulting matrix to tell apart the different
-data we are comparing.
-
-```{r}
-# Estimate Q using empirical method
-data <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='empirical')
-cor <- add.data(cor, data, 'sfreemap empirical')
-
-# Estimate Q using mcmc method
-data <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='mcmc', n_simulation=1)
-cor <- add.data(cor, data, 'sfreemap mcmc')
-
-```
-
-Like we said before, it is possible to use data from different programs, as long as they
-return (or you adapt) something similar as what *sfreemap.map* returns. In fact, we
-based our return object on the return of the *make.simmap* function from *phytools* package,
-which are using running below to compare with *sfreemap.map*.
+You can compare as many mappings as you want. Note that *correlation* supports
+the *+* operator, so you can easily accumulate results.
 
 ```{r, results="hide"}
+# Estimate Q using 'empirical' and 'mcmc' methods
+data1 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='empirical', parallel=FALSE)
+data2 <- sfreemap.map(sfreemap.corals.trees[[1]], sfreemap.corals.tips, method='mcmc', n_simulation=1, parallel=FALSE)
 
+# Now using make.simmap from the package phytools
 require(phytools)
+data3 <- make.simmap(sfreemap.corals.trees[[1]], sfreemap.corals.tips, Q='mcmc', n_simulation=1)
 
-data <- make.simmap(sfreemap.corals.trees[[1]], sfreemap.corals.tips, Q='mcmc', n_simulation=1)
-cor <- add.data(cor, data, 'simmap mcmc')
+# Finally creating 'correlation' object
+cor <- correlation(data1, 'colonial', 'sfreemap empirical') +
+       correlation(data2, 'colonial', 'sfreemap mcmc') +
+       correlation(data3, 'colonial', 'simmap mcmc')
 ```
+
+In the *correlation* function the first parameter is the mapping, the second is the
+character state you want to look at, and the third one is a unique identifier.
+
 At last, let's see the result in a nice image:
 
 ```{r, fig.width=7, fig.height=7}

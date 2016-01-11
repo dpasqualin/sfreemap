@@ -234,7 +234,7 @@ apeAce <- function(tree,x,model,omp,fixedQ=NULL,...){
     TIPS<-1:nb.tip
     if(is.matrix(x)) liks[TIPS,]<-x
     else liks[cbind(TIPS,x)]<-1
-    phy<-reorder(tree,"pruningwise")
+    phy<-reorder.phylo(tree,"pruningwise")
 
     dev<-function(p,output.liks=FALSE,fixedQ=NULL){
         if(any(is.nan(p))||any(is.infinite(p))) return(1e50)

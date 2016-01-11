@@ -123,14 +123,27 @@ describe.sfreemap <- function (tree, ...) {
     return (list(transitions=lmt, dwelling_times=emr))
 }
 
-summary.sfreemap <- function (object, ...) describe.sfreemap(object, ...)
+# Alias for describe.sfreemap
+summary.sfreemap <- function (object, ...) {
+    describe.sfreemap(object, ...)
+}
 
 # function reorders sfreemap tree
 # based on reorderSimmap, written by Liam Revell 2011, 2013
-reorderSfreemap <- function(tree, order="cladewise", index.only=FALSE, ...) {
-    if (!inherits(tree, "phylo")) {
-        stop("tree should be an object of class \"phylo\".")
+reorder.sfreemap <- function(x, ...) {
+
+    tree <- x
+
+    order <- "cladewise"
+    if (hasArg(order)) {
+        order <- list(...)$order
     }
+
+    index.only <- FALSE
+    if (hasArg(index.only)) {
+        index.only <- list(...)$index.only
+    }
+
     index <- reorder.phylo(tree, order, index.only=TRUE, ...)
     if (!index.only) {
         if (inherits(index, "phylo")) {
@@ -149,9 +162,6 @@ reorderSfreemap <- function(tree, order="cladewise", index.only=FALSE, ...) {
         return (index)
     }
 }
-
-# S3 method for reorder function for objects of class sfreemap
-reorder.sfreemap <- function(x, ...) reorderSfreemap(x, ...)
 
 # function whichorder
 # written by Liam Revell 2011, 2013

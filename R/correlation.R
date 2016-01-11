@@ -2,53 +2,57 @@
 # Works for sfreemap, simmap and any other method that returns a phylo type tree
 # with mapped.edge matrix
 # Based on the plot found in http://www.inside-r.org/r-doc/graphics/pairs
-sfreemap.correlation <- function(state) {
-    data <- list(
-        state = state
-        , data = NULL
-        , color = NULL
+correlation <- function(map, state, name) {
+
+    # sanity check
+    if (!inherits(map, 'phylo')) {
+        stop ('map object should be of class "phylo"')
+    }
+
+    if (!state %in% colnames(map$mapped.edge)) {
+        stop ('Unrecognized state', state)
+    }
+
+    # get data
+    data <- matrix(map$mapped.edge[,state], ncol=1)
+    colnames(data) <- name
+    rownames(data) <- NULL
+
+    # add tip information
+    nodes <- rownames(map$mapped.edge)
+    nodes <- sapply(strsplit(nodes, ','), function(x) x[2])
+    tip_label <- map$tip.label[as.numeric(nodes)]
+    is_tip <- rep(FALSE, length(tip_label))
+    is_tip[!is.na(tip_label)] <- TRUE
+
+    obj <- list(
+        data = data
+        , is_tip = is_tip
     )
 
-    class(data) <- append(class(data), 'sfreemap.correlation')
-    return(data)
-}
-
-# This method adds more data to the object obj.
-# map is a sfreemap.map object, name is the name that will be shown in the plot
-add.data <- function(obj, map, name) {
-    UseMethod('add.data', obj)
-}
-add.data.sfreemap.correlation <- function(obj, map, name) {
-
-    data <- matrix(map$mapped.edge[,obj$state], ncol=1)
-    colnames(data) <- name
-    rownames(obj$data) <- NULL
-
-    if (is.null(obj$data)) {
-        obj$data <- data
-    } else {
-        obj$data <- cbind(obj$data, data)
-    }
-
-    if (is.null(obj$color)) {
-        # add color information
-        nodes <- rownames(map$mapped.edge)
-        nodes <- sapply(strsplit(nodes, ','), function(x) x[2])
-        tip_label <- color <- map$tip.label[as.numeric(nodes)]
-        color[is.na(tip_label)] <- 'grey'
-        color[!is.na(tip_label)] <- 'green'
-        obj$color <- color
-    }
+    class(obj) <- append('correlation', class(obj))
 
     return(obj)
 }
 
-# Actualy plots the correlation matrix
-# TODO: add title, axis labels and stuff..
-plot <- function(obj) {
-    UseMethod('plot', obj)
+# Allow to sum up two correlation objects
+"+.correlation" <- function(c1, c2) {
+    obj <- c1
+
+    obj$data <- cbind(obj$data, c2$data)
+    # it is a tip if node is a tip in any of the mapping analysed
+    obj$is_tip <- obj$is_tip | c2$is_tip
+
+    return(obj)
 }
-plot.sfreemap.correlation <- function(obj) {
+
+# print correlation object as a list
+print.correlation <- function(x, ...) {
+    NextMethod()
+}
+
+# Actualy plots the correlation matrix
+plot.correlation <- function(x, y=NULL, ...) {
 
     # panel.smooth function is built in.
     # panel.cor puts correlation in upper panels, size proportional to correlation
@@ -78,12 +82,18 @@ plot.sfreemap.correlation <- function(obj) {
         rect(breaks[-nB], 0, breaks[-1], y, col = "grey", ...)
     }
 
+    # correlation object
+    cor <- x
+
     # Transform to data.frame
-    data <- data.frame(obj$data, stringsAsFactors=FALSE)
+    data <- data.frame(cor$data, stringsAsFactors=FALSE)
 
     # build formula
     formula <- paste('~', paste(colnames(data), collapse='+'))
     formula <- as.formula(formula)
+
+    # define color, green when it is a tip when grey when isn't
+    color <- ifelse(cor$is_tip, 'green', 'grey')
 
     # package car has a scatterplotMatrix function that can print things like
     # an ellipse showing 95% confidence level, but I'm not sure it this fits
@@ -91,7 +101,7 @@ plot.sfreemap.correlation <- function(obj) {
     pairs(formula
         , data=data
         , pch = 21
-        , bg = obj$color
+        , bg = color
         , upper.panel=panel.cor
         , diag.panel=panel.hist
     )

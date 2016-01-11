@@ -267,7 +267,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     # Reorder the tree so the root is the first row of the matrix.
     # We save the original order to make sure we have the result
     # in same order of the tree;
-    tree <- reorder(tree, 'pruningwise')
+    tree <- reorder(tree, order='pruningwise')
     # Let's set the elements back to the original tree
     tree[['Q']] <- Q
     tree[['prior']] <- prior
@@ -339,7 +339,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
     rownames(tree[['mapped.edge']]) <- rownames(tree[['mapped.edge.lmt']]) <- bname
 
     # Return the tree in the original order
-    return (reorder(tree, 'cladewise'))
+    return (reorder(tree, order='cladewise'))
 }
 
 # The final answer!
