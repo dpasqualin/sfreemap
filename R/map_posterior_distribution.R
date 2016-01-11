@@ -1,4 +1,4 @@
-sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, scale.trees=FALSE, parallel=TRUE) {
+map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, scale.trees=FALSE, parallel=TRUE) {
 
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])

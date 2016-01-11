@@ -1,13 +1,13 @@
-\name{sfreemap.map_posterior_distribution}
-\alias{sfreemap.map_posterior_distribution}
+\name{map_posterior_distribution}
+\alias{map_posterior_distribution}
 \title{Analyses a set of trees regarding to a specific tree and output an object that can be used by many other functions of this package}
 \usage{
-sfreemap.map_posterior_distribution(base_tree, trees, scale.branches=TRUE
+map_posterior_distribution(base_tree, trees, scale.branches=TRUE
                                     , scale.trees=FALSE, parallel=TRUE)
 }
 \examples{
     sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
-    map <- sfreemap.map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
+    map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
     p <- sfreemap.plot_distribution(map, 160)
     print(p)
 }

@@ -172,7 +172,7 @@ If you haven't rescaled the trees before but want to do it now, just pass on
 
 ```{r}
 base_tree <- data[[1]]
-mpd <- sfreemap.map_posterior_distribution(base_tree, data, scale.branches=TRUE, parallel=FALSE)
+mpd <- map_posterior_distribution(base_tree, data, scale.branches=TRUE, parallel=FALSE)
 ```
 
 The first parameter of the function is the so called "base tree", the tree on which the
@@ -207,7 +207,7 @@ around 10% and 45% of the time on the branch ending on node 89 and, with equal
 certainty, the state *solitary* was present during 55% to 90% of the time on this branch.
 At the top of the chart, the text *branch posterior probability: 100%* means that this
 particular branch was present on 100% of the trees given as argument to the function
-*sfreemap.map_posterior_distribution* and compared to out *base tree*.
+*map_posterior_distribution* and compared to out *base tree*.
 
 It is also possible to plot only one of the states by supplying the *states* argument.
 
@@ -285,7 +285,7 @@ dataset, and then map the postero distribution (as we did before).
 
 ```{r, fig.width=10, fig.height=14}
 data <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical', parallel=FALSE)
-mpd <- sfreemap.map_posterior_distribution(data[[1]], data, parallel=FALSE)
+mpd <- map_posterior_distribution(data[[1]], data, parallel=FALSE)
 ```
 Now we can use the function below to plot a tree showing the distribution of time
 spent by a particular state (second argument). As the legend says, red shifted

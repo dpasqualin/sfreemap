@@ -7,12 +7,12 @@ sfreemap.plot_distribution(map, nodes=NULL, trees=NULL, states=NULL, conf_level=
 }
 \examples{
 sm <- sfreemap.map(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
-map <- sfreemap.map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
+map <- map_posterior_distribution(sm[[1]], sm, parallel=FALSE)
 p <- sfreemap.plot_distribution(map, 160)
 print(p)
 }
 \arguments{
-	\item{map}{A result of a \link{sfreemap.map_posterior_distribution} execution;}
+	\item{map}{A result of a \link{map_posterior_distribution} execution;}
     \item{nodes}{A vector containing the nodes to filter, or NULL to not filter;}
     \item{trees}{A vector containing the trees to filter, or NULL to not filter;}
     \item{states}{A vector containing the states to filter, or NULL to not filter;}
@@ -34,7 +34,7 @@ print(p)
 
 \author{Diego Pasqualin \email{dpasqualin@inf.ufpr.br}}
 \seealso{
-    \code{\link{sfreemap.map_posterior_distribution}},
+    \code{\link{map_posterior_distribution}},
     \code{\link{sfreemap.map}}
 }
 \keyword{phylogenetics}
