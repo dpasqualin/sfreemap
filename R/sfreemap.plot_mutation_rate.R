@@ -1,4 +1,4 @@
-sfreemap.plot_mutation_rate <- function(tree, combination=3) {
+plot_mutation_rate <- function(tree, combination=3) {
     if (!inherits(tree, "multiPhylo")) {
         stop("tree must be a 'multiPhylo' object")
     }
