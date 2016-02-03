@@ -1,8 +1,8 @@
-\name{sfreemap.pruning}
-\alias{sfreemap.pruning}
+\name{pruning}
+\alias{pruning}
 \title{Prune a phylogetic tree}
 \usage{
-sfreemap.pruning(t1, t2, reroot=NULL)
+pruning(t1, t2, reroot=NULL)
 }
 \arguments{
     \item{t1}{The tree to be prunned (\code{phylo} object.}

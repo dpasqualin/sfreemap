@@ -1,6 +1,6 @@
 # adds legend to an open stochastic map style plot
 # modified from phytools (written by Liam J. Revell 2013)
-sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
+add_subtitle <- function(leg=NULL, colors, prompt=FALSE
                                 , vertical=FALSE, ...) {
 
     shape <- "rect"
@@ -60,7 +60,7 @@ sfreemap.add.legend <- function(leg=NULL, colors, prompt=FALSE
     }
 }
 
-sfreemap.read_tips <- function(file, character=1, sep="\t") {
+read_tips <- function(file, character=1, sep="\t") {
 
     data <- read.csv(file, sep=sep, header=FALSE, colClasses = "character"
                          , fill=FALSE, strip.white = TRUE)
@@ -87,7 +87,7 @@ sfreemap.read_tips <- function(file, character=1, sep="\t") {
 
 # return t1 only with tips that are in t2 too
 # optionally reroot at node 'reroot'
-sfreemap.pruning <- function(t1, t2, reroot=NULL) {
+pruning <- function(t1, t2, reroot=NULL) {
     tips_to_remove <- t1$tip.label[!t1$tip.label %in% t2$tip.label]
     t <- drop.tip(t1, tips_to_remove)
     if (!is.null(reroot)) {
@@ -188,7 +188,7 @@ freq_to_prob <- function(x) {
     return (result)
 }
 
-sfreemap.read.fasta <- function(file, ensure_dna=FALSE) {
+read_fasta <- function(file, ensure_dna=FALSE) {
     nucleo_data <- read.fasta(file)
     nucleo_data <- sapply(nucleo_data, cbind)
     if (ensure_dna) {
@@ -201,13 +201,13 @@ sfreemap.read.fasta <- function(file, ensure_dna=FALSE) {
 
 ## based on function to rescale simmap style trees
 ## written by Liam J. Revell 2012, 2013, 2014, 2015
-sfreemap.rescale <- function(tree, height=NULL, parallel=FALSE) {
+rescale <- function(tree, height=NULL, parallel=FALSE) {
     if (inherits(tree, "multiPhylo")){
         tree <- unclass(tree)
         if (parallel==TRUE && !on_windows()) {
-            tree <- mclapply(tree, sfreemap.rescale, height, mc.cores=detectCores())
+            tree <- mclapply(tree, rescale, height, mc.cores=detectCores())
         } else {
-            tree <- lapply(tree, sfreemap.rescale, height)
+            tree <- lapply(tree, rescale, height)
         }
         class(tree) <- "multiPhylo"
         return (tree)

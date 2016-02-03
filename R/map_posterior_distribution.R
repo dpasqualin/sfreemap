@@ -1,4 +1,4 @@
-sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, scale.trees=FALSE, parallel=TRUE) {
+map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, scale.trees=FALSE, parallel=TRUE) {
 
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])
@@ -23,7 +23,7 @@ sfreemap.map_posterior_distribution <- function(base_tree, trees, scale.branches
     mymatch <- function(tree) {
 
         if (is.numeric(scale.trees)) {
-            tree <- sfreemap.rescale(tree, scale.trees)
+            tree <- rescale(tree, scale.trees)
         }
 
         # match of internal nodes

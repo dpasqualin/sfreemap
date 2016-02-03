@@ -1,4 +1,4 @@
-sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
+plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
 
@@ -95,7 +95,7 @@ sfreemap.plot_distribution <- function(map, nodes=NULL, trees=NULL, states=NULL,
 	return(p)
 }
 
-sfreemap.plot_tree <- function(map, state, type='emr'
+plot_distribution_tree <- function(map, state, type='emr'
                                 , conf_level=95, number_of_ticks=20
                                 , tip_states=NULL, fsize=0.7, ftype="i"
                                 , lwd=3) {
@@ -171,7 +171,7 @@ sfreemap.plot_tree <- function(map, state, type='emr'
         vertical <- TRUE
     }
 
-	sfreemap.add.legend(colors=colors, vertical=vertical)
+	add_subtitle(colors=colors, vertical=vertical)
 
 	return(tree)
 }

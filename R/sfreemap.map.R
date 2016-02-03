@@ -1,7 +1,7 @@
 # Input
 #   tree    a phylogenetic tree as an object of class "phylo" (from package
 #           ape)
-sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", method="empirical", ...) {
+sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", method="empirical", ...) {
 
     # Am I running on windows? Windows does not have support for the kind of
     # parallelism we are using
@@ -65,7 +65,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
         stop("if 'Q' is a list and 'tree' is a 'multiPhylo' object, their number of elements must match.")
     }
 
-    # a helper function to call sfreemap.map multiple times, combining
+    # a helper function to call sfreemap multiple times, combining
     # trees with Q rate matrices and priors
     call_multiple <- function(idx, tree, tip_states, Q, prior) {
         if (inherits(tree, "multiPhylo")) {
@@ -95,7 +95,7 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
             , "..." = ...
         )
 
-        return (do.call(sfreemap.map, params))
+        return (do.call(sfreemap, params))
     }
 
     # helper to decide whether to call 'call_multiple' in serial or parallel
@@ -129,21 +129,21 @@ sfreemap.map <- function(tree, tip_states, Q=NULL, type="standard", model="SYM",
 
     # Everything below these tests assume the program is running on with a
     # single tree, single rate matrix and single tip label. So here we check
-    # parameters and call sfreemap.map multiple times if needed.
+    # parameters and call sfreemap multiple times if needed.
     if (inherits(tree, "multiPhylo")) {
-        # if 'multiPhylo', call sfreemap.map for each tree
+        # if 'multiPhylo', call sfreemap for each tree
         return(serial_or_parallel(length(tree), tree, tip_states, Q, prior))
     } else if (inherits(Q, "list")) {
-        # if multiple rate matrix, call sfreemap.map for each one.
+        # if multiple rate matrix, call sfreemap for each one.
         # serial_or_parallell will handle the case when we have an equal number
-        # of rate matrices and trees, where sfreemap.map should match tree 1
+        # of rate matrices and trees, where sfreemap should match tree 1
         # with rate matrix 1, 2 with 2, and so on..
         return(serial_or_parallel(length(Q), tree, tip_states, Q, prior))
     } else if (inherits(prior, "list")) {
         # we can run multiple priors on trees and Q rate matrices
         return(serial_or_parallel(length(prior), tree, tip_states, Q, prior))
     } else if (all(inherits(tip_states, "matrix"), ncol(tip_states) > 1)) {
-        # if single tree but multiple tip_states (dna type), call sfreemap.map
+        # if single tree but multiple tip_states (dna type), call sfreemap
         # for each set of tip label
         return(serial_or_parallel(ncol(tip_states), tree, tip_states, Q, prior))
     } else if (!is.rooted(tree)) {
