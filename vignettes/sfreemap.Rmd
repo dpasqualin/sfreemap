@@ -3,9 +3,9 @@ title: "Sfreemap"
 author: "Diego Pasqualin, Marcos Barbeitos and Fabiano Silva"
 date: "`r Sys.Date()`"
 output:
-    pdf_document:
-        toc: true
-        number_sections: true
+    #pdf_document:
+    #    toc: true
+    #    number_sections: true
     html_document:
         toc: true
         theme: spacelab
@@ -122,12 +122,13 @@ sfreemap(sfreemap.primates.trees[1:10], sfreemap.primates.dna.tips[,1:10], paral
 ```
 
 It is also possible to run the program passing a single tree as parameter and multiple characters.
-In this case each have ten trees as result, each one with a mapping that corresponds to
+In this case we'll have ten trees as result, each one with a mapping that corresponds to
 a character.
 
 ```{r}
 sfreemap(sfreemap.primates.trees[[1]], sfreemap.primates.dna.tips[,1:10], parallel=FALSE)
 ```
+
 Of course, the user can also map a single character into multiple trees, like following:
 
 ```{r}
@@ -160,7 +161,7 @@ important for analysing the number of transitions considering the same proportio
 
 ```
 trees <- rescale(sfreemap.corals.trees, height=1)
-data <- sfreemap(trees, sfreemap.corals.tips)
+data <- sfreemap(trees, sfreemap.corals.tips, parallel=FALSE)
 ```
 
 Now we will run the function below, which analysis mapping results on all trees, creating
@@ -181,6 +182,17 @@ analysed, *scale.branches* is used to represent the dwelling times regarding the
 of time spent in the branch, instead of the absolute value (the expected number
 of transitions is not scaled, as it doesn't make sense to do so).
 
+This function returns a list of three elements, each one representing a type of analysis.
+
+1. *lmt* (labelled markov transitions): the expected value for number of transitions among states;
+2. *emr* (expected markov reward): it's the dwelling times of states;
+3. *mr* (mutation rate): the muration/evolution rate;
+
+Each item on this list contains an array of three dimensions, *[x, y, z]*, where *x* indexes the trees,
+*y* indexes the states and *z* indexes the nodes. As an example, *mpd$emr[10,'colonial',83]* would
+ return the dwelling times for state *colonial* on node *83* of the tenth tree.
+
+If node *83* is not present on the tree number *10*, the value will be *NA*.
 
 ## Expected dwelling times for states of a branch across all trees
 
@@ -261,6 +273,7 @@ Needless to say, but you can plot a single state transition here:
 ```{r, fig.width=6, fig.height=4}
 plot_distribution_chart(mpd, 85, states='solitary,colonial', type='lmt')
 ```
+
 Example considering all nodes and all states:
 
 ```{r, fig.width=6, fig.height=4}
@@ -273,8 +286,34 @@ As the last type of distribution plot, *mr (mutation rate)* shows the rate of mu
 for states per branch. Parameters are very similar than before. It is possible to
 filter by trees, nodes and/or states.
 
+Just as a reminder, it makes more sense to analyse mutation rate on trees where the distance
+between any leaf and it's root is equal. If the trees passed to *sfreemap* where not
+scaled in that way, it's possible to do that using the *map_posterior_distribution* function.
+
+```{r}
+base_tree <- data[[1]]
+mpd <- map_posterior_distribution(base_tree, data, scale.trees=1, parallel=FALSE)
+```
+
+Now that we know that all values are scaled in a way that all leaf nodes are distant
+from the root node by *1* unit, we can then plot the distribution chart.
+
+We can get the mutation rate for all states in a single tree (let's say, tree *2*) with the command below:
+
+```{r}
+mpd$mr[2,,85]
+```
+
+The mean mutation rate considering all trees and all states would be as simple as:
+
+```{r}
+apply(mpd$mr[,,85], 2, mean)
+```
+
+But it might be more interesting to have it plotted as a distribution:
+
 ```{r, fig.width=6, fig.height=4}
-plot_distribution_chart(mpd, type='mr')
+plot_distribution_chart(mpd, 85, type='mr')
 ```
 
 # Analysing mapped data by plotting a tree
@@ -287,6 +326,7 @@ dataset, and then map the postero distribution (as we did before).
 data <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, method='empirical', parallel=FALSE)
 mpd <- map_posterior_distribution(data[[1]], data, parallel=FALSE)
 ```
+
 Now we can use the function below to plot a tree showing the distribution of time
 spent by a particular state (second argument). As the legend says, red shifted
 colors indicates that the state was more present, and on the other side of the
