@@ -23,8 +23,6 @@ map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, sc
     mymatch <- function(tree) {
 
         if (is.numeric(scale.trees)) {
-            # FIXME: I believe I should rescale the results for mapped.edge
-            # here too
             tree <- rescale(tree, scale.trees)
         }
 

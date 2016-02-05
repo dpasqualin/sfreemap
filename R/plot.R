@@ -95,7 +95,7 @@ plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, co
 	return(p)
 }
 
-plot_distribution_tree <- function(map, state, type='emr'
+plot_distribution_tree <- function(map, state='all', type='emr'
                                 , conf_level=95, number_of_ticks=20
                                 , tip_states=NULL, fsize=0.7, ftype="i"
                                 , lwd=3) {
@@ -109,7 +109,7 @@ plot_distribution_tree <- function(map, state, type='emr'
 	ticks <- get_ticks(map, type, number_of_ticks)
 	tree$maps <- list()
 
-    if (!state %in% names(map[1,,1])) {
+    if (!state %in% c('all', names(map[1,,1]))) {
         stop ('Unrecognized state')
     }
 
@@ -207,7 +207,11 @@ get_color_pallete <- function(color_names) {
 }
 
 get_state_data <- function(node, state, conf_level, ticks, na.rm=TRUE) {
-	data <- node[,as.character(state)]
+    if (state == 'all') {
+        data <- apply(node, 1, sum)
+    } else {
+    	data <- node[,as.character(state)]
+    }
 
 	final_conf_level <- 0.0
 	final_idx <- c()

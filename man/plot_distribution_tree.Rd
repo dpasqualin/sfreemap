@@ -2,7 +2,7 @@
 \alias{plot_distribution_tree}
 \title{Plot the dwelling times distribution of a state in a given tree}
 \usage{
-plot_distribution_tree(map, state, type='emr', conf_level=95, number_of_ticks=20
+plot_distribution_tree(map, state='all', type='emr', conf_level=95, number_of_ticks=20
                     , tip_states=NULL, fsize=0.7, ftype="i", lwd=3)
 }
 \examples{
@@ -12,7 +12,7 @@ tree <- plot_distribution_tree(map, state='colonial', tip_states=sfreemap.corals
 }
 \arguments{
     \item{map}{A result of a \link{map_posterior_distribution} execution;}
-	\item{state}{The state to be plotted}
+	\item{state}{The state to be plotted. NULL means that the program should consider all states. This makes more sense for "muration rate" then other types of plot.}
 	\item{type}{\code{emr} for expected markov reward (dwelling times) or
 	\code{lmt} for labelled makov transistions (number of transitions). Defaults to \code{emr};}
 	\item{conf_level}{An integer representing the confidence level desired, ranging from 0 to 100. Defaults to 95 percent;}

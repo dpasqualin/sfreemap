@@ -1,6 +1,5 @@
 \name{sfreemap-package}
 \alias{sfreemap-package}
-\alias{sfreemap}
 \docType{package}
 \title{
 \packageTitle{sfreemap}
