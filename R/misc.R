@@ -44,7 +44,7 @@ add_subtitle <- function(leg=NULL, colors, prompt=FALSE
 
         labels <- leg
 
-        text(x, y+0.5, labels, pos=3, cex=0.7*fsize)
+        text(x, y+h*0.75, labels, pos=3, cex=0.7*fsize)
     }
 
     if (shape=="rect") {
