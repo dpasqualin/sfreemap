@@ -16,7 +16,7 @@ add_subtitle <- function(leg=NULL, colors, prompt=FALSE
 
     h <- fsize * strheight(LETTERS[1])
     usr <- par()$usr
-    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.5
+    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.6
 
     if (prompt) {
         cat("Click where you want to draw the legend\n")

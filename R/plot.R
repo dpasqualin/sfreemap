@@ -171,7 +171,7 @@ plot_distribution_tree <- function(map, state='all', type='emr'
         vertical <- TRUE
     }
 
-	add_subtitle(colors=colors, vertical=vertical)
+	add_subtitle(colors=colors, vertical=vertical, fsize=fsize)
 
 	return(tree)
 }
