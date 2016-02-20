@@ -17,6 +17,17 @@ sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", met
         }
     }
 
+    # When running in parallel, choose how many cores do use.
+    # default to all cores available on the machine
+    mc.cores <- detectCores()
+    if (hasArg(mc.cores)) {
+        tmp <- list(...)$mc.cores
+        # ignore things like NULL
+        if (is.numeric(tmp)) {
+            mc.cores <- tmp
+        }
+    }
+
     # how many omp threads should be created?
     omp <- 1
     if (hasArg(omp)) {
@@ -102,7 +113,7 @@ sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", met
     serial_or_parallel <- function(times, tree, tip_states, Q, prior) {
         if (parallel) {
             mtrees <- mclapply(1:times, call_multiple, tree, tip_states, Q
-                                      , prior, mc.cores=detectCores())
+                                      , prior, mc.cores=mc.cores)
         } else {
             mtrees <- lapply(1:times, call_multiple, tree, tip_states, Q, prior)
         }
