@@ -1,51 +1,25 @@
 # adds legend to an open stochastic map style plot
 # modified from phytools (written by Liam J. Revell 2013)
-add_subtitle <- function(leg=NULL, colors, prompt=FALSE
-                                , vertical=FALSE, ...) {
+add_subtitle <- function(leg=NULL, colors, cex=0.7, shape="rect", ...) {
 
-    shape <- "rect"
-    if (hasArg(shape)) {
-      shape <- list(...)$shape
-    }
+    # heigh and width of legend squares
+    h <- strheight(LETTERS[1])
+    w <- 30
 
-    if (hasArg(fsize)) {
-        fsize <- list(...)$fsize
-    } else {
-        fsize <- ifelse(isTRUE(vertical), 0.7, 1)
-    }
-
-    h <- fsize * strheight(LETTERS[1])
-    usr <- par()$usr
-    w <- h*(usr[2]-usr[1]) / (usr[4]-usr[3]) * 1.6
-
-    if (prompt) {
-        cat("Click where you want to draw the legend\n")
-        pos <- unlist(locator(1))
-        x <- pos[1]
-        y <- pos[2]
-    } else {
-        x <- ifelse(hasArg(x), list(...)$x, -4)
-        y <- ifelse(hasArg(y), list(...)$y, -4)
-    }
+    x <- y <- -4
 
     if (is.null(leg)) {
       leg <- names(colors)
     }
 
-    if (vertical) {
-        y <- y+0:(length(leg)-1)*1.5*h
-        x <- rep(x,length(y))
-        text(x+w/2, y+0.5, leg, pos=4, cex=fsize/par()$cex)
-    } else {
-        x <- x + (0:(length(leg)-2) * w)
-        # add NA a bit separate from the rest
-        x <- c(x, w*length(leg))
-        y <- rep(y,length(x))
+    x <- x + (0:(length(leg)-2) * w)
+    # add NA a bit separate from the rest
+    x <- c(x, w*length(leg))
+    y <- rep(y,length(x))
 
-        labels <- leg
+    labels <- leg
 
-        text(x, y+h*0.75, labels, pos=3, cex=0.7*fsize)
-    }
+    text(x, y+h*0.75, labels, pos=3, cex=par()$cex*0.7)
 
     if (shape=="rect") {
         rects <- cbind(rep(w, length(x)), rep(h*1, length(x)))
