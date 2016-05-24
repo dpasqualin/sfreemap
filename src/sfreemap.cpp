@@ -81,7 +81,7 @@ arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp) {
 // [[Rcpp::depends("RcppArmadillo")]]
 // [[Rcpp::export]]
 arma::cube func_H(arma::mat multiplier, List Q_eigen, List tree, List tree_extra, int omp) {
-    
+
     int n_edges = tree_extra["n_edges"];
     int n_states = tree_extra["n_states"];
     arma::vec d = Q_eigen["values"];
@@ -192,6 +192,7 @@ List fractional_likelihoods(List tree, List tree_extra, arma::mat q
         f.row(i) = states.row(i);
     }
 
+    // Calculate F_u and S_b
     for (e=0; e<n_edges; e+=2) {
         p = edge(e,0) - 1; // nodes start at 1 in R...
         right = edge(e,1) - 1;
@@ -209,10 +210,12 @@ List fractional_likelihoods(List tree, List tree_extra, arma::mat q
         }
     }
 
+    // Calculate likelihood using prior and F_root
     root_node = edge(n_edges-1,0)-1;
     likelihood = sum(f.row(root_node) % prior);
     g.row(root_node) = prior;
 
+    // Calculate G_u
     for (e=n_edges-1; e>=1; e-=2) {
         p = edge(e,0) - 1;
         left = edge(e,1) - 1;
