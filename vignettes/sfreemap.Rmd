@@ -33,7 +33,14 @@ data(sfreemap.primates.summary.tree)
 
 # Introduction
 
-Put some description here so people don't lose their minds...
+SFREEMAP is an analytical approach to obtain accurate, per-branch
+expectations of numbers of state transitions and dwelling times. We also
+introduce an intuitive way of visualizing the results by integrating over
+the posterior and summarizing the parameters onto a target reference
+topology (such as a consensus or MAP tree) provided by the user.
+
+The following sections will guide you through installation and use of this
+tool.
 
 # Installing *sfreemap*
 
