@@ -4,13 +4,13 @@ This package is not production ready. There are still some improvements and test
 
 ### Package Requirements for Production
 
-You need to have R installed on your system. If you are using a debian/ubuntu based distribution, just type the following command in a terminal.
+You need to have R installed on your system, plus some dependencies. If you are using a debian/ubuntu based distribution, just type the following command in a terminal.
 
-`sudo apt-get install r-base-core`
+`sudo apt-get install r-base-core libblas-dev liblapack-dev` 
 
 ### Package Requirements for Development
 
-`sudo apt-get install r-base-core texlive-full`
+`sudo apt-get install r-base-core texlive-full zlib1g-dev libcurl4-openssl-dev`
 
 ### Install
 

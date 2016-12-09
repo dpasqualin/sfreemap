@@ -44,6 +44,8 @@ tool.
 
 # Installing *sfreemap*
 
+First make sure you have *libblas-dev* and *liblapack-dev* installed on your system.
+
 To install the development version from github:
 ```{r, eval=FALSE}
 library(devtools)
