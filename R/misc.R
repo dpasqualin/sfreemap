@@ -4,7 +4,7 @@ add_subtitle <- function(leg=NULL, colors, cex=0.7, shape="rect", ...) {
 
     # heigh and width of legend squares
     h <- strheight(LETTERS[1])
-    w <- 30
+    w <- 25
 
     x <- y <- -4
 
@@ -19,7 +19,7 @@ add_subtitle <- function(leg=NULL, colors, cex=0.7, shape="rect", ...) {
 
     labels <- leg
 
-    text(x, y+h*0.75, labels, pos=3, cex=par()$cex*0.7)
+    text(x, y+h*0.75, labels, pos=3, cex=par()$cex*1.5)
 
     if (shape=="rect") {
         rects <- cbind(rep(w, length(x)), rep(h*1, length(x)))

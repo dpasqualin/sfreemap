@@ -98,7 +98,7 @@ plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, co
 plot_distribution_tree <- function(map, state='all', type='emr'
                                 , conf_level=95, number_of_ticks=20
                                 , tip_states=NULL, cex=0.9, ftype="i"
-                                , lwd=3) {
+                                , lwd=3, tip.label=NULL) {
 
     if (!type %in% c('lmt', 'emr', 'mr')) {
         stop(paste('Unrecognized type', type))
@@ -117,7 +117,7 @@ plot_distribution_tree <- function(map, state='all', type='emr'
     all_nodes <- unique(tree$edge[,2])
 
     if (type %in% c('mr', 'lmt')) {
-        color_names <- format(round(ticks,2), nsmall=2, trim=TRUE, scientific=FALSE)
+        color_names <- format(round(ticks,1), nsmall=1, trim=TRUE, scientific=FALSE)
     } else if (type == 'emr') {
         color_names <- as.character(ticks)
     }
@@ -162,6 +162,14 @@ plot_distribution_tree <- function(map, state='all', type='emr'
     # add tip state
     if (!is.null(tip_states)) {
         tree$tip.label <- join_tip_states(tree, tip_states)
+    }
+
+    if (!is.null(tip.label)) {
+        if (length(tip.label) == length(tree$tip.label)) {
+            tree$tip.label <- tip.label
+        } else {
+            stop("tip.label doesn't match the number of tips")
+        }
     }
 
 	plotSimmap(tree, colors=colors, fsize=cex, ftype=ftype, ylim=ylim, lwd=lwd)
