@@ -127,9 +127,8 @@ Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sa
 }
 
 
-# THESE ARE MOSTLY EXTERNAL FUNCTIONS HONESTLY STOLEN AND
-# SLIGHTLY CHANGE FROM PHYTOOLS. WE HAD TO DO THIS BECAUSE
-# THIS FUNCTIONS ARE NOT VISIBLE FROM OUTSIDE PHYTOOLS
+# These are mostly helper funcions honestly stolen and slightly changed from
+# phytools. We had to copy them because they are not exported.
 
 # PHYTOOLS
 # get pars

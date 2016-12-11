@@ -178,7 +178,7 @@ read_fasta <- function(file, ensure_dna=FALSE) {
 rescale <- function(tree, height=NULL, parallel=FALSE) {
     if (inherits(tree, "multiPhylo")){
         tree <- unclass(tree)
-        if (parallel==TRUE && !on_windows()) {
+        if (parallel==TRUE && support_parallel_mode()) {
             tree <- mclapply(tree, rescale, height, mc.cores=detectCores())
         } else {
             tree <- lapply(tree, rescale, height)
@@ -204,9 +204,10 @@ rescale <- function(tree, height=NULL, parallel=FALSE) {
     }
 }
 
-# Return true if we are running on windows and false otherwise
-on_windows <- function() {
-    return(Sys.info()['sysname'] == 'Windows')
+# Currently parallelism is only supported on linux
+support_parallel_mode <- function() {
+    os <- Sys.info()['sysname']
+    return(os == 'Linux')
 }
 
 # This function creates a matrix with rownames being states, colnames being

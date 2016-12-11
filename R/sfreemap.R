@@ -5,16 +5,16 @@ sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", met
 
     # Am I running on windows? Windows does not have support for the kind of
     # parallelism we are using
-    i_am_windows <- on_windows()
 
     # Should this program run in parallel?
-    parallel <- !i_am_windows
     if (hasArg(parallel)) {
         parallel <- list(...)$parallel
-        if (all(parallel, i_am_windows)) {
-            warning('parallel mode is not available on windows.', call. = FALSE)
+        if (all(parallel, !support_parallel_mode())) {
+            warning('parallel mode is not available on this machine.', call. = FALSE)
             parallel <- FALSE
         }
+    } else {
+        parallel <- support_parallel_mode()
     }
 
     # When running in parallel, choose how many cores do use.

@@ -1,5 +1,10 @@
 #include <RcppArmadillo.h>
-#include <omp.h>
+#ifdef _OPENMP
+   #include <omp.h>
+#else
+   #define omp_get_thread_num() { return 0;}
+   #define omp_set_num_threads() { return 1;}
+#endif
 // [[Rcpp::plugins(openmp)]]
 
 #define TOL 0.00000001
