@@ -6,7 +6,7 @@ This package is not production ready. There are still some improvements and test
 
 You need to have R installed on your system, plus some dependencies. If you are using a debian/ubuntu based distribution, just type the following command in a terminal.
 
-`sudo apt-get install r-base-core libblas-dev liblapack-dev` 
+`sudo apt-get install r-base-core libblas-dev liblapack-dev`
 
 ### Package Requirements for Development
 
@@ -39,4 +39,22 @@ it:
 ## try http:// if https:// URLs are not supported
 source('https://bioconductor.org/biocLite.R')
 biocLite('Biostrings')
+```
+
+### Help and Vignettes
+
+If you want to look at the reference manual, load R and type the following
+commands. A new tab will open in your web browser with the description of
+all available functions.
+
+```
+require(sfreemap)
+help(package = "sfreemap", help_type = "html")
+```
+
+The following command will open a new tab in your web browser with a link to
+the vignettes (HTML).
+
+```
+browseVignettes("sfreemap")
 ```
