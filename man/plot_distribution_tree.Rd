@@ -3,7 +3,7 @@
 \title{Plot the dwelling times distribution of a state in a given tree}
 \usage{
 plot_distribution_tree(map, state='all', type='emr', conf_level=95, number_of_ticks=20
-                    , tip_states=NULL, fsize=0.7, ftype="i", lwd=3)
+                    , tip_states=NULL, fsize=0.7, ftype="i", lwd=3, tip.label=NULL)
 }
 \examples{
 sm <- sfreemap(sfreemap.corals.trees, sfreemap.corals.tips, parallel=FALSE)
@@ -21,6 +21,7 @@ tree <- plot_distribution_tree(map, state='colonial', tip_states=sfreemap.corals
     \item{fsize}{relative font size for tip labels;}
     \item{ftype}{font type - options are "reg", "i" (italics), "b" (bold), or "bi" (bold-italics);}
     \item{lwd}{line width for three branches.}
+    \item{tip.label}{A vector containing the tip names. Defaults to NULL, meaning tip names will be get from the \code{phylo} object}
 }
 \description{
     This functions plots the posterior distribution of a state in the tree used as base_tree on \link{map_posterior_distribution}.

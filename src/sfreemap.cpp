@@ -4,6 +4,7 @@
   #include <omp.h>
 #else
   #define omp_set_num_threads(x) do {} while(0)
+  #define omp_get_thread_num() do {} while(0)
 #endif
 
 // [[Rcpp::plugins(openmp)]]

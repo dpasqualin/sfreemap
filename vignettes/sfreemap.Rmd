@@ -3,13 +3,13 @@ title: "Sfreemap"
 author: "Diego Pasqualin, Marcos Barbeitos and Fabiano Silva"
 date: "`r Sys.Date()`"
 output:
-    #pdf_document:
-    #    toc: true
-    #    number_sections: true
-    html_document:
+    pdf_document:
         toc: true
-        theme: spacelab
-        highligh: textmate
+        number_sections: true
+    #html_document:
+    #    toc: true
+    #    theme: spacelab
+    #    highligh: textmate
 vignette: >
   %\VignetteIndexEntry{Sfreemap}
   %\VignetteEngine{knitr::rmarkdown}
