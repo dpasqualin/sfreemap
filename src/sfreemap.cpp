@@ -1,3 +1,4 @@
+#include <math.h>
 #include <RcppArmadillo.h>
 #ifdef _OPENMP
   #include <omp.h>
@@ -41,7 +42,7 @@ arma::cube get_Si(int n_states, arma::cube S, arma::mat m) {
 
 double build_Iij(double t, arma::vec d, int i, int j) {
     double diff = d[i] - d[j];
-    if (abs(diff) < TOL) {
+    if (fabsf(diff) < TOL) {
         return t * (exp(d[i]*t));
     } else {
         return (exp(d[i]*t) - exp(d[j]*t)) / (diff);
@@ -56,14 +57,14 @@ arma::cube transition_probabilities(List Q_eigen, arma::vec edges, int omp) {
     arma::mat q_vec_inv = Q_eigen["vectors_inv"];
     arma::mat q_vec = Q_eigen["vectors"];
 
-    int n_states = q_val.size();
+    unsigned int n_states = q_val.size();
     arma::cube P(n_states, n_states, edges.size());
 
     omp_set_num_threads(omp);
     #pragma omp parallel default(shared)
     {
         arma::mat aux(n_states, n_states);
-        int i, j;
+        unsigned int i, j;
 
         // P(t) = U X diag(e**d1t, ... e**dmt) X U**-1
         // t is an arbitrary edge length
