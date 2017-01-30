@@ -11,6 +11,7 @@ export(sfreemap
        , correlation
        , plot.correlation
        , reorder.sfreemap
+       , rescale
        , describe.sfreemap
 )
 
