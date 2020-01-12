@@ -8,30 +8,57 @@ topology (such as a consensus or MAP tree) provided by the user.
 
 ## Installation
 
-You need to have R installed on your system, plus some dependencies.
-If you are using a Debian/Ubuntu based distribution, just type the following command in a terminal.
+First install R and dependencies according to your operating system (see below), then install
+the package from CRAN, github or source, as described in the following sections.
 
-`sudo apt-get install r-base-core libblas-dev liblapack-dev libmagick++-dev`
+
+##### Debian/Ubuntu
+
+If you are using a Debian/Ubuntu based distribution, install the following packages.
+
+```bash
+sudo apt-get install r-base-core libblas-dev liblapack-dev libmagick++-dev
+```
+
+##### Windows
+
+Install the latest version of Rtools for Windows following
+http://cran.r-project.org/bin/windows/Rtools/.
+
+##### MAC OS
+
+You might need to install install Xcode command line tools:
+```bash
+xcode-select --install
+```
+
+
+#### From CRAN
 
 You can install the stable version of the package from CRAN by opening R console and typing:
 ```
 install.packages(sfreemap)
 ```
 
-The most up to date version from github can be installed using devtools.
-If you want to build vignettes (usage examples), provide `build_vignettes = FALSE`
-parameter to `install_github` command (installation will take a few minutes more):
+#### From Github using devtools
+
+The most up to date version from Github can be installed using `devtools` (if you want to build vignettes
+(usage examples), provide `build_vignettes = TRUE` parameter to `install_github`).
 ```
 install.packages('devtools')
 require(devtools)
 install_github('dpasqualin/sfreemap')
 ```
+#### From source
 
-You can also clone the repository and install it like this:
+If you don't want to install `devtools` you can also clone the repository and install it using R command line.
+You will need `git` installed on your system.
 ```
 git clone https://github.com/dpasqualin/sfreemap.git
 R CMD build sfreemap && R CMD INSTALL sfreemap
 ```
+
+## Documentation
 
 If you want to look at the reference manual, load R and type the following
 commands. A new tab will open in your web browser with the description of
@@ -42,13 +69,12 @@ require(sfreemap)
 help(package = "sfreemap", help_type = "html")
 ```
 
-The following command will open a new tab in your web browser with a link to
-the vignettes (HTML).
+The following command will open a new tab in your browser with a link to the vignettes, if you chose
+to install it.
 
 ```
 browseVignettes("sfreemap")
 ```
-
 
 ## Development
 
