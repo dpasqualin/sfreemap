@@ -10,3 +10,5 @@ visual_test
 ^\.RDataTmp$
 ^cran-comments.Rmd$
 ^cran-comments.md$
+^doc$
+^Meta$
