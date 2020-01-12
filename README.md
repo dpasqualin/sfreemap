@@ -1,45 +1,37 @@
-### Package Requirements for Production
+# SFREEMAP
 
-You need to have R installed on your system, plus some dependencies. If you are using a debian/ubuntu based distribution, just type the following command in a terminal.
+SFREEMAP is an analytical approach to obtain accurate, per-branch
+expectations of numbers of state transitions and dwelling times. It also
+provides an intuitive way of visualizing the results by integrating over
+the posterior and summarizing the parameters onto a target reference
+topology (such as a consensus or MAP tree) provided by the user.
 
-`sudo apt-get install r-base-core libblas-dev liblapack-dev`
+## Installation
 
-### Package Requirements for Development
+You need to have R installed on your system, plus some dependencies.
+If you are using a Debian/Ubuntu based distribution, just type the following command in a terminal.
 
+`sudo apt-get install r-base-core libblas-dev liblapack-dev libmagick++-dev`
+
+You can install the stable version of the package from CRAN by opening R console and typing:
 ```
-# On Fedora libssl-dev might be called libssh2-devel, and on OS X might be just libssh2
-sudo apt-get install r-base-core texlive-full zlib1g-dev libcurl4-openssl-dev libssl-dev
+install.packages(sfreemap)
 ```
 
-### Install
-
+The most up to date version from github can be installed using devtools.
+If you want to build vignettes (usage examples), provide `build_vignettes = FALSE`
+parameter to `install_github` command (installation will take a few minutes more):
 ```
 install.packages('devtools')
 require(devtools)
 install_github('dpasqualin/sfreemap')
 ```
 
-If you have troubles installing the `devtools` package, try cloning
-`sfreemap` and then installing it, with the following commands:
-
+You can also clone the repository and install it like this:
 ```
 git clone https://github.com/dpasqualin/sfreemap.git
 R CMD build sfreemap && R CMD INSTALL sfreemap
-# Vignettes will be available in the directory `sfreemap.Rcheck`.
 ```
-
-Some people might have problems with package `Briostrings` as well, which is
-a dependency of `phangorn`, which is a dependency of `sfreemap`. If you do,
-the official Biostrings website suggest the following commands to install
-it:
-
-```
-## try http:// if https:// URLs are not supported
-source('https://bioconductor.org/biocLite.R')
-biocLite('Biostrings')
-```
-
-### Help and Vignettes
 
 If you want to look at the reference manual, load R and type the following
 commands. A new tab will open in your web browser with the description of
@@ -55,4 +47,13 @@ the vignettes (HTML).
 
 ```
 browseVignettes("sfreemap")
+```
+
+
+## Development
+
+For development you are gonna need a few extra packages:
+```
+# On Fedora libssl-dev might be called libssh2-devel, and on OS X might be just libssh2
+sudo apt-get install texlive-full zlib1g-dev libcurl4-openssl-dev libssl-dev
 ```
