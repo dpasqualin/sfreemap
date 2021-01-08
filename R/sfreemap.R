@@ -9,7 +9,7 @@ sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", met
     # Should this program run in parallel?
     if (hasArg(parallel)) {
         parallel <- list(...)$parallel
-        if (all(parallel, !support_parallel_mode())) {
+        if (any(parallel, !support_parallel_mode())) {
             warning('parallel mode is not available on this machine.', call. = FALSE)
             parallel <- FALSE
         }
