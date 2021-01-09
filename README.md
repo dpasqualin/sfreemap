@@ -32,14 +32,6 @@ You might need to install install Xcode command line tools:
 xcode-select --install
 ```
 
-
-#### From CRAN
-
-You can install the stable version of the package from CRAN by opening R console and typing:
-```
-install.packages(sfreemap)
-```
-
 #### From Github using devtools
 
 The most up to date version from Github can be installed using `devtools` (if you want to build vignettes
