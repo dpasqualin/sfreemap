@@ -207,7 +207,7 @@ rescale <- function(tree, height=NULL, parallel=FALSE) {
 # Currently parallelism is only supported on linux
 support_parallel_mode <- function() {
     os <- Sys.info()['sysname']
-    return(os == 'Linux')
+    return(os %in% c('Linux',  'Darwin'))
 }
 
 # This function creates a matrix with rownames being states, colnames being

@@ -47,7 +47,7 @@ map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, sc
     }
 
     prev_class <- class(trees)
-    if (isTRUE(parallel) && !on_windows()) {
+    if (isTRUE(parallel) && support_parallel_mode()) {
         trees <- mclapply(trees, mymatch, mc.cores=detectCores())
     } else {
         trees <- lapply(trees, mymatch)
