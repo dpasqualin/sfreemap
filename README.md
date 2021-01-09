@@ -6,6 +6,8 @@ provides an intuitive way of visualizing the results by integrating over
 the posterior and summarizing the parameters onto a target reference
 topology (such as a consensus or MAP tree) provided by the user.
 
+Paper: https://bmcbioinformatics.biomedcentral.com/articles/10.1186/s12859-017-1554-7
+
 ## Installation
 
 First install R and dependencies according to your operating system (see below), then install
