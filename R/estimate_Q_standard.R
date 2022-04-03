@@ -11,7 +11,7 @@ Q_empirical <- function(tree, tip_states, prior, model, tol, omp) {
     # phytools need this...
     new_tree <- bt <- reorder.phylo(tree, "cladewise")
 
-    if (!is.binary.tree(bt)) {
+    if (!ape::is.binary(bt)) {
         # NOTE: find out what this does...
         bt <- multi2di(bt)
     }
