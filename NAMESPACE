@@ -24,7 +24,7 @@ S3method('+', correlation)
 
 importFrom(stats, reorder)
 
-importFrom(ape, ace, di2multi, is.binary.tree, is.rooted, is.ultrametric
+importFrom(ape, ace, di2multi, is.binary, is.rooted, is.ultrametric
               , matexpo, multi2di, nodelabels, plot.phylo, read.tree
               , reorder.phylo, write.tree, all.equal.phylo, drop.tip, root)
 
