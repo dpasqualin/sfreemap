@@ -36,13 +36,17 @@ xcode-select --install
 
 #### From Github using devtools
 
-The most up to date version from Github can be installed using `devtools` (if you want to build vignettes
-(usage examples), provide `build_vignettes = TRUE` parameter to `install_github`).
-```
-install.packages('devtools')
+The most up to date version from Github can be installed using `devtools`. Devtools itself has a different set of
+dependencies depending on the OS you are on, for some `install.packages('devtools')` on R console might be enough, 
+for Debian/Ubuntu the easiest way is with `sudo apt install r-cran-devtools`.
+
+After installing `devtools` you can run the lines below on R to install `sfreemap`.
+Use `build_vignettes = TRUE` parameter to `install_github` if you want to build usage examples as well.
+```R
 require(devtools)
 install_github('dpasqualin/sfreemap')
 ```
+
 #### From source
 
 If you don't want to install `devtools` you can also clone the repository and install it using R command line.
