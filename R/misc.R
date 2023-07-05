@@ -2,7 +2,7 @@
 # modified from phytools (written by Liam J. Revell 2013)
 add_subtitle <- function(leg=NULL, colors, cex=0.7, shape="rect", ...) {
 
-    # heigh and width of legend squares
+    # height and width of legend squares
     h <- strheight(LETTERS[1])
     w <- 25
 

@@ -51,7 +51,7 @@ print.correlation <- function(x, ...) {
     NextMethod()
 }
 
-# Actualy plots the correlation matrix
+# Plots the correlation matrix
 plot.correlation <- function(x, y=NULL, ...) {
 
     # panel.smooth function is built in.
@@ -95,7 +95,7 @@ plot.correlation <- function(x, y=NULL, ...) {
     # define color, green when it is a tip when grey when isn't
     color <- ifelse(cor$is_tip, 'green', 'grey')
 
-    # package car has a scatterplotMatrix function that can print things like
+    # package car has a scatter plot Matrix function that can print things like
     # an ellipse showing 95% confidence level, but I'm not sure it this fits
     # here. https://cran.r-project.org/web/packages/car/car.pdf
     pairs(formula
