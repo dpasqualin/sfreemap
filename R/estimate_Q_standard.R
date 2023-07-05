@@ -84,9 +84,9 @@ Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sa
 
     n_states <- ncol(states)
 
-    # Reorder tree and create a copy called bt. Not sure why
-    # phytools need this copy...
-    # TODO: As we set the order of the tree in the main functio, maybe we don't # need to do it here again.
+    # Reorder tree and create a copy called bt. Not sure why phytools need this copy.
+    # TODO: As we set the order of the tree in the main function, maybe we don't need
+    # to do it here again.
     new_tree <- bt <- reorder.phylo(tree, "cladewise")
 
     # Define prior
@@ -127,8 +127,8 @@ Q_mcmc <- function(tree, tip_states, prior, model, gamma_prior, tol, burn_in, sa
 }
 
 
-# These are mostly helper funcions honestly stolen and slightly changed from
-# phytools. We had to copy them because they are not exported.
+# These are mostly helper functions honestly stolen and slightly changed from phytools.
+# We had to copy them because they are not exported.
 
 # PHYTOOLS
 # get pars
@@ -141,7 +141,7 @@ getPars<-function(bt,xx,model,Q,tree,tol,m,omp=1,liks=TRUE){
     if(liks){
         L<-XX$lik.anc
         rownames(L)<-N+1:nrow(L)
-        if(!is.binary.tree(tree)){
+        if(!ape::is.binary(tree)){
             ancNames<-matchNodes(tree,bt)
             L<-L[as.character(ancNames[,2]),]
             rownames(L)<-ancNames[,1]
@@ -177,6 +177,18 @@ statdist <- function(Q){
 }
 
 # PHYTOOLS
+.getSEs <- function(out)
+{
+    h <- out$hessian
+    if (any(diag(h) == 0)) {
+        warning("The likelihood gradient seems flat in at least one dimension (gradient null):\ncannot compute the standard-errors of the transition rates.\n")
+        se <- rep(NaN, nrow(h))
+    } else {
+        se <- sqrt(diag(solve(h)))
+    }
+    se
+}
+
 # function for conditional likelihoods at nodes, from ace(...,type="discrete")
 # modified (only very slightly) from E. Paradis et al. 2013
 apeAce <- function(tree,x,model,omp,fixedQ=NULL,...){
@@ -236,14 +248,14 @@ apeAce <- function(tree,x,model,omp,fixedQ=NULL,...){
     phy<-reorder.phylo(tree,"pruningwise")
 
     dev<-function(p,output.liks=FALSE,fixedQ=NULL){
-        if(any(is.nan(p))||any(is.infinite(p))) return(1e50)
+        if(any(is.nan(p))||any(is.infinite(p))) return(1e+50)
         comp<-numeric(nb.tip+nb.node)
         if(is.null(fixedQ)){
             Q[]<-c(p,0)[rate]
             diag(Q)<--rowSums(Q)
         } else Q<-fixedQ
 
-        Q_eigen <- eigen(Q, TRUE, only.values = FALSE)
+        Q_eigen <- eigen(Q, only.values = FALSE)
         Q_eigen[['vectors_inv']] <- solve(Q_eigen$vectors)
         tb <- transition_probabilities(Q_eigen, phy$edge.length, omp)
 
@@ -263,11 +275,21 @@ apeAce <- function(tree,x,model,omp,fixedQ=NULL,...){
         if(is.na(dev)) Inf else dev
     }
     if(is.null(fixedQ)){
-        out<-nlminb(rep(ip,length.out=np),function(p) dev(p),lower=rep(0,np),upper=rep(1e50,np))
+        out <- nlminb(rep(ip, length.out = np), function(p) dev(p),
+                      lower = rep(0, np), upper = rep(1e50, np))
         obj<-list()
-        obj$loglik<--out$objective/2
-        obj$rates<-out$par
-        obj$index.matrix<-index.matrix
+        obj$loglik <- -out$objective/2
+        obj$rates <- out$par
+        oldwarn <- options("warn")
+        options(warn = -1)
+        out.nlm <- try(nlm(function(p) dev(p), p = obj$rates, iterlim = 1,
+                           stepmax = 0, hessian = TRUE), silent = TRUE)
+        options(oldwarn)
+        obj$se <- if (inherits(out.nlm, "try-error")) {
+            warning("model fit suspicious: gradients apparently non-finite")
+            rep(NaN, np)
+        } else .getSEs(out.nlm)
+        obj$index.matrix <- index.matrix
         if(output.liks){
             obj$lik.anc<-dev(obj$rates,TRUE)
             colnames(obj$lik.anc)<-lvls

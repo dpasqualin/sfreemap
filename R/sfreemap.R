@@ -216,8 +216,7 @@ sfreemap <- function(tree, tip_states, Q=NULL, type="standard", model="SYM", met
     if (all(!is.null(Q), is.matrix(Q))) {
         QP <- Q_matrix(tree, tip_states, Q, model, prior, tol, type)
     } else if (type == 'standard') {
-        # standard data type has currently two ways of estimating the rate
-        # matrix
+        # standard data type has currently two ways of estimating the rate matrix
         if (method == "empirical") {
             QP <- Q_empirical(tree, tip_states, prior, model, tol, omp)
         } else if (method == "mcmc") {

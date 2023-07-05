@@ -3,7 +3,7 @@ map_posterior_distribution <- function(base_tree, trees, scale.branches=TRUE, sc
     # all but the root node
     all_nodes <- unique(base_tree$edge[,2])
 
-    # create tree dimentional matrix for the result
+    # create tree dimensional matrix for the result
     states <- colnames(base_tree$mapped.edge)
     transitions <- colnames(base_tree$mapped.edge.lmt)
     tree_names <- 1:length(trees)

@@ -1,7 +1,6 @@
 plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, conf_level=95
 	                                   , number_of_ticks=20, type='emr') {
 
-
     if (!type %in% c('lmt', 'emr', 'mr')) {
         stop(paste('Unrecognized type', type))
     }
@@ -11,6 +10,7 @@ plot_distribution_chart <- function(map, nodes=NULL, trees=NULL, states=NULL, co
     if (!is.null(trees)) {
         map <- map[trees,,]
     }
+
     # check whether states exists
     if (!is.null(states) && !all(states %in% names(map[1,,1]))) {
         stop(paste('Unrecognized state:', states))
@@ -153,7 +153,7 @@ plot_distribution_tree <- function(map, state='all', type='emr'
 		tree$maps[[b_number]] <- (value*b_len)/100.0
     }
 
-	# color grandient
+	# color gradient
 	colors <- get_color_pallete(color_names)
 
 	# make room for the legend
